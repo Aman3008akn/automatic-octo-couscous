@@ -1,4 +1,5 @@
 import Link from "next/link";
+export const dynamic = "force-dynamic";
 import { searchCatalog } from "@/server/search";
 import { HeroCarousel } from "@/components/storefront/hero-carousel";
 import { MerchandisingGrid } from "@/components/storefront/merchandising-grid";
