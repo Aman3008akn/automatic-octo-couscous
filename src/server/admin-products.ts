@@ -21,67 +21,72 @@ export type ModerationResult =
  * Fetch products for admin moderation queue.
  */
 export async function getAdminProductQueue(statusFilter?: ProductStatus | "ALL", searchQuery?: string) {
-  await requireRole(["MODERATOR", "SUPPORT", "FINANCE", "ADMIN", "SUPER_ADMIN"]);
+  try {
+    await requireRole(["MODERATOR", "SUPPORT", "FINANCE", "ADMIN", "SUPER_ADMIN"]);
 
-  const whereClause: Record<string, unknown> = {};
+    const whereClause: Record<string, unknown> = {};
 
-  if (statusFilter && statusFilter !== "ALL") {
-    whereClause.status = statusFilter;
-  }
+    if (statusFilter && statusFilter !== "ALL") {
+      whereClause.status = statusFilter;
+    }
 
-  if (searchQuery && searchQuery.trim().length > 0) {
-    const q = searchQuery.trim();
-    whereClause.OR = [
-      { title: { contains: q, mode: "insensitive" } },
-      { slug: { contains: q, mode: "insensitive" } },
-      { resellerProfile: { legalName: { contains: q, mode: "insensitive" } } },
-      { variants: { some: { sku: { contains: q, mode: "insensitive" } } } },
-    ];
-  }
+    if (searchQuery && searchQuery.trim().length > 0) {
+      const q = searchQuery.trim();
+      whereClause.OR = [
+        { title: { contains: q, mode: "insensitive" } },
+        { slug: { contains: q, mode: "insensitive" } },
+        { resellerProfile: { legalName: { contains: q, mode: "insensitive" } } },
+        { variants: { some: { sku: { contains: q, mode: "insensitive" } } } },
+      ];
+    }
 
-  const products = await prisma.product.findMany({
-    where: whereClause,
-    include: {
-      category: true,
-      images: { orderBy: { sortOrder: "asc" } },
-      variants: {
-        include: { inventory: true },
+    const products = await prisma.product.findMany({
+      where: whereClause,
+      include: {
+        category: true,
+        images: { orderBy: { sortOrder: "asc" } },
+        variants: {
+          include: { inventory: true },
+        },
+        resellerProfile: {
+          select: { id: true, legalName: true, contactEmail: true, status: true },
+        },
       },
-      resellerProfile: {
-        select: { id: true, legalName: true, contactEmail: true, status: true },
-      },
-    },
-    orderBy: { updatedAt: "desc" },
-  });
+      orderBy: { updatedAt: "desc" },
+    });
 
-  return products.map((p) => {
-    const mainVariant = p.variants[0];
-    return {
-      id: p.id,
-      slug: p.slug,
-      title: p.title,
-      description: p.description,
-      brand: p.brand,
-      condition: p.condition,
-      status: p.status,
-      rejectionReason: p.rejectionReason,
-      moderatedAt: p.moderatedAt,
-      createdAt: p.createdAt,
-      updatedAt: p.updatedAt,
-      category: p.category,
-      images: p.images,
-      mainVariant: mainVariant
-        ? {
-            id: mainVariant.id,
-            sku: mainVariant.sku,
-            priceCents: mainVariant.priceCents,
-            compareAtCents: mainVariant.compareAtCents,
-            inventoryCount: mainVariant.inventory?.available ?? 0,
-          }
-        : null,
-      resellerProfile: p.resellerProfile,
-    };
-  });
+    return products.map((p) => {
+      const mainVariant = p.variants[0];
+      return {
+        id: p.id,
+        slug: p.slug,
+        title: p.title,
+        description: p.description,
+        brand: p.brand,
+        condition: p.condition,
+        status: p.status,
+        rejectionReason: p.rejectionReason,
+        moderatedAt: p.moderatedAt,
+        createdAt: p.createdAt,
+        updatedAt: p.updatedAt,
+        category: p.category,
+        images: p.images,
+        mainVariant: mainVariant
+          ? {
+              id: mainVariant.id,
+              sku: mainVariant.sku,
+              priceCents: mainVariant.priceCents,
+              compareAtCents: mainVariant.compareAtCents,
+              inventoryCount: mainVariant.inventory?.available ?? 0,
+            }
+          : null,
+        resellerProfile: p.resellerProfile,
+      };
+    });
+  } catch (error) {
+    console.error("Database connection error in getAdminProductQueue:", error);
+    return [];
+  }
 }
 
 /**
@@ -102,17 +107,17 @@ export async function moderateProduct(input: ModerationInput): Promise<Moderatio
 
   const { productId, decision, reason } = parsed.data;
 
-  const product = await prisma.product.findUnique({
-    where: { id: productId },
-  });
-
-  if (!product) {
-    return { ok: false, error: "Product not found.", code: "NOT_FOUND" };
-  }
-
-  const actorUserId = (session.user as { id: string }).id;
-
   try {
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      return { ok: false, error: "Product not found.", code: "NOT_FOUND" };
+    }
+
+    const actorUserId = (session.user as { id: string }).id;
+
     await prisma.$transaction(async (tx) => {
       await tx.product.update({
         where: { id: productId },
@@ -138,6 +143,7 @@ export async function moderateProduct(input: ModerationInput): Promise<Moderatio
 
     return { ok: true };
   } catch (error) {
-    return { ok: false, error: (error as Error).message };
+    console.error("Database error in moderateProduct:", error);
+    return { ok: false, error: "Database connection failed. Please try again." };
   }
 }

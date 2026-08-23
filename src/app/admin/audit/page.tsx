@@ -19,14 +19,19 @@ export default async function AdminAuditLogsPage({ searchParams }: PageProps) {
     whereClause.actor = { email: actorFilter };
   }
 
-  const logs = await prisma.auditLog.findMany({
-    where: whereClause,
-    include: {
-      actor: { select: { id: true, name: true, email: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
+  let logs: any[] = [];
+  try {
+    logs = await prisma.auditLog.findMany({
+      where: whereClause,
+      include: {
+        actor: { select: { id: true, name: true, email: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
+  } catch (error) {
+    console.error("Database connection error in AdminAuditLogsPage:", error);
+  }
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
