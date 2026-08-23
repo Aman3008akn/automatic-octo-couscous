@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { getSumitGautamActivityLogs } from "@/server/admin-audit";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
   let pendingCount = 0;
   let approvedCount = 0;
@@ -30,7 +32,10 @@ export default async function AdminDashboardPage() {
       take: 5,
       orderBy: { createdAt: "desc" },
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.digest === 'DYNAMIC_SERVER_USAGE') {
+      throw error;
+    }
     console.error("Database connection error in AdminDashboardPage:", error);
   }
 

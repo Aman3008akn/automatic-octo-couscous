@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/authz";
+export const dynamic = "force-dynamic";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 
@@ -29,7 +30,10 @@ export default async function AdminAuditLogsPage({ searchParams }: PageProps) {
       orderBy: { createdAt: "desc" },
       take: 100,
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.digest === 'DYNAMIC_SERVER_USAGE') {
+      throw error;
+    }
     console.error("Database connection error in AdminAuditLogsPage:", error);
   }
 

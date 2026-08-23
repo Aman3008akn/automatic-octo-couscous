@@ -1,7 +1,10 @@
 import { searchCatalog, getStorefrontCategories } from "@/server/search";
 import { ProductCard } from "@/components/storefront/product-card";
 import { Footer } from "@/components/storefront/footer";
+import { SortDropdown } from "@/components/storefront/sort-dropdown";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
 
 type SearchPageProps = {
   searchParams: {
@@ -44,7 +47,10 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
     items = results[0].items;
     totalCount = results[0].totalCount;
     categories = results[1];
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.digest === 'DYNAMIC_SERVER_USAGE') {
+      throw error;
+    }
     console.error("Unhandled error in SearchResultsPage:", error);
   }
 
@@ -66,20 +72,7 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
           {/* Sort Dropdown */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-navy-600">Sort by:</span>
-            <form method="GET" action="/search">
-              {q && <input type="hidden" name="q" value={q} />}
-              {categorySlug !== "all" && <input type="hidden" name="categorySlug" value={categorySlug} />}
-              <select
-                name="sort"
-                defaultValue={sort}
-                onChange={(e) => (e.target as HTMLSelectElement).form?.requestSubmit()}
-                className="rounded-card border border-line bg-white px-3 py-1.5 text-xs font-bold text-ink outline-none cursor-pointer"
-              >
-                <option value="newest">Newest Arrivals</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="price_desc">Price: High to Low</option>
-              </select>
-            </form>
+            <SortDropdown defaultSort={sort} />
           </div>
         </div>
 
