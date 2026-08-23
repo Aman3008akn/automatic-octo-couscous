@@ -14,24 +14,39 @@ type SearchPageProps = {
 };
 
 export default async function SearchResultsPage({ searchParams }: SearchPageProps) {
-  const q = searchParams.q || "";
-  const categorySlug = searchParams.categorySlug || "all";
-  const sort = (searchParams.sort as any) || "newest";
+  let items: any[] = [];
+  let totalCount = 0;
+  let categories: any[] = [];
+  let q = "";
+  let categorySlug = "all";
+  let sort = "newest";
 
-  const minPriceCents = searchParams.minPrice ? Math.round(parseFloat(searchParams.minPrice) * 100) : undefined;
-  const maxPriceCents = searchParams.maxPrice ? Math.round(parseFloat(searchParams.maxPrice) * 100) : undefined;
+  try {
+    q = searchParams.q || "";
+    categorySlug = searchParams.categorySlug || "all";
+    sort = (searchParams.sort as any) || "newest";
 
-  const [{ items, totalCount }, categories] = await Promise.all([
-    searchCatalog({
-      q,
-      categorySlug,
-      minPriceCents,
-      maxPriceCents,
-      sortBy: sort,
-      take: 40,
-    }),
-    getStorefrontCategories(),
-  ]);
+    const minPriceCents = searchParams.minPrice ? Math.round(parseFloat(searchParams.minPrice) * 100) : undefined;
+    const maxPriceCents = searchParams.maxPrice ? Math.round(parseFloat(searchParams.maxPrice) * 100) : undefined;
+
+    const results = await Promise.all([
+      searchCatalog({
+        q,
+        categorySlug,
+        minPriceCents,
+        maxPriceCents,
+        sortBy: sort as any,
+        take: 40,
+      }),
+      getStorefrontCategories(),
+    ]);
+    
+    items = results[0].items;
+    totalCount = results[0].totalCount;
+    categories = results[1];
+  } catch (error) {
+    console.error("Unhandled error in SearchResultsPage:", error);
+  }
 
   return (
     <div className="min-h-screen bg-paper flex flex-col">
