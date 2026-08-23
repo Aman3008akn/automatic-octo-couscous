@@ -8,7 +8,12 @@ export default async function AdminDashboardPage() {
   let pendingCount = 0;
   let approvedCount = 0;
   let recentLogs: any[] = [];
-  let sumitActivity = { user: null, logs: [], totalActions: 0, lastActive: null };
+  let sumitActivity: Awaited<ReturnType<typeof getSumitGautamActivityLogs>> = {
+    user: null,
+    logs: [],
+    totalActions: 0,
+    lastActive: null,
+  };
 
   try {
     sumitActivity = await getSumitGautamActivityLogs();
