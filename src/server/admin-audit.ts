@@ -8,14 +8,40 @@ import { requireRole } from "@/lib/authz";
  * Accessible by Super Admins (specifically Aman Shukla).
  */
 export async function getSumitGautamActivityLogs() {
-  await requireRole(["SUPER_ADMIN", "ADMIN"]);
+  try {
+    await requireRole(["SUPER_ADMIN", "ADMIN"]);
 
-  const sumitUser = await prisma.user.findUnique({
-    where: { email: "sumitgautam@cartigo.admin" },
-    select: { id: true, name: true, email: true, role: true, createdAt: true, updatedAt: true },
-  });
+    const sumitUser = await prisma.user.findUnique({
+      where: { email: "sumitgautam@cartigo.admin" },
+      select: { id: true, name: true, email: true, role: true, createdAt: true, updatedAt: true },
+    });
 
-  if (!sumitUser) {
+    if (!sumitUser) {
+      return {
+        user: null,
+        logs: [],
+        totalActions: 0,
+        lastActive: null,
+      };
+    }
+
+    const logs = await prisma.auditLog.findMany({
+      where: { actorUserId: sumitUser.id },
+      include: {
+        actor: { select: { id: true, name: true, email: true, role: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    return {
+      user: sumitUser,
+      logs,
+      totalActions: logs.length,
+      lastActive: logs[0]?.createdAt ?? sumitUser.updatedAt,
+    };
+  } catch (error) {
+    console.error("Database connection error in getSumitGautamActivityLogs:", error);
     return {
       user: null,
       logs: [],
@@ -23,44 +49,33 @@ export async function getSumitGautamActivityLogs() {
       lastActive: null,
     };
   }
-
-  const logs = await prisma.auditLog.findMany({
-    where: { actorUserId: sumitUser.id },
-    include: {
-      actor: { select: { id: true, name: true, email: true, role: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-  });
-
-  return {
-    user: sumitUser,
-    logs,
-    totalActions: logs.length,
-    lastActive: logs[0]?.createdAt ?? sumitUser.updatedAt,
-  };
 }
 
 /**
  * Fetch all admin audit logs with optional filter by admin email.
  */
 export async function getFilteredAdminAuditLogs(adminEmailFilter?: string) {
-  await requireRole(["SUPER_ADMIN", "ADMIN", "MODERATOR", "SUPPORT", "FINANCE"]);
+  try {
+    await requireRole(["SUPER_ADMIN", "ADMIN", "MODERATOR", "SUPPORT", "FINANCE"]);
 
-  const whereClause: Record<string, unknown> = {};
+    const whereClause: Record<string, unknown> = {};
 
-  if (adminEmailFilter && adminEmailFilter !== "ALL") {
-    whereClause.actor = { email: adminEmailFilter };
+    if (adminEmailFilter && adminEmailFilter !== "ALL") {
+      whereClause.actor = { email: adminEmailFilter };
+    }
+
+    const logs = await prisma.auditLog.findMany({
+      where: whereClause,
+      include: {
+        actor: { select: { id: true, name: true, email: true, role: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
+
+    return logs;
+  } catch (error) {
+    console.error("Database connection error in getFilteredAdminAuditLogs:", error);
+    return [];
   }
-
-  const logs = await prisma.auditLog.findMany({
-    where: whereClause,
-    include: {
-      actor: { select: { id: true, name: true, email: true, role: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
-
-  return logs;
 }

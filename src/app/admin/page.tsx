@@ -2,24 +2,32 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { getSumitGautamActivityLogs } from "@/server/admin-audit";
 
 export default async function AdminDashboardPage() {
-  const sumitActivity = await getSumitGautamActivityLogs();
+  let pendingCount = 0;
+  let approvedCount = 0;
+  let recentLogs: any[] = [];
+  let sumitActivity = { user: null, logs: [], totalActions: 0, lastActive: null };
 
-  const pendingCount = await prisma.resellerApplication.count({
-    where: { status: "PENDING_REVIEW" },
-  });
+  try {
+    sumitActivity = await getSumitGautamActivityLogs();
 
-  const approvedCount = await prisma.resellerProfile.count({
-    where: { status: "APPROVED" },
-  });
+    pendingCount = await prisma.resellerApplication.count({
+      where: { status: "PENDING_REVIEW" },
+    });
 
-  const recentLogs = await prisma.auditLog.findMany({
-    take: 5,
-    orderBy: { createdAt: "desc" },
-  });
+    approvedCount = await prisma.resellerProfile.count({
+      where: { status: "APPROVED" },
+    });
+
+    recentLogs = await prisma.auditLog.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.error("Database connection error in AdminDashboardPage:", error);
+  }
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -215,7 +223,7 @@ export default async function AdminDashboardPage() {
                   </p>
                 ) : (
                   <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                    {sumitActivity.logs.map((log) => (
+                    {sumitActivity.logs.map((log: any) => (
                       <div key={log.id} className="bg-white p-2 rounded border border-line text-[11px] space-y-0.5">
                         <div className="flex items-center justify-between font-bold text-ink">
                           <span className="text-amber-700 font-mono text-[10px]">{log.action}</span>
