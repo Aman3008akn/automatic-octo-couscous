@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAdminProduct, updateAdminProduct } from "@/server/admin-catalog";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 
@@ -47,6 +48,9 @@ export function ProductForm({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +58,29 @@ export function ProductForm({
     setError(null);
 
     try {
+      let uploadedImageUrl = formData.imageUrl;
+      
+      if (imageFile) {
+        setUploadingImage(true);
+        const fileName = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("product-images")
+          .upload(fileName, imageFile, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        if (uploadError) {
+          throw new Error(`Failed to upload image: ${uploadError.message}`);
+        }
+        
+        const { data: publicUrlData } = supabase.storage
+          .from("product-images")
+          .getPublicUrl(uploadData.path);
+          
+        uploadedImageUrl = publicUrlData.publicUrl;
+      }
+
       const payload = {
         title: formData.title,
         description: formData.description,
@@ -64,7 +91,7 @@ export function ProductForm({
         compareAtCents: formData.compareAtUsd ? Math.round(parseFloat(formData.compareAtUsd) * 100) : undefined,
         sku: formData.sku,
         inventoryCount: Number(formData.inventoryCount),
-        imageUrl: formData.imageUrl,
+        imageUrl: uploadedImageUrl,
       };
 
       let res;
@@ -87,6 +114,7 @@ export function ProductForm({
     } catch (err: any) {
       setError(err.message || "An error occurred while saving the product.");
       setLoading(false);
+      setUploadingImage(false);
     }
   };
 
@@ -237,13 +265,18 @@ export function ProductForm({
             </h3>
             
             <div>
-              <label className="block text-xs font-semibold text-navy-900 mb-1">Primary Image URL</label>
+              <label className="block text-xs font-semibold text-navy-900 mb-1">Product Image</label>
               <input
-                type="url"
-                value={formData.imageUrl}
-                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                placeholder="https://example.com/image.jpg"
-                className="w-full rounded-card border border-line p-2 text-sm focus:border-navy-400 outline-none"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setImageFile(e.target.files[0]);
+                    const objectUrl = URL.createObjectURL(e.target.files[0]);
+                    setFormData({ ...formData, imageUrl: objectUrl });
+                  }
+                }}
+                className="w-full rounded-card border border-line p-2 text-sm focus:border-navy-400 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-navy-50 file:text-navy-900 hover:file:bg-navy-100"
               />
               {formData.imageUrl && (
                 <div className="mt-4 w-32 h-32 rounded-card overflow-hidden border border-line bg-navy-50">
@@ -256,11 +289,11 @@ export function ProductForm({
         </CardContent>
 
         <CardFooter className="bg-navy-50/50 border-t border-line p-4 flex justify-end gap-3">
-          <Button type="button" variant="secondary" onClick={() => router.back()} disabled={loading}>
+          <Button type="button" variant="secondary" onClick={() => router.back()} disabled={loading || uploadingImage}>
             Cancel
           </Button>
-          <Button type="submit" variant="primary" loading={loading} className="px-6">
-            {isEditing ? "Save Changes" : "Create Product"}
+          <Button type="submit" variant="primary" loading={loading || uploadingImage} className="px-6">
+            {uploadingImage ? "Uploading Image..." : isEditing ? "Save Changes" : "Create Product"}
           </Button>
         </CardFooter>
       </Card>
