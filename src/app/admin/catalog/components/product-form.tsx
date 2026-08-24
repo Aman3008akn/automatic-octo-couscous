@@ -62,23 +62,21 @@ export function ProductForm({
       
       if (imageFile) {
         setUploadingImage(true);
-        const fileName = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("product-images")
-          .upload(fileName, imageFile, {
-            cacheControl: "3600",
-            upsert: false,
-          });
+        const uploadData = new FormData();
+        uploadData.append("file", imageFile);
 
-        if (uploadError) {
-          throw new Error(`Failed to upload image: ${uploadError.message}`);
+        const uploadRes = await fetch("/api/upload-image", {
+          method: "POST",
+          body: uploadData,
+        });
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json();
+          throw new Error(`Failed to upload image: ${errData.error || uploadRes.statusText}`);
         }
         
-        const { data: publicUrlData } = supabase.storage
-          .from("product-images")
-          .getPublicUrl(uploadData.path);
-          
-        uploadedImageUrl = publicUrlData.publicUrl;
+        const { url } = await uploadRes.json();
+        uploadedImageUrl = url;
       }
 
       const payload = {
