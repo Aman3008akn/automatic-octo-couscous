@@ -7,6 +7,7 @@ import { useEffect, useState, useRef } from "react";
 import { getCart } from "@/server/cart";
 import { getSearchSuggestions } from "@/server/search";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { CartigoLogoIcon } from "@/components/ui/cartigo-logo";
 
 const CATEGORIES_STRIP = [
   { name: "Electronics", slug: "electronics" },
@@ -106,9 +107,7 @@ export function Header() {
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 py-2.5">
         {/* Brand Logo */}
         <Link href="/" className="group flex items-center gap-2.5 shrink-0">
-          <div className="flex h-10 w-10 items-center justify-center rounded-card bg-navy-900 text-amber-400 font-display font-bold text-2xl shadow-sm transition-transform group-hover:scale-105">
-            C
-          </div>
+          <CartigoLogoIcon className="h-10 w-10 transition-transform group-hover:scale-105" />
           <div className="flex flex-col">
             <span className="font-display text-2xl font-bold tracking-tight text-ink leading-none">
               Cartigo

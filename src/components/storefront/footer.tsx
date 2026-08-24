@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CartigoLogoIcon } from "@/components/ui/cartigo-logo";
 
 export function Footer() {
   return (
@@ -65,9 +66,7 @@ export function Footer() {
         {/* Bottom copyright row */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded bg-navy-900 text-amber-400 font-display font-bold text-sm">
-              C
-            </div>
+            <CartigoLogoIcon className="h-7 w-7" />
             <span className="font-display font-bold text-base text-ink">Cartigo</span>
             <span className="text-navy-400">© {new Date().getFullYear()} Cartigo Marketplace Inc. All rights reserved.</span>
           </div>
