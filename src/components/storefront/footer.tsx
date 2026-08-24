@@ -37,6 +37,15 @@ export function Footer() {
               <li><Link href="#" className="hover:text-ink">Shipping Rates & Policies</Link></li>
               <li><Link href="#" className="hover:text-ink">Returns & Replacements</Link></li>
               <li><Link href="#" className="hover:text-ink">Help Center & FAQ</Link></li>
+              <li className="pt-3">
+                <span className="text-xs font-bold text-ink mb-1.5 block uppercase tracking-wide">WhatsApp Support:</span>
+                <a href="https://wa.me/918826817677" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-green-600 transition-colors">
+                  <span className="text-green-500 text-sm">💬</span> +91 88268 17677
+                </a>
+                <a href="https://wa.me/918840108332" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-green-600 transition-colors mt-1">
+                  <span className="text-green-500 text-sm">💬</span> +91 88401 08332
+                </a>
+              </li>
             </ul>
           </div>
 
