@@ -60,7 +60,7 @@ export function ProductForm({
         categoryId: formData.categoryId,
         brand: formData.brand,
         condition: formData.condition,
-        priceCents: Math.round(parseFloat(formData.priceUsd) * 100),
+        priceCents: formData.priceUsd ? Math.round(parseFloat(formData.priceUsd) * 100) : 0,
         compareAtCents: formData.compareAtUsd ? Math.round(parseFloat(formData.compareAtUsd) * 100) : undefined,
         sku: formData.sku,
         inventoryCount: Number(formData.inventoryCount),
@@ -74,8 +74,15 @@ export function ProductForm({
         res = await createAdminProduct(payload);
       }
 
+      if (!res) {
+        throw new Error("Server did not return a response. Check your network or try again.");
+      }
+
       if (res.ok) {
         router.push("/admin/catalog");
+      } else {
+        setError(res.error || "Failed to save product.");
+        setLoading(false);
       }
     } catch (err: any) {
       setError(err.message || "An error occurred while saving the product.");
