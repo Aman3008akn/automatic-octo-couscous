@@ -6,7 +6,7 @@ import { requireRole } from "@/lib/authz";
 import type { ProductStatus } from "@prisma/client";
 
 const moderationSchema = z.object({
-  productId: z.string().cuid(),
+  productId: z.string().length(24, "Must be a valid MongoDB ObjectId"),
   decision: z.enum(["APPROVED", "REJECTED", "CHANGES_REQUESTED", "UNPUBLISHED", "SUSPENDED"]),
   reason: z.string().max(2000).optional(),
 });

@@ -154,53 +154,58 @@ export async function createAdminProduct(data: {
   inventoryCount: number;
   imageUrl?: string;
 }) {
-  await getAdminSession();
-  const profile = await getOrCreateCartigoOfficialProfile();
+  try {
+    await getAdminSession();
+    const profile = await getOrCreateCartigoOfficialProfile();
 
-  // Basic slug generation
-  const slug = data.title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "") + "-" + Date.now().toString().slice(-4);
+    // Basic slug generation
+    const slug = data.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "") + "-" + Date.now().toString().slice(-4);
 
-  const product = await prisma.product.create({
-    data: {
-      resellerProfileId: profile.id,
-      categoryId: data.categoryId,
-      slug,
-      title: data.title,
-      description: data.description,
-      brand: data.brand || null,
-      condition: data.condition || "New",
-      status: "APPROVED",
-      variants: {
-        create: {
-          sku: data.sku,
-          optionsJson: {},
-          priceCents: data.priceCents,
-          compareAtCents: data.compareAtCents || null,
-          inventory: {
-            create: {
-              available: data.inventoryCount,
+    const product = await prisma.product.create({
+      data: {
+        resellerProfileId: profile.id,
+        categoryId: data.categoryId,
+        slug,
+        title: data.title,
+        description: data.description,
+        brand: data.brand || null,
+        condition: data.condition || "New",
+        status: "APPROVED",
+        variants: {
+          create: {
+            sku: data.sku,
+            optionsJson: {},
+            priceCents: data.priceCents,
+            compareAtCents: data.compareAtCents || null,
+            inventory: {
+              create: {
+                available: data.inventoryCount,
+              },
             },
           },
         },
       },
-    },
-  });
-
-  if (data.imageUrl) {
-    await prisma.productImage.create({
-      data: {
-        productId: product.id,
-        url: data.imageUrl,
-      },
     });
-  }
 
-  revalidatePath("/admin/catalog");
-  revalidatePath("/");
-  return { ok: true, productId: product.id };
+    if (data.imageUrl) {
+      await prisma.productImage.create({
+        data: {
+          productId: product.id,
+          url: data.imageUrl,
+        },
+      });
+    }
+
+    revalidatePath("/admin/catalog");
+    revalidatePath("/");
+    return { ok: true, productId: product.id };
+  } catch (err: any) {
+    console.error("Error creating product:", err);
+    return { ok: false, error: err.message || "Unknown error occurred" };
+  }
 }
 
 /**
