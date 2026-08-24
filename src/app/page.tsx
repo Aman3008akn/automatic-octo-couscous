@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/storefront/product-card";
 import { PromoBanner } from "@/components/storefront/promo-banner";
 import { TrustSection } from "@/components/storefront/trust-section";
 import { TeamSection } from "@/components/storefront/team-section";
+import { TeamScrollPopup } from "@/components/storefront/team-scroll-popup";
 import { Footer } from "@/components/storefront/footer";
 import { RetailPoster } from "@/components/storefront/retail-poster";
 
@@ -142,6 +143,9 @@ export default async function HomePage() {
 
       {/* 9. Meet the Developers Section */}
       <TeamSection />
+
+      {/* Floating Action Button for Teams */}
+      <TeamScrollPopup />
 
       {/* 10. Large Marketplace Footer */}
       <Footer />

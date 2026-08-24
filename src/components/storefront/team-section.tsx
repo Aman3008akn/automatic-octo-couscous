@@ -40,7 +40,7 @@ export function TeamSection() {
   ];
 
   return (
-    <section className="bg-navy-900 py-16 sm:py-24 text-paper overflow-hidden relative">
+    <section id="team-section" className="bg-navy-900 py-16 sm:py-24 text-paper overflow-hidden relative">
       {/* Decorative background elements */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-amber-500/10 blur-3xl"></div>
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-blue-500/10 blur-3xl"></div>
