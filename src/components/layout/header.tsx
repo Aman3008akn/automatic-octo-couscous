@@ -9,16 +9,28 @@ import { getSearchSuggestions } from "@/server/search";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { CartigoLogoIcon } from "@/components/ui/cartigo-logo";
 
+import { 
+  Tv, 
+  Smartphone, 
+  Laptop, 
+  Coffee, 
+  Shirt, 
+  Sparkles, 
+  Dumbbell, 
+  Gamepad2, 
+  Tag 
+} from "lucide-react";
+
 const CATEGORIES_STRIP = [
-  { name: "Electronics", slug: "electronics" },
-  { name: "Mobiles & Tablets", slug: "mobiles-tablets" },
-  { name: "Computers & Laptops", slug: "computers-laptops" },
-  { name: "Home & Kitchen", slug: "home-kitchen" },
-  { name: "Fashion & Apparel", slug: "fashion-apparel" },
-  { name: "Beauty & Care", slug: "beauty-care" },
-  { name: "Sports & Fitness", slug: "sports-fitness" },
-  { name: "Gaming & Consoles", slug: "gaming" },
-  { name: "Today's Deals", slug: "deals" },
+  { name: "Electronics", slug: "electronics", icon: Tv },
+  { name: "Mobiles & Tablets", slug: "mobiles-tablets", icon: Smartphone },
+  { name: "Computers & Laptops", slug: "computers-laptops", icon: Laptop },
+  { name: "Home & Kitchen", slug: "home-kitchen", icon: Coffee },
+  { name: "Fashion & Apparel", slug: "fashion-apparel", icon: Shirt },
+  { name: "Beauty & Care", slug: "beauty-care", icon: Sparkles },
+  { name: "Sports & Fitness", slug: "sports-fitness", icon: Dumbbell },
+  { name: "Gaming & Consoles", slug: "gaming", icon: Gamepad2 },
+  { name: "Today's Deals", slug: "deals", icon: Tag },
 ];
 
 export function Header() {
@@ -313,15 +325,19 @@ export function Header() {
           </Link>
           <span className="text-line">|</span>
 
-          {CATEGORIES_STRIP.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/search?categorySlug=${cat.slug}`}
-              className="text-navy-600 hover:text-ink transition-colors"
-            >
-              {cat.name}
-            </Link>
-          ))}
+          {CATEGORIES_STRIP.map((cat) => {
+            const Icon = cat.icon;
+            return (
+              <Link
+                key={cat.slug}
+                href={`/search?categorySlug=${cat.slug}`}
+                className="flex items-center gap-1.5 text-navy-600 hover:text-ink transition-colors"
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{cat.name}</span>
+              </Link>
+            );
+          })}
         </div>
       </nav>
     </header>
