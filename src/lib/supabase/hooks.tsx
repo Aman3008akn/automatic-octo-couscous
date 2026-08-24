@@ -84,8 +84,8 @@ export function useSession() {
   return useContext(SessionContext);
 }
 
-export async function signOut() {
+export async function signOut(options?: { callbackUrl?: string }) {
   const supabase = createClient();
   await supabase.auth.signOut();
-  window.location.href = "/";
+  window.location.href = options?.callbackUrl || "/";
 }
