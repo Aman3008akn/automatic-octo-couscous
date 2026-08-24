@@ -30,9 +30,10 @@ export default function AdminResellersQueuePage() {
     setLoading(true);
     getAdminResellerApplications(statusFilter, searchQuery)
       .then((res) => {
-        setApplications(res);
+        const data = res || [];
+        setApplications(data);
         if (selectedApp) {
-          const updated = res.find((a) => a.id === selectedApp.id);
+          const updated = data.find((a) => a?.id === selectedApp.id);
           if (updated) setSelectedApp(updated);
         }
       })
@@ -122,12 +123,12 @@ export default function AdminResellersQueuePage() {
         <div className={selectedApp ? "lg:col-span-2" : "lg:col-span-3"}>
           <Card>
             <CardHeader className="border-b border-line pb-3">
-              <CardTitle className="text-lg">Applications ({applications.length})</CardTitle>
+              <CardTitle className="text-lg">Applications ({applications?.length || 0})</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               {loading ? (
                 <p className="p-6 text-center text-xs text-navy-600 animate-pulse">Loading reseller applications...</p>
-              ) : applications.length === 0 ? (
+              ) : !applications || applications.length === 0 ? (
                 <div className="p-12 text-center text-navy-600">
                   <p className="text-sm font-semibold">No applications found in this queue.</p>
                   <p className="text-xs text-navy-400 mt-1">Try clearing your search query or status filter.</p>
@@ -136,7 +137,7 @@ export default function AdminResellersQueuePage() {
                 <div className="divide-y divide-line">
                   {applications.map((app) => (
                     <div
-                      key={app.id}
+                      key={app?.id}
                       onClick={() => handleOpenDrawer(app)}
                       className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-navy-50/50 cursor-pointer transition-colors ${
                         selectedApp?.id === app.id ? "bg-navy-50 border-l-4 border-navy-900" : ""
