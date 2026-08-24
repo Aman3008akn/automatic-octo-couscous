@@ -7,6 +7,7 @@ import { CategoryGrid } from "@/components/storefront/category-grid";
 import { ProductCard } from "@/components/storefront/product-card";
 import { PromoBanner } from "@/components/storefront/promo-banner";
 import { TrustSection } from "@/components/storefront/trust-section";
+import { TeamSection } from "@/components/storefront/team-section";
 import { Footer } from "@/components/storefront/footer";
 
 export default async function HomePage() {
@@ -135,7 +136,10 @@ export default async function HomePage() {
         <TrustSection />
       </main>
 
-      {/* 9. Large Marketplace Footer */}
+      {/* 9. Meet the Developers Section */}
+      <TeamSection />
+
+      {/* 10. Large Marketplace Footer */}
       <Footer />
     </div>
   );
