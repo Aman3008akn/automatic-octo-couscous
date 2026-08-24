@@ -62,20 +62,25 @@ export default function AdminResellersQueuePage() {
     setDecisionLoading(true);
     setDecisionError(null);
 
-    const res = await decideResellerApplication({
-      applicationId: selectedApp.id,
-      decision,
-      reason: rejectionReason || undefined,
-      internalNotes: internalNotes || undefined,
-    });
+    try {
+      const res = await decideResellerApplication({
+        applicationId: selectedApp.id,
+        decision,
+        reason: rejectionReason || undefined,
+        internalNotes: internalNotes || undefined,
+      });
 
-    setDecisionLoading(false);
+      setDecisionLoading(false);
 
-    if (!res.ok) {
-      setDecisionError(res.error);
-    } else {
-      setSelectedApp(null);
-      loadQueue();
+      if (!res || !res.ok) {
+        setDecisionError(res?.error || "An unexpected error occurred. Please try again.");
+      } else {
+        setSelectedApp(null);
+        loadQueue();
+      }
+    } catch (err: any) {
+      setDecisionLoading(false);
+      setDecisionError(err.message || "Failed to process the decision.");
     }
   }
 

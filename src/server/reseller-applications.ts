@@ -6,7 +6,7 @@ import { requireRole } from "@/lib/authz";
 import type { ResellerStatus } from "@prisma/client";
 
 const decisionSchema = z.object({
-  applicationId: z.string().cuid(),
+  applicationId: z.string().length(24, "Must be a valid MongoDB ObjectId"),
   decision: z.enum(["APPROVED", "REJECTED", "INFO_REQUESTED"]),
   reason: z.string().max(2000).optional(),
   internalNotes: z.string().max(2000).optional(),
@@ -70,11 +70,16 @@ export async function decideResellerApplication(
       data: { status: profileStatus },
     });
 
-    if (decision === "APPROVED") {
-      await tx.user.update({
-        where: { id: application.resellerProfile.userId },
-        data: { role: "APPROVED_RESELLER" },
-      });
+      if (decision === "APPROVED") {
+        const userToUpdate = await tx.user.findUnique({
+          where: { id: application.resellerProfile.userId },
+        });
+        if (userToUpdate && !["ADMIN", "SUPER_ADMIN"].includes(userToUpdate.role)) {
+          await tx.user.update({
+            where: { id: application.resellerProfile.userId },
+            data: { role: "APPROVED_RESELLER" },
+          });
+        }
 
       // Automatically list all products of this reseller when approved
       await tx.product.updateMany({

@@ -32,6 +32,13 @@ export default function ForbiddenPage() {
           </Link>
 
           <Link
+            href="/api/auth/signout?callbackUrl=/"
+            className="block w-full rounded-card border border-danger/50 bg-danger/10 py-2.5 text-xs font-bold text-danger hover:bg-danger/20 transition-colors shadow-sm"
+          >
+            Force Sign Out (Clear Session) ⏏️
+          </Link>
+
+          <Link
             href="/"
             className="block w-full rounded-card border border-line py-2 text-xs font-semibold text-navy-600 hover:bg-navy-50 transition-colors"
           >
