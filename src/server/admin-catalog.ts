@@ -219,87 +219,97 @@ export async function updateAdminProduct(
     imageUrl?: string;
   }
 ) {
-  await getAdminSession();
+  try {
+    await getAdminSession();
 
-  // Find existing variant to update it
-  const product = await prisma.product.findUnique({
-    where: { id: productId },
-    include: { variants: { include: { inventory: true } }, images: true },
-  });
+    // Find existing variant to update it
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      include: { variants: { include: { inventory: true } }, images: true },
+    });
 
-  if (!product) throw new Error("Product not found");
+    if (!product) throw new Error("Product not found");
 
-  const variant = product.variants[0];
+    const variant = product.variants[0];
 
-  await prisma.product.update({
-    where: { id: productId },
-    data: {
-      title: data.title,
-      description: data.description,
-      categoryId: data.categoryId,
-      brand: data.brand,
-      condition: data.condition,
-    },
-  });
-
-  if (variant) {
-    await prisma.productVariant.update({
-      where: { id: variant.id },
+    await prisma.product.update({
+      where: { id: productId },
       data: {
-        sku: data.sku,
-        priceCents: data.priceCents,
-        compareAtCents: data.compareAtCents || null,
+        title: data.title,
+        description: data.description,
+        categoryId: data.categoryId,
+        brand: data.brand,
+        condition: data.condition,
       },
     });
 
-    if (variant.inventory) {
-      await prisma.inventory.update({
-        where: { id: variant.inventory.id },
-        data: { available: data.inventoryCount },
-      });
-    } else {
-      await prisma.inventory.create({
+    if (variant) {
+      await prisma.productVariant.update({
+        where: { id: variant.id },
         data: {
-          variantId: variant.id,
-          available: data.inventoryCount,
+          sku: data.sku,
+          priceCents: data.priceCents,
+          compareAtCents: data.compareAtCents || null,
         },
       });
-    }
-  }
 
-  if (data.imageUrl) {
-    const firstImage = product.images[0];
-    if (firstImage) {
-      await prisma.productImage.update({
-        where: { id: firstImage.id },
-        data: { url: data.imageUrl },
-      });
-    } else {
-      await prisma.productImage.create({
-        data: {
-          productId: product.id,
-          url: data.imageUrl,
-        },
-      });
+      if (variant.inventory) {
+        await prisma.inventory.update({
+          where: { id: variant.inventory.id },
+          data: { available: data.inventoryCount },
+        });
+      } else {
+        await prisma.inventory.create({
+          data: {
+            variantId: variant.id,
+            available: data.inventoryCount,
+          },
+        });
+      }
     }
-  }
 
-  revalidatePath("/admin/catalog");
-  revalidatePath("/");
-  return { ok: true };
+    if (data.imageUrl) {
+      const firstImage = product.images[0];
+      if (firstImage) {
+        await prisma.productImage.update({
+          where: { id: firstImage.id },
+          data: { url: data.imageUrl },
+        });
+      } else {
+        await prisma.productImage.create({
+          data: {
+            productId: product.id,
+            url: data.imageUrl,
+          },
+        });
+      }
+    }
+
+    revalidatePath("/admin/catalog");
+    revalidatePath("/");
+    return { ok: true };
+  } catch (err: any) {
+    console.error("Error updating product:", err);
+    return { ok: false, error: err.message || "Unknown error occurred" };
+  }
 }
 
 /**
  * Deletes a product.
  */
 export async function deleteAdminProduct(productId: string) {
-  await getAdminSession();
-  
-  await prisma.product.delete({
-    where: { id: productId },
-  });
+  try {
+    await getAdminSession();
+    
+    await prisma.product.delete({
+      where: { id: productId },
+    });
 
-  revalidatePath("/admin/catalog");
-  revalidatePath("/");
-  return { ok: true };
+    revalidatePath("/admin/catalog");
+    revalidatePath("/");
+    return { ok: true };
+  } catch (err: any) {
+    console.error("Error deleting product:", err);
+    return { ok: false, error: err.message || "Unknown error occurred" };
+  }
 }
