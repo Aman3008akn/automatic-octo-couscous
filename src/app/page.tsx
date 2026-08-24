@@ -9,6 +9,7 @@ import { PromoBanner } from "@/components/storefront/promo-banner";
 import { TrustSection } from "@/components/storefront/trust-section";
 import { TeamSection } from "@/components/storefront/team-section";
 import { Footer } from "@/components/storefront/footer";
+import { RetailPoster } from "@/components/storefront/retail-poster";
 
 export default async function HomePage() {
   // Fetch products for storefront sections
@@ -21,6 +22,9 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-paper flex flex-col">
       <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex-1 space-y-12">
+        {/* 0. Large Top Retail Poster */}
+        <RetailPoster />
+
         {/* 1. Hero Promotional Carousel */}
         <HeroCarousel />
 
