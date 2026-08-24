@@ -1,7 +1,6 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireRole } from "@/lib/authz";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -9,13 +8,7 @@ import { revalidatePath } from "next/cache";
  * Ensure the admin is authorized to manage the catalog.
  */
 async function getAdminSession() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) throw new Error("Unauthorized");
-  const role = session.user.role as string;
-  if (!["ADMIN", "SUPER_ADMIN"].includes(role)) {
-    throw new Error("Forbidden: Only Admins can manage the catalog");
-  }
-  return session;
+  return await requireRole(["ADMIN", "SUPER_ADMIN"]);
 }
 
 /**

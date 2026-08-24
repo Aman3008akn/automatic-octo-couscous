@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut } from "@/lib/supabase/hooks";
 import { useEffect, useState, useRef } from "react";
 import { getCart } from "@/server/cart";
 import { getSearchSuggestions } from "@/server/search";

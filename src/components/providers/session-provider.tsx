@@ -1,7 +1,7 @@
 "use client";
 
-import { SessionProvider as NextAuthSessionProvider } from "next-auth/react";
+import { SupabaseSessionProvider } from "@/lib/supabase/hooks";
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
-  return <NextAuthSessionProvider>{children}</NextAuthSessionProvider>;
+  return <SupabaseSessionProvider>{children}</SupabaseSessionProvider>;
 }

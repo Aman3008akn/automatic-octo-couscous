@@ -1,15 +1,16 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { createClient } from "@/lib/supabase/client";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const supabase = createClient();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,16 +22,15 @@ function LoginForm() {
     setError(null);
     setLoading(true);
 
-    const res = await signIn("credentials", {
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
-      redirect: false,
     });
 
     setLoading(false);
 
-    if (res?.error) {
-      setError("Invalid email or password. Please try again.");
+    if (signInError) {
+      setError(signInError.message || "Invalid email or password. Please try again.");
     } else {
       router.push(callbackUrl);
       router.refresh();
@@ -43,15 +43,15 @@ function LoginForm() {
     setLoading(true);
     setError(null);
 
-    const res = await signIn("credentials", {
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email: demoEmail,
       password: demoPass,
-      redirect: false,
     });
 
     setLoading(false);
-    if (res?.error) {
-      setError("Quick login failed. Ensure database seed has been executed (`npm run db:seed`).");
+    
+    if (signInError) {
+      setError(signInError.message || "Quick login failed.");
     } else {
       router.push(callbackUrl);
       router.refresh();

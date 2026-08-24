@@ -1,37 +1,82 @@
-import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
-export default withAuth(
-  function middleware(req) {
-    const role = req.nextauth.token?.role as string | undefined;
-    const path = req.nextUrl.pathname;
-
-    if (path.startsWith("/admin")) {
-      const allowed = ["MODERATOR", "SUPPORT", "FINANCE", "ADMIN", "SUPER_ADMIN"];
-      if (!role || !allowed.includes(role)) {
-        return NextResponse.redirect(new URL("/403", req.url));
-      }
-    }
-
-    if (path.startsWith("/reseller/dashboard")) {
-      const allowed = ["APPROVED_RESELLER", "SUPER_ADMIN", "ADMIN"];
-      if (!role || !allowed.includes(role)) {
-        return NextResponse.redirect(new URL("/reseller/status", req.url));
-      }
-    }
-
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token,
+export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
     },
-    pages: {
-      signIn: "/login",
-    },
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value: "",
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value: "",
+            ...options,
+          });
+        },
+      },
+    }
+  );
+
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const path = request.nextUrl.pathname;
+
+  // Basic authentication check
+  if (!user && (path.startsWith("/admin") || path.startsWith("/reseller/dashboard") || path.startsWith("/account"))) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
-);
+
+  // NOTE: Role-based authorization is now handled in layout.tsx and server actions
+  // because Prisma cannot connect to MongoDB on the Edge runtime to fetch the role.
+
+  return response;
+}
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*", "/reseller/dashboard/:path*", "/account/:path*"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { addToCart } from "@/server/cart";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/supabase/hooks";
 import { useRouter } from "next/navigation";
 import { StorefrontImage } from "@/components/ui/storefront-image";
 

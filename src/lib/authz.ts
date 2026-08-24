@@ -1,5 +1,5 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "./auth";
+import { createClient } from "./supabase/server";
+import { prisma } from "./prisma";
 import type { Role } from "@prisma/client";
 
 export class UnauthorizedError extends Error {
@@ -10,16 +10,25 @@ export class ForbiddenError extends Error {
 }
 
 export async function requireSession() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) throw new UnauthorizedError("Sign in required.");
-  return session as {
+  const supabase = createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  
+  if (error || !user?.id) throw new UnauthorizedError("Sign in required.");
+  
+  const dbUser = await prisma.user.findUnique({
+    where: { email: user.email },
+  });
+
+  if (!dbUser) throw new UnauthorizedError("User profile not found in database.");
+
+  return {
     user: {
-      id: string;
-      email?: string | null;
-      name?: string | null;
-      image?: string | null;
-      role?: Role;
-    };
+      id: dbUser.id, // Return MongoDB id for compatibility with existing code
+      email: dbUser.email,
+      name: dbUser.name,
+      role: dbUser.role as Role,
+      supabaseId: user.id,
+    },
   };
 }
 

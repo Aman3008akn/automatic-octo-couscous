@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/supabase/hooks";
 import { getAdminResellerApplications } from "@/server/admin-resellers";
 import { decideResellerApplication } from "@/server/reseller-applications";
 import { StatusBadge } from "@/components/ui/status-badge";
