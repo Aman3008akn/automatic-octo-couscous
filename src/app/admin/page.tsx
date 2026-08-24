@@ -122,32 +122,48 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           {/* Quick Action Navigation Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Link href="/admin/resellers">
               <Card className="hover:border-navy-400 transition-all cursor-pointer h-full">
                 <CardHeader>
                   <div className="w-10 h-10 rounded-card bg-amber-400/20 text-amber-600 flex items-center justify-center font-bold mb-2">
                     📋
                   </div>
-                  <CardTitle className="text-lg">Reseller Application Queue</CardTitle>
-                  <CardDescription>
-                    Review business submissions, verify documents, approve or reject seller onboarding applications.
+                  <CardTitle className="text-lg">Reseller Applications</CardTitle>
+                  <CardDescription className="text-xs">
+                    Review and verify seller onboarding applications.
                   </CardDescription>
                 </CardHeader>
               </Card>
             </Link>
 
-            <Card className="opacity-60 bg-navy-50/40 border-line h-full">
-              <CardHeader>
-                <div className="w-10 h-10 rounded-card bg-navy-100 text-navy-600 flex items-center justify-center font-bold mb-2">
-                  📦
-                </div>
-                <CardTitle className="text-lg">Product Moderation (Slice 2)</CardTitle>
-                <CardDescription>
-                  Review listing submissions from approved resellers before storefront publication.
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <Link href="/admin/catalog">
+              <Card className="hover:border-navy-400 transition-all cursor-pointer h-full">
+                <CardHeader>
+                  <div className="w-10 h-10 rounded-card bg-success/20 text-success flex items-center justify-center font-bold mb-2">
+                    🛍️
+                  </div>
+                  <CardTitle className="text-lg">Catalog Management</CardTitle>
+                  <CardDescription className="text-xs">
+                    Add new first-party products, manage inventory and discounts.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+
+            <Link href="/admin/products">
+              <Card className="hover:border-navy-400 transition-all cursor-pointer h-full bg-navy-50/40">
+                <CardHeader>
+                  <div className="w-10 h-10 rounded-card bg-navy-100 text-navy-600 flex items-center justify-center font-bold mb-2">
+                    📦
+                  </div>
+                  <CardTitle className="text-lg">Moderation Queue</CardTitle>
+                  <CardDescription className="text-xs">
+                    Review listing submissions from resellers before publication.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
           </div>
 
           {/* Recent Audit Logs Table */}
