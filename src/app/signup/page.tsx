@@ -80,7 +80,7 @@ function SignupForm() {
             <Button
               onClick={() => router.push("/login")}
               className="mt-4 w-full py-2 text-sm"
-              variant="outline"
+              variant="secondary"
             >
               Go to Login
             </Button>
@@ -141,7 +141,7 @@ function SignupForm() {
             </div>
 
             <Link href="/login" className="w-full">
-              <Button type="button" variant="outline" className="w-full text-sm py-2.5">
+              <Button type="button" variant="secondary" className="w-full text-sm py-2.5">
                 Sign up with Phone Number
               </Button>
             </Link>
