@@ -74,6 +74,7 @@ export async function getCart() {
       resellerName: v?.product.resellerProfile.legalName ?? "Verified Reseller",
       resellerProfileId: v?.product.resellerProfile.id ?? "",
       availableStock: v?.inventory?.available ?? 0,
+      compareAtCents: (v?.product as any)?.compareAtCents ?? unitPriceCents * 1.3,
     };
   });
 
@@ -98,10 +99,15 @@ export async function addToCart(variantIdOrSlug: string, quantity = 1): Promise<
   const session = await requireSession();
   const userId = (session.user as { id: string }).id;
 
-  let variant = await prisma.productVariant.findUnique({
-    where: { id: variantIdOrSlug },
-    include: { inventory: true },
-  });
+  let variant = null;
+  
+  // Only query by ID if it's a valid 24-character hex string (MongoDB ObjectId)
+  if (/^[0-9a-fA-F]{24}$/.test(variantIdOrSlug)) {
+    variant = await prisma.productVariant.findUnique({
+      where: { id: variantIdOrSlug },
+      include: { inventory: true },
+    });
+  }
 
   if (!variant) {
     const product = await prisma.product.findUnique({

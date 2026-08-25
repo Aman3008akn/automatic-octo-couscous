@@ -60,12 +60,16 @@ export function ProductCard({
 
     setAdding(true);
     try {
-      await addToCart(slug, 1);
+      const res = await addToCart(slug, 1);
+      if (!res.ok) {
+        alert("Failed to add to cart: " + res.error);
+        return;
+      }
       setAddedSuccess(true);
       setTimeout(() => setAddedSuccess(false), 2000);
       router.refresh();
-    } catch {
-      // ignore error
+    } catch (err: any) {
+      alert("Error adding to cart: " + err.message);
     } finally {
       setAdding(false);
     }
@@ -126,23 +130,22 @@ export function ProductCard({
           </Link>
 
           <div className="mt-1.5 flex items-center gap-1 text-[11px]">
-            <div className="flex text-amber-500">
-              {"★".repeat(Math.floor(rating))}
+            <div className="flex text-amber-500 text-[10px]">
+              ⭐⭐⭐⭐⭐
             </div>
-            <span className="font-bold text-ink">{rating}</span>
             <span className="text-navy-400 font-mono">({reviewCount})</span>
           </div>
 
           <div className="mt-2.5 flex items-baseline gap-2">
-            <span className="text-base sm:text-lg font-bold text-navy-900">₹{price}</span>
             {compareAt && (
-              <span className="text-xs text-navy-400 line-through font-mono">₹{compareAt}</span>
+              <span className="text-sm text-navy-400 line-through font-mono">₹{compareAt}</span>
             )}
+            <span className="text-base sm:text-lg font-bold text-navy-900">₹{price}</span>
           </div>
 
-          <div className="mt-1 text-[10px] text-success font-medium flex items-center gap-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-success"></span>
-            <span>Free Delivery • {availableStock > 0 ? "In Stock" : "Limited Stock"}</span>
+          <div className="mt-1 text-[11px] text-success font-medium flex items-center gap-1.5">
+            <span className="text-[14px]">🚚</span>
+            <span>Free delivery</span>
           </div>
         </div>
       </div>

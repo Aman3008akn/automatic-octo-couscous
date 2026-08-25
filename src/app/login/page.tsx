@@ -111,41 +111,43 @@ function LoginForm() {
           </Button>
         </form>
 
-        {/* Super Admin Quick Credentials */}
-        <div className="mt-8 pt-6 border-t border-line">
-          <p className="text-xs font-semibold uppercase tracking-widest text-navy-400 mb-3 text-center">
-            Super Admin Access
-          </p>
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => handleQuickLogin("amanshukla@cartigo.admin", "Aman@2008")}
-              className="flex items-center justify-between rounded-card border border-amber-300 bg-amber-50/60 p-2.5 text-xs text-left hover:bg-amber-100 transition-colors"
-            >
-              <div>
-                <p className="font-semibold text-navy-900">Aman Shukla (Super Admin)</p>
-                <p className="text-navy-600 font-mono text-[10px]">amanshukla@cartigo.admin</p>
-              </div>
-              <span className="rounded bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-navy-900">
-                SUPER_ADMIN
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleQuickLogin("sumitgautam@cartigo.admin", "Sumit@2008")}
-              className="flex items-center justify-between rounded-card border border-navy-200 bg-navy-50/60 p-2.5 text-xs text-left hover:bg-navy-100 transition-colors"
-            >
-              <div>
-                <p className="font-semibold text-navy-900">Sumit Gautam (Super Admin)</p>
-                <p className="text-navy-600 font-mono text-[10px]">sumitgautam@cartigo.admin</p>
-              </div>
-              <span className="rounded bg-navy-900 px-2 py-0.5 text-[10px] font-bold text-white">
-                SUPER_ADMIN
-              </span>
-            </button>
+        {/* Super Admin Quick Credentials - Only in Dev */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="mt-8 pt-6 border-t border-line">
+            <p className="text-xs font-semibold uppercase tracking-widest text-navy-400 mb-3 text-center">
+              Super Admin Access (Dev Only)
+            </p>
+            <div className="flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => handleQuickLogin("amanshukla@cartigo.admin", "Aman@2008")}
+                className="flex items-center justify-between rounded-card border border-amber-300 bg-amber-50/60 p-2.5 text-xs text-left hover:bg-amber-100 transition-colors"
+              >
+                <div>
+                  <p className="font-semibold text-navy-900">Aman Shukla (Super Admin)</p>
+                  <p className="text-navy-600 font-mono text-[10px]">amanshukla@cartigo.admin</p>
+                </div>
+                <span className="rounded bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-navy-900">
+                  SUPER_ADMIN
+                </span>
+              </button>
+  
+              <button
+                type="button"
+                onClick={() => handleQuickLogin("sumitgautam@cartigo.admin", "Sumit@2008")}
+                className="flex items-center justify-between rounded-card border border-navy-200 bg-navy-50/60 p-2.5 text-xs text-left hover:bg-navy-100 transition-colors"
+              >
+                <div>
+                  <p className="font-semibold text-navy-900">Sumit Gautam (Super Admin)</p>
+                  <p className="text-navy-600 font-mono text-[10px]">sumitgautam@cartigo.admin</p>
+                </div>
+                <span className="rounded bg-navy-900 px-2 py-0.5 text-[10px] font-bold text-white">
+                  SUPER_ADMIN
+                </span>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </CardContent>
 
       <CardFooter className="justify-center text-xs text-navy-600">

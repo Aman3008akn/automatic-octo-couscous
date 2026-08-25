@@ -87,117 +87,166 @@ export default function CartPage() {
     );
   }
 
+  // Calculate MRP and discounts
+  const totalMrpCents = cart.items.reduce((sum, item) => sum + (item.compareAtCents * item.quantity), 0);
+  const totalDiscountCents = totalMrpCents - cart.subtotalCents;
+  const isDiscounted = totalDiscountCents > 0;
+
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-display font-bold text-ink mb-8">Shopping Cart</h1>
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 font-sans">
+      <div className="flex items-center gap-3 mb-8">
+        <h1 className="text-3xl font-display font-bold text-navy-900">Shopping Cart</h1>
+        <span className="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+          {cart.items.length} {cart.items.length === 1 ? 'Item' : 'Items'}
+        </span>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Cart Items List */}
         <div className="lg:col-span-2 space-y-4">
-          <Card>
-            <CardHeader className="border-b border-line pb-3 flex flex-row items-center justify-between">
-              <CardTitle className="text-lg">Cart Items ({cart.items.length})</CardTitle>
-              <CardDescription>Verified items reserved for checkout</CardDescription>
-            </CardHeader>
+          <div className="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
+            <div className="bg-navy-50/50 border-b border-line p-4 px-6">
+              <h2 className="text-lg font-bold text-navy-900">Items in your cart</h2>
+            </div>
 
-            <CardContent className="p-0 divide-y divide-line">
-              {cart.items.map((item) => (
-                <div key={item.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-card border border-line bg-navy-50 overflow-hidden shrink-0 flex items-center justify-center">
-                      {item.imageUrl ? (
-                        <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="font-mono text-xs text-navy-400">NO IMG</span>
-                      )}
+            <div className="divide-y divide-line">
+              {cart.items.map((item) => {
+                const discountPct = Math.round(((item.compareAtCents - item.unitPriceCents) / item.compareAtCents) * 100);
+
+                return (
+                  <div key={item.id} className="p-6 flex flex-col sm:flex-row gap-6 hover:bg-navy-50/30 transition-colors">
+                    {/* Image & Qty */}
+                    <div className="flex flex-col gap-4 items-center w-28 shrink-0">
+                      <div className="w-24 h-24 rounded-lg border border-line bg-white shadow-sm flex items-center justify-center p-2">
+                        {item.imageUrl ? (
+                          <img src={item.imageUrl} alt={item.title} className="max-w-full max-h-full object-contain" />
+                        ) : (
+                          <span className="text-xs text-navy-300 font-mono">NO IMG</span>
+                        )}
+                      </div>
+                      <div className="w-full relative">
+                        <select
+                          value={item.quantity}
+                          onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
+                          className="w-full appearance-none border border-line rounded-md text-sm px-3 py-1.5 pr-8 bg-white focus:outline-none focus:ring-2 focus:ring-navy-400 font-medium text-navy-900 shadow-sm cursor-pointer"
+                        >
+                          {[1,2,3,4,5,6,7,8,9,10].map(n => <option key={n} value={n}>Qty: {n}</option>)}
+                        </select>
+                        <span className="absolute right-2.5 top-2 text-navy-400 pointer-events-none text-xs">▼</span>
+                      </div>
                     </div>
 
-                    <div>
-                      <p className="font-bold text-ink text-base">{item.title}</p>
-                      <p className="text-xs text-navy-600">
-                        Seller: <span className="font-semibold text-ink">{item.resellerName}</span> • SKU: <span className="font-mono">{item.sku}</span>
-                      </p>
-                      <p className="text-sm font-bold text-navy-900 mt-1">
-                        ${(item.unitPriceCents / 100).toFixed(2)} USD
-                      </p>
+                    {/* Product Details */}
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <Link href={`/products/${item.variantId}`} className="hover:text-amber-600 transition-colors">
+                          <h3 className="text-lg font-bold text-ink leading-tight line-clamp-2">{item.title}</h3>
+                        </Link>
+                        <p className="text-sm text-navy-600 mt-1 font-medium">
+                          Sold by <span className="text-navy-900 font-bold">{item.resellerName}</span>
+                        </p>
+
+                        <div className="flex items-end gap-2.5 mt-3">
+                          <span className="text-xl font-bold text-navy-900">
+                            ₹{(item.unitPriceCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                          </span>
+                          {item.compareAtCents > item.unitPriceCents && (
+                            <span className="text-navy-400 line-through text-sm font-medium mb-0.5">
+                              ₹{(item.compareAtCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                            </span>
+                          )}
+                          {discountPct > 0 && (
+                            <span className="text-success font-bold text-xs mb-1 bg-success/10 px-1.5 py-0.5 rounded">
+                              {discountPct}% OFF
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-xs text-navy-500 mt-3 font-medium flex items-center gap-1.5">
+                          <span className="text-sm">🚚</span> Delivery by {new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', weekday: 'short' })}
+                        </p>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-4 mt-5 pt-4 border-t border-line border-dashed">
+                        <button className="text-sm text-navy-600 hover:text-navy-900 font-semibold flex items-center gap-1.5 transition-colors">
+                          <span>♡</span> Save for later
+                        </button>
+                        <span className="text-line">|</span>
+                        <button 
+                          onClick={() => handleRemove(item.id)}
+                          className="text-sm text-danger hover:text-red-700 font-semibold flex items-center gap-1.5 transition-colors"
+                        >
+                          <span>🗑️</span> Remove
+                        </button>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-6 justify-between sm:justify-end">
-                    {/* Quantity Controls */}
-                    <div className="flex items-center rounded-card border border-line bg-white">
-                      <button
-                        type="button"
-                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                        className="px-2.5 py-1 text-xs font-bold text-navy-600 hover:bg-navy-50"
-                      >
-                        -
-                      </button>
-                      <span className="px-3 py-1 text-xs font-bold text-ink">{item.quantity}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                        className="px-2.5 py-1 text-xs font-bold text-navy-600 hover:bg-navy-50"
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    <div className="text-right">
-                      <span className="text-base font-bold text-navy-900 block">
-                        ₹{(item.lineTotalCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-                      </span>
-                      <button
-                        onClick={() => handleRemove(item.id)}
-                        className="text-xs text-danger hover:underline mt-0.5"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
         {/* Right Column: Order Summary Sidebar */}
         <div>
-          <Card className="sticky top-20 border-navy-300 shadow-md">
-            <CardHeader className="border-b border-line pb-3">
-              <CardTitle>Order Summary</CardTitle>
-            </CardHeader>
+          <div className="sticky top-24 bg-white rounded-xl shadow-md border border-line overflow-hidden">
+            <div className="bg-navy-900 p-5 border-b border-navy-800">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>🧾</span> Price Details
+              </h2>
+            </div>
 
-            <CardContent className="pt-4 space-y-3 text-xs text-navy-600">
-              <div className="flex justify-between">
-                <span>Subtotal ({cart.items.reduce((sum, i) => sum + i.quantity, 0)} items):</span>
-                <span className="font-semibold text-ink">₹{(cart.subtotalCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+            <div className="p-6 space-y-4 text-sm text-navy-700">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Total MRP ({cart.items.reduce((sum, i) => sum + i.quantity, 0)} items)</span>
+                <span className="font-semibold text-navy-900">₹{(totalMrpCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Estimated Shipping:</span>
-                <span className="font-semibold text-ink">
+              
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Shipping Fee</span>
+                <span className="font-bold text-success">
                   {cart.shippingCents === 0 ? "FREE" : `₹${(cart.shippingCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span>Estimated Tax (18% GST):</span>
-                <span className="font-semibold text-ink">₹{(cart.taxCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Discount</span>
+                <span className="font-bold text-success">
+                  -₹{(totalDiscountCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                </span>
               </div>
 
-              <div className="pt-3 border-t border-line flex justify-between text-base font-bold text-navy-900">
-                <span>Total Payable:</span>
-                <span>₹{(cart.totalCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })} INR</span>
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Estimated Tax (18% GST)</span>
+                <span className="font-semibold text-navy-900">₹{(cart.taxCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
               </div>
-            </CardContent>
 
-            <CardFooter className="pt-2">
-              <Link href="/checkout" className="w-full">
-                <Button variant="primary" className="w-full py-3 bg-amber-500 text-navy-900 font-bold hover:bg-amber-600">
-                  Proceed to Checkout →
+              <div className="pt-4 mt-2 border-t border-dashed border-line flex justify-between items-center text-lg font-bold text-navy-900">
+                <span>Total Amount</span>
+                <span>₹{(cart.totalCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+              </div>
+
+              {isDiscounted && (
+                <div className="bg-success/10 text-success border border-success/20 p-3 rounded-lg text-sm font-bold text-center mt-2">
+                  🎉 You will save ₹{(totalDiscountCents / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })} on this order!
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 pt-0">
+              <Link href="/checkout" className="block w-full">
+                <Button variant="primary" className="w-full py-6 bg-amber-500 hover:bg-amber-400 text-navy-900 font-bold text-base shadow-[0_4px_14px_rgba(245,158,11,0.25)] transition-all hover:shadow-[0_6px_20px_rgba(245,158,11,0.4)] hover:-translate-y-0.5 rounded-xl flex justify-center items-center gap-2">
+                  <span>Place Order</span>
+                  <span className="text-xl">→</span>
                 </Button>
               </Link>
-            </CardFooter>
-          </Card>
+            </div>
+            
+            <div className="bg-navy-50 p-4 text-center text-xs text-navy-500 font-medium flex items-center justify-center gap-1.5 border-t border-line">
+              <span>🛡️</span> Safe and secure payments. 100% Authentic.
+            </div>
+          </div>
         </div>
       </div>
     </main>

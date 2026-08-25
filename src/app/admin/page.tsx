@@ -122,7 +122,7 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           {/* Quick Action Navigation Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
             <Link href="/admin/resellers">
               <Card className="hover:border-navy-400 transition-all cursor-pointer h-full">
                 <CardHeader>
@@ -155,11 +155,25 @@ export default async function AdminDashboardPage() {
               <Card className="hover:border-navy-400 transition-all cursor-pointer h-full bg-navy-50/40">
                 <CardHeader>
                   <div className="w-10 h-10 rounded-card bg-navy-100 text-navy-600 flex items-center justify-center font-bold mb-2">
-                    📦
+                    🛡️
                   </div>
                   <CardTitle className="text-lg">Moderation Queue</CardTitle>
                   <CardDescription className="text-xs">
                     Review listing submissions from resellers before publication.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+
+            <Link href="/admin/orders">
+              <Card className="hover:border-navy-400 transition-all cursor-pointer h-full">
+                <CardHeader>
+                  <div className="w-10 h-10 rounded-card bg-indigo-500/20 text-indigo-600 flex items-center justify-center font-bold mb-2">
+                    📦
+                  </div>
+                  <CardTitle className="text-lg">Order Management</CardTitle>
+                  <CardDescription className="text-xs">
+                    View all orders, update fulfillment and payment statuses.
                   </CardDescription>
                 </CardHeader>
               </Card>

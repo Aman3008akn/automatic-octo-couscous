@@ -70,18 +70,32 @@ export async function createOrderFromCart(input: CheckoutInput): Promise<OrderAc
         });
       }
 
+      const initialStatus = data.paymentMethod === "COD" ? "PENDING_PAYMENT" : "PAID";
+
       // 3. Create Order
-      const order = await tx.order.create({
-        data: {
-          orderNumber,
-          userId,
-          status: "PAID", // Confirmed server-side
-          subtotalCents: cart.subtotalCents,
-          shippingCents: cart.shippingCents,
-          taxCents: cart.taxCents,
-          totalCents: cart.totalCents,
-          currency: "USD",
+      const orderData: any = {
+        orderNumber,
+        userId,
+        status: initialStatus,
+        subtotalCents: cart.subtotalCents,
+        shippingCents: cart.shippingCents,
+        taxCents: cart.taxCents,
+        totalCents: cart.totalCents,
+        currency: "INR",
+        paymentMethod: data.paymentMethod,
+        shippingAddress: {
+          line1: data.line1,
+          line2: data.line2,
+          city: data.city,
+          state: data.state,
+          postalCode: data.postalCode,
+          country: data.country,
+          phone: data.phone,
         },
+      };
+
+      const order = await tx.order.create({
+        data: orderData,
       });
 
       // 4. Create OrderItems with snapshotting
@@ -103,14 +117,16 @@ export async function createOrderFromCart(input: CheckoutInput): Promise<OrderAc
       }
 
       // 5. Record OrderStatusHistory
-      await tx.orderStatusHistory.create({
-        data: {
-          orderId: order.id,
-          fromStatus: "PENDING_PAYMENT",
-          toStatus: "PAID",
-          actorUserId: userId,
-        },
-      });
+      if (initialStatus !== "PENDING_PAYMENT") {
+        await tx.orderStatusHistory.create({
+          data: {
+            orderId: order.id,
+            fromStatus: "PENDING_PAYMENT",
+            toStatus: initialStatus,
+            actorUserId: userId,
+          },
+        });
+      }
 
       // 6. Clear user cart
       if (cart.id) {
@@ -126,7 +142,7 @@ export async function createOrderFromCart(input: CheckoutInput): Promise<OrderAc
           action: "order.create",
           entityType: "Order",
           entityId: order.id,
-          afterJson: { orderNumber, totalCents: cart.totalCents, status: "PAID" },
+          afterJson: { orderNumber, totalCents: cart.totalCents, status: initialStatus, paymentMethod: data.paymentMethod },
         },
       });
 

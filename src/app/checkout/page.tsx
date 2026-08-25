@@ -11,18 +11,42 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  const [line1, setLine1] = useState("12, MG Road, Connaught Place");
-  const [line2, setLine2] = useState("Block A");
-  const [city, setCity] = useState("New Delhi");
-  const [state, setState] = useState("Delhi");
-  const [postalCode, setPostalCode] = useState("110001");
-  const [country, setCountry] = useState("IN");
-  const [phone, setPhone] = useState("+91 98765 43210");
+  const [line1, setLine1] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [phone, setPhone] = useState("");
 
   const [paymentMethod, setPaymentMethod] = useState<"CARD" | "COD">("CARD");
 
   const [loading, setLoading] = useState(false);
+  const [loadingPincode, setLoadingPincode] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  async function handlePincodeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setPostalCode(val);
+
+    if (val.length === 6) {
+      setLoadingPincode(true);
+      try {
+        const res = await fetch(`https://api.postalpincode.in/pincode/${val}`);
+        const data = await res.json();
+        if (data && data[0] && data[0].Status === "Success") {
+          const postOffice = data[0].PostOffice[0];
+          setCity(postOffice.District);
+          setState(postOffice.State);
+        } else {
+          setCity("");
+          setState("");
+        }
+      } catch (err) {
+        console.error("Failed to fetch pincode details", err);
+      } finally {
+        setLoadingPincode(false);
+      }
+    }
+  }
 
   async function handlePlaceOrder(e: React.FormEvent) {
     e.preventDefault();
@@ -31,11 +55,11 @@ export default function CheckoutPage() {
 
     const res = await createOrderFromCart({
       line1,
-      line2,
+      line2: "",
       city,
       state,
       postalCode,
-      country,
+      country: "IN",
       phone,
       paymentMethod,
     });
@@ -50,161 +74,191 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <div className="mb-8">
-        <span className="text-xs font-mono font-medium text-amber-500 uppercase tracking-wider">
-          Slice 3 Checkout Flow
-        </span>
-        <h1 className="text-3xl font-display font-bold text-ink">Secure Order Checkout</h1>
+    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 font-sans">
+      <div className="mb-8 border-b border-line pb-4 flex items-center justify-between">
+        <h1 className="text-3xl font-display font-bold text-navy-900 flex items-center gap-3">
+          <span>Checkout</span>
+          <span className="text-sm font-medium bg-success/10 text-success px-2 py-0.5 rounded-full border border-success/20">Secure</span>
+        </h1>
+        <div className="flex gap-2">
+          <span className="text-2xl opacity-50 grayscale hover:grayscale-0 transition-all">💳</span>
+          <span className="text-2xl opacity-50 grayscale hover:grayscale-0 transition-all">🚚</span>
+        </div>
       </div>
 
       {error && (
-        <div className="mb-6 rounded-card bg-danger/10 border border-danger/20 p-4 text-xs font-medium text-danger">
-          ⚠️ {error}
+        <div className="mb-6 rounded-lg bg-danger/10 border border-danger/20 p-4 text-sm font-medium text-danger flex items-center gap-2">
+          <span className="text-lg">⚠️</span>
+          <span>{error}</span>
         </div>
       )}
 
       <form onSubmit={handlePlaceOrder}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Shipping & Payment Forms */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* Shipping Address */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">1. Shipping Delivery Address</CardTitle>
-                <CardDescription>Enter destination address for order shipment.</CardDescription>
-              </CardHeader>
+            <div className="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
+              <div className="bg-navy-50/50 border-b border-line p-4 px-6 flex items-center gap-3">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-navy-900 text-white text-sm font-bold">1</span>
+                <h2 className="text-lg font-bold text-navy-900">Delivery Address</h2>
+              </div>
 
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold uppercase text-navy-600 mb-1">Street Address *</label>
-                  <input
-                    type="text"
-                    required
-                    value={line1}
-                    onChange={(e) => setLine1(e.target.value)}
-                    className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none focus:border-navy-400"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold uppercase text-navy-600 mb-1">City *</label>
+              <div className="p-6 space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-navy-600 mb-1.5">Street Address *</label>
                     <input
                       type="text"
                       required
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none focus:border-navy-400"
+                      placeholder="Flat / House No. / Building / Street"
+                      value={line1}
+                      onChange={(e) => setLine1(e.target.value)}
+                      className="w-full rounded-lg border border-line bg-gray-50/50 px-4 py-3 text-sm text-ink outline-none focus:border-navy-400 focus:bg-white transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold uppercase text-navy-600 mb-1">State / Province *</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-navy-600 mb-1.5 flex justify-between">
+                      <span>Postal Code / Pincode *</span>
+                      {loadingPincode && <span className="text-amber-500 animate-pulse text-[10px]">Detecting...</span>}
+                    </label>
                     <input
                       type="text"
                       required
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                      className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none focus:border-navy-400"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold uppercase text-navy-600 mb-1">Postal Code *</label>
-                    <input
-                      type="text"
-                      required
+                      maxLength={6}
+                      placeholder="e.g. 110001"
                       value={postalCode}
-                      onChange={(e) => setPostalCode(e.target.value)}
-                      className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none focus:border-navy-400"
+                      onChange={handlePincodeChange}
+                      className="w-full rounded-lg border border-line bg-gray-50/50 px-4 py-3 text-sm text-ink outline-none focus:border-navy-400 focus:bg-white transition-colors tracking-widest font-mono"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold uppercase text-navy-600 mb-1">Phone Number *</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-navy-600 mb-1.5">Phone Number *</label>
                     <input
                       type="tel"
                       required
+                      placeholder="+91 98765 43210"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none focus:border-navy-400"
+                      className="w-full rounded-lg border border-line bg-gray-50/50 px-4 py-3 text-sm text-ink outline-none focus:border-navy-400 focus:bg-white transition-colors font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-navy-600 mb-1.5">City *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="City Name"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className={`w-full rounded-lg border border-line px-4 py-3 text-sm text-ink outline-none focus:border-navy-400 transition-colors ${loadingPincode ? 'bg-amber-50/50 animate-pulse' : 'bg-gray-50/50 focus:bg-white'}`}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-navy-600 mb-1.5">State / Province *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="State Name"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                      className={`w-full rounded-lg border border-line px-4 py-3 text-sm text-ink outline-none focus:border-navy-400 transition-colors ${loadingPincode ? 'bg-amber-50/50 animate-pulse' : 'bg-gray-50/50 focus:bg-white'}`}
                     />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Payment Method Selection */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">2. Payment Method</CardTitle>
-                <CardDescription>Server-verified payment authorization</CardDescription>
-              </CardHeader>
+            <div className="bg-white rounded-xl shadow-sm border border-line overflow-hidden">
+              <div className="bg-navy-50/50 border-b border-line p-4 px-6 flex items-center gap-3">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-navy-900 text-white text-sm font-bold">2</span>
+                <h2 className="text-lg font-bold text-navy-900">Payment Options</h2>
+              </div>
 
-              <CardContent className="space-y-3">
-                <label className="flex items-center justify-between rounded-card border border-navy-900 bg-navy-50/50 p-4 cursor-pointer">
-                  <div className="flex items-center gap-3">
+              <div className="p-6 space-y-4">
+                <label className={`flex items-center justify-between rounded-xl border-2 p-4 cursor-pointer transition-all ${paymentMethod === 'CARD' ? 'border-navy-900 bg-navy-50/50 shadow-sm' : 'border-line hover:border-navy-300'}`}>
+                  <div className="flex items-center gap-4">
                     <input
                       type="radio"
                       name="payment"
                       value="CARD"
                       checked={paymentMethod === "CARD"}
                       onChange={() => setPaymentMethod("CARD")}
+                      className="w-5 h-5 accent-navy-900 cursor-pointer"
                     />
                     <div>
-                      <p className="font-semibold text-ink text-sm">Credit / Debit Card (Stripe Gateway)</p>
-                      <p className="text-xs text-navy-600">Simulated 256-bit SSL encrypted tokenization</p>
+                      <p className="font-bold text-navy-900 text-base">Credit / Debit Card / UPI</p>
+                      <p className="text-xs text-navy-600 mt-0.5 font-medium">Safe & Secure via Stripe Payment Gateway</p>
                     </div>
                   </div>
-                  <span className="text-xs font-mono font-bold text-navy-900">VISA / MC</span>
+                  <div className="flex gap-1.5">
+                    <span className="bg-white px-2 py-1 rounded shadow-sm border border-line text-[10px] font-bold text-navy-900">VISA</span>
+                    <span className="bg-white px-2 py-1 rounded shadow-sm border border-line text-[10px] font-bold text-navy-900">UPI</span>
+                  </div>
                 </label>
 
-                <label className="flex items-center justify-between rounded-card border border-line p-4 cursor-pointer hover:bg-navy-50/30">
-                  <div className="flex items-center gap-3">
+                <label className={`flex items-center justify-between rounded-xl border-2 p-4 cursor-pointer transition-all ${paymentMethod === 'COD' ? 'border-navy-900 bg-navy-50/50 shadow-sm' : 'border-line hover:border-navy-300'}`}>
+                  <div className="flex items-center gap-4">
                     <input
                       type="radio"
                       name="payment"
                       value="COD"
                       checked={paymentMethod === "COD"}
                       onChange={() => setPaymentMethod("COD")}
+                      className="w-5 h-5 accent-navy-900 cursor-pointer"
                     />
                     <div>
-                      <p className="font-semibold text-ink text-sm">Cash on Delivery (COD)</p>
-                      <p className="text-xs text-navy-600">Pay upon delivery confirmation</p>
+                      <p className="font-bold text-navy-900 text-base">Cash on Delivery (COD)</p>
+                      <p className="text-xs text-navy-600 mt-0.5 font-medium">Pay via Cash/UPI when your order arrives</p>
                     </div>
                   </div>
+                  <span className="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full text-[10px] font-bold">POPULAR</span>
                 </label>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
           {/* Right Column: Order Confirmation */}
           <div>
-            <Card className="sticky top-20 border-navy-300 shadow-lg">
-              <CardHeader>
-                <CardTitle>Order Authorization</CardTitle>
-                <CardDescription>Review totals before final placement</CardDescription>
-              </CardHeader>
+            <div className="sticky top-24 bg-white rounded-xl shadow-lg border border-line overflow-hidden">
+              <div className="bg-navy-900 p-5 border-b border-navy-800">
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <span>🧾</span> Order Authorization
+                </h2>
+              </div>
 
-              <CardContent className="space-y-3 text-xs text-navy-600">
-                <div className="rounded-card bg-navy-50 p-3 space-y-1">
-                  <p className="font-bold text-navy-900">Platform Guarantee:</p>
-                  <p>Order line items snapshot price, SKU, and reseller attribution at time of sale.</p>
+              <div className="p-6 text-sm text-navy-600">
+                <div className="rounded-lg bg-blue-50 border border-blue-100 p-4 space-y-2 mb-6">
+                  <div className="flex items-start gap-2">
+                    <span className="text-blue-600 text-lg">💡</span>
+                    <div>
+                      <p className="font-bold text-blue-900 text-[13px]">Platform Guarantee</p>
+                      <p className="text-xs text-blue-800/80 mt-1 leading-relaxed">
+                        Your order snapshot, including pricing, SKU details, and verified reseller attribution, is securely frozen at the time of sale.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </CardContent>
 
-              <CardFooter>
                 <Button
                   type="submit"
                   variant="primary"
                   loading={loading}
-                  className="w-full py-3.5 bg-amber-500 text-navy-900 font-bold hover:bg-amber-600 text-sm shadow"
+                  className="w-full py-6 bg-amber-500 text-navy-900 font-bold hover:bg-amber-400 hover:-translate-y-0.5 text-base shadow-[0_4px_14px_rgba(245,158,11,0.25)] transition-all rounded-xl"
                 >
-                  Authorize & Place Order →
+                  Place Order Now →
                 </Button>
-              </CardFooter>
-            </Card>
+                
+                <p className="text-center text-[11px] text-navy-400 mt-4 font-medium px-4">
+                  By placing your order, you agree to Cartigo's Terms of Service and Privacy Policy.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </form>
