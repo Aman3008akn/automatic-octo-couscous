@@ -11,6 +11,12 @@ import { TeamSection } from "@/components/storefront/team-section";
 import { TeamScrollPopup } from "@/components/storefront/team-scroll-popup";
 import { Footer } from "@/components/storefront/footer";
 import { RetailPoster } from "@/components/storefront/retail-poster";
+import { WelcomeOffer } from "@/components/storefront/welcome-offer";
+import { SpinBanner } from "@/components/storefront/spin-banner";
+import { CountdownBanner } from "@/components/storefront/countdown-banner";
+import { BankOffersBanner } from "@/components/storefront/bank-offers-banner";
+import { TrendingBanner } from "@/components/storefront/trending-banner";
+import { AppDownloadBanner } from "@/components/storefront/app-download-banner";
 
 export default async function HomePage() {
   // Fetch products for storefront sections
@@ -22,15 +28,26 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-paper flex flex-col">
-      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex-1 space-y-12">
+      <WelcomeOffer />
+      
+      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex-1 space-y-12 overflow-hidden">
         {/* 0. Large Top Retail Poster */}
         <RetailPoster />
+
+        {/* 0.5. Premium Spin Wheel Banner */}
+        <SpinBanner />
 
         {/* 1. Hero Promotional Carousel */}
         <HeroCarousel />
 
+        {/* 1.5. Countdown Flash Sale Banner */}
+        <CountdownBanner />
+
         {/* 2. Amazon-Style 4-Card Merchandising Grid */}
         <MerchandisingGrid />
+
+        {/* 2.5. Bank Offers Banner */}
+        <BankOffersBanner />
 
         {/* 2. Quick Category Grid */}
         <CategoryGrid />
@@ -91,6 +108,9 @@ export default async function HomePage() {
         {/* 5. Promotional Middle Banner */}
         <PromoBanner />
 
+        {/* 5.5. Trending / Editorial Banner */}
+        <TrendingBanner />
+
         {/* 6. New Arrivals Section */}
         <section>
           <div className="flex items-center justify-between mb-4">
@@ -136,6 +156,9 @@ export default async function HomePage() {
             </Link>
           </div>
         </section>
+
+        {/* 7.5. App Download Banner */}
+        <AppDownloadBanner />
 
         {/* 8. Marketplace Trust Benefits */}
         <TrustSection />

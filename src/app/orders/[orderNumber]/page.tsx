@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/authz";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
+import { OrderTimeline } from "@/components/orders/order-timeline";
 
 export default async function OrderDetailsPage({ params }: { params: { orderNumber: string } }) {
   let session;
@@ -50,8 +51,10 @@ export default async function OrderDetailsPage({ params }: { params: { orderNumb
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left Column: Line Items */}
+        {/* Left Column: Timeline & Line Items */}
         <div className="md:col-span-2 space-y-6">
+          <OrderTimeline status={order.status} />
+
           <div className="bg-white rounded-2xl shadow-sm border border-line overflow-hidden">
             <div className="bg-navy-50/50 p-4 border-b border-line flex justify-between items-center">
               <h2 className="font-bold text-navy-900">Items in this order</h2>

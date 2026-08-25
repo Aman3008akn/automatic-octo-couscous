@@ -6,6 +6,8 @@ import { SessionProvider } from "@/components/providers/session-provider";
 export const metadata: Metadata = {
   title: "Cartigo — Verified Reseller Marketplace",
   description: "The trusted reseller-only marketplace for verified products.",
+  manifest: "/manifest.json",
+  themeColor: "#0f172a",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
