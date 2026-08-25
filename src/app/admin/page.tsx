@@ -123,6 +123,20 @@ export default async function AdminDashboardPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Quick Action Navigation Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+            <Link href="/admin/banners">
+              <Card className="hover:border-navy-400 transition-all cursor-pointer h-full bg-amber-50/20">
+                <CardHeader>
+                  <div className="w-10 h-10 rounded-card bg-amber-400/20 text-amber-600 flex items-center justify-center font-bold mb-2">
+                    🖼️
+                  </div>
+                  <CardTitle className="text-lg">Banners & Promotions</CardTitle>
+                  <CardDescription className="text-xs">
+                    Manage storefront banners, hero carousel, and active promos.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+
             <Link href="/admin/resellers">
               <Card className="hover:border-navy-400 transition-all cursor-pointer h-full">
                 <CardHeader>

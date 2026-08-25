@@ -18,12 +18,15 @@ import { BankOffersBanner } from "@/components/storefront/bank-offers-banner";
 import { TrendingBanner } from "@/components/storefront/trending-banner";
 import { AppDownloadBanner } from "@/components/storefront/app-download-banner";
 
+import { getBanners } from "@/server/banners";
+
 export default async function HomePage() {
   // Fetch products for storefront sections
-  const [{ items: popularProducts }, { items: dealProducts }, { items: newArrivals }] = await Promise.all([
+  const [{ items: popularProducts }, { items: dealProducts }, { items: newArrivals }, heroBanners] = await Promise.all([
     searchCatalog({ take: 8, sortBy: "newest" }),
     searchCatalog({ take: 4, sortBy: "price_asc" }),
     searchCatalog({ take: 8, sortBy: "newest" }),
+    getBanners("HERO_CAROUSEL"),
   ]);
 
   return (
@@ -38,7 +41,7 @@ export default async function HomePage() {
         <SpinBanner />
 
         {/* 1. Hero Promotional Carousel */}
-        <HeroCarousel />
+        <HeroCarousel banners={heroBanners.length > 0 ? heroBanners : undefined} />
 
         {/* 1.5. Countdown Flash Sale Banner */}
         <CountdownBanner />

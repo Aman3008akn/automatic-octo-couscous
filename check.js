@@ -1,0 +1,1 @@
+const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); async function main() { const apps = await prisma.resellerApplication.findMany(); console.log(apps.length); } main().finally(() => prisma.$disconnect());

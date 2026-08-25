@@ -81,8 +81,9 @@ export async function getAdminResellerApplications(statusFilter?: ResellerStatus
         documents: app.resellerProfile.documents,
       },
     }));
-  } catch (error) {
-    console.error("Database connection error in getAdminResellerApplications:", error);
+  } catch (error: any) {
+    console.error("Database connection error in getAdminResellerApplications:");
+    console.error(error?.stack || error);
     return [];
   }
 }
