@@ -46,7 +46,7 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
     // Wait for animation to finish (5 seconds)
     setTimeout(() => {
       setIsSpinning(false);
-      setWonPrize(PRIZES[prizeIndex]);
+      setWonPrize(PRIZES[prizeIndex] || null);
     }, 5000);
   };
 
@@ -134,7 +134,7 @@ export function SpinWheel({ onClose }: { onClose: () => void }) {
                   <p className="text-sm font-bold text-success uppercase tracking-widest mb-1">Congratulations!</p>
                   <div className="bg-amber-100 border border-amber-300 rounded-lg py-3 px-4 w-full flex items-center justify-between">
                     <span className="font-mono font-bold text-lg text-amber-900">{wonPrize.code}</span>
-                    <Button size="sm" variant="outline" className="h-8 text-xs bg-white" onClick={() => {
+                    <Button variant="secondary" className="h-8 px-2 text-xs bg-white" onClick={() => {
                       navigator.clipboard.writeText(wonPrize.code!);
                       alert("Copied to clipboard!");
                     }}>Copy</Button>

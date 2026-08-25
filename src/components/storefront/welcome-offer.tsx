@@ -78,7 +78,7 @@ export function WelcomeOffer() {
 
           <Button 
             onClick={handleClose}
-            variant={scratched ? "primary" : "outline"}
+            variant={scratched ? "primary" : "secondary"}
             className={`w-full mt-6 py-6 text-base rounded-xl ${scratched ? "bg-navy-900 text-white" : ""}`}
           >
             {scratched ? "Awesome, thanks!" : "No thanks, close"}
