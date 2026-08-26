@@ -7,33 +7,13 @@ import Image from "next/image";
 const BANNERS = [
   {
     id: 1,
-    tag: "FLASH SALE ⚡",
-    title: "Flat 15% Off on Top Electronics",
-    subtitle: "2-3 PM | 8-9 PM | 10 PM-12 AM. Don't miss out on the biggest tech discounts of the season.",
-    ctaText: "Shop Flash Sale →",
-    ctaUrl: "/search?categorySlug=electronics",
-    imageUrl: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=1200&auto=format&fit=crop",
-    bgGradient: "from-blue-600 via-blue-800 to-indigo-900",
-  },
-  {
-    id: 2,
-    tag: "EVERYTHING UNDER ₹499",
-    title: "Ultimate Brand Sale",
-    subtitle: "Fashion, Home & more. Free Delivery on your first order & Quick Refunds.",
-    ctaText: "Explore ₹499 Store →",
-    ctaUrl: "/search?categorySlug=fashion-apparel",
-    imageUrl: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=1200&auto=format&fit=crop",
-    bgGradient: "from-orange-500 via-red-500 to-red-700",
-  },
-  {
-    id: 3,
-    tag: "UNDER ₹699",
-    title: "Bags, Backpacks & Accessories",
-    subtitle: "Pay on delivery available. Latest trends for college and office.",
-    ctaText: "Shop Backpacks →",
+    tag: "MEGA SALE",
+    title: "Unbeatable Offers",
+    subtitle: "Get top brands at incredible prices. Limited time only.",
+    ctaText: "Shop Now →",
     ctaUrl: "/search",
-    imageUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&auto=format&fit=crop",
-    bgGradient: "from-emerald-600 via-green-700 to-teal-900",
+    imageUrl: "/images/banners/mega-sale.jpg",
+    bgGradient: "from-blue-600 via-blue-800 to-indigo-900",
   },
 ];
 
@@ -53,7 +33,7 @@ export function HeroCarousel({ banners = BANNERS }: { banners?: any[] }) {
   const banner = banners[current] || banners[0];
 
   return (
-    <div className="relative overflow-hidden rounded-2xl text-white shadow-lg w-full aspect-[16/7]">
+    <div className="relative overflow-hidden rounded-2xl text-white shadow-lg w-full aspect-[16/9]">
       {/* Slide Images */}
       <div className="absolute inset-0">
         {banners.map((banner, index) => (
