@@ -317,8 +317,29 @@ export function Header() {
         </div>
       </div>
 
-      {/* 3. Category Navigation Strip */}
-      <nav className="border-t border-line bg-navy-50/60 overflow-x-auto scrollbar-none">
+      {/* 3. Mobile Search Bar (Only visible on small screens) */}
+      <div className="sm:hidden px-4 pb-3">
+        <form onSubmit={handleSearchSubmit} className="flex items-center rounded-card border border-navy-600/30 bg-white shadow-sm focus-within:border-navy-900 overflow-hidden">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search products..."
+            className="w-full px-3 py-2 text-sm text-ink outline-none"
+          />
+          <button
+            type="submit"
+            className="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold px-4 py-2 transition-colors"
+          >
+            <svg className="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      {/* 4. Category Navigation Strip */}
+      <nav className="hidden md:block border-t border-line bg-navy-50/60 overflow-x-auto scrollbar-none">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center gap-6 text-xs font-semibold py-2 whitespace-nowrap">
           <Link href="/search" className="flex items-center gap-1 text-navy-900 font-bold hover:text-amber-600 transition-colors">
             <span>☰</span> All Categories

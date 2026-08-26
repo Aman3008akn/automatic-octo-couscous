@@ -3,87 +3,95 @@ import { CartigoLogoIcon } from "@/components/ui/cartigo-logo";
 
 export function Footer() {
   return (
-    <footer className="border-t border-line bg-paper pt-12 pb-8 text-xs text-navy-600">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-10 border-b border-line">
-          {/* Col 1: Get to Know Cartigo */}
-          <div className="space-y-3">
-            <h3 className="font-bold text-ink text-sm uppercase tracking-wider">Get to Know Us</h3>
-            <ul className="space-y-2 font-medium">
-              <li><Link href="#" className="hover:text-ink">About Cartigo</Link></li>
-              <li><Link href="#" className="hover:text-ink">Marketplace Standards</Link></li>
-              <li><Link href="#" className="hover:text-ink">Careers & Culture</Link></li>
-              <li><Link href="#" className="hover:text-ink">Press Releases</Link></li>
+    <footer className="border-t border-line bg-navy-900 text-navy-100">
+      {/* Newsletter Strip */}
+      <div className="bg-navy-800 border-b border-navy-700 py-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-1 text-center md:text-left">
+            <h3 className="text-lg font-bold text-white">Subscribe to Cartigo Insider</h3>
+            <p className="text-sm text-navy-300">Get early access to drops, exclusive discounts, and partner offers.</p>
+          </div>
+          <div className="flex w-full md:w-auto max-w-md">
+            <input 
+              type="email" 
+              placeholder="Enter your email address" 
+              className="w-full px-4 py-3 rounded-l-md text-ink outline-none border-none text-sm"
+            />
+            <button className="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold px-6 py-3 rounded-r-md transition-colors text-sm">
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 pb-10 border-b border-navy-700">
+          {/* Col 1: Brand Info */}
+          <div className="col-span-2 lg:col-span-1 space-y-4">
+            <div className="flex items-center gap-2">
+              <CartigoLogoIcon className="h-8 w-8 text-amber-500" />
+              <span className="font-display font-bold text-xl text-white">Cartigo</span>
+            </div>
+            <p className="text-xs text-navy-300 leading-relaxed">
+              The premier marketplace for verified sellers and authentic products. Shop confidently with our buyer protection guarantee.
+            </p>
+          </div>
+
+          {/* Col 2: Get to Know Us */}
+          <div className="space-y-4">
+            <h3 className="font-bold text-white text-sm uppercase tracking-wider">Get to Know Us</h3>
+            <ul className="space-y-2.5 text-xs text-navy-300 font-medium">
+              <li><Link href="#" className="hover:text-amber-400 transition-colors">About Cartigo</Link></li>
+              <li><Link href="#" className="hover:text-amber-400 transition-colors">Marketplace Standards</Link></li>
+              <li><Link href="#" className="hover:text-amber-400 transition-colors">Careers & Culture</Link></li>
+              <li><Link href="#" className="hover:text-amber-400 transition-colors">Press Releases</Link></li>
             </ul>
           </div>
 
-          {/* Col 2: Shop Marketplace */}
-          <div className="space-y-3">
-            <h3 className="font-bold text-ink text-sm uppercase tracking-wider">Shop Marketplace</h3>
-            <ul className="space-y-2 font-medium">
-              <li><Link href="/search?categorySlug=electronics" className="hover:text-ink">Electronics</Link></li>
-              <li><Link href="/search?categorySlug=mobiles-tablets" className="hover:text-ink">Mobiles & Tablets</Link></li>
-              <li><Link href="/search?categorySlug=computers-laptops" className="hover:text-ink">Computers & Laptops</Link></li>
-              <li><Link href="/search?categorySlug=home-kitchen" className="hover:text-ink">Home & Kitchen</Link></li>
-              <li><Link href="/search" className="hover:text-ink">Today's Deals</Link></li>
+          {/* Col 3: Make Money with Us */}
+          <div className="space-y-4">
+            <h3 className="font-bold text-white text-sm uppercase tracking-wider">Make Money with Us</h3>
+            <ul className="space-y-2.5 text-xs text-navy-300 font-medium">
+              <li><Link href="/reseller" className="hover:text-amber-400 transition-colors">Sell on Cartigo</Link></li>
+              <li><Link href="/reseller/apply" className="hover:text-amber-400 transition-colors">Become an Affiliate</Link></li>
+              <li><Link href="#" className="hover:text-amber-400 transition-colors">Fulfillment by Cartigo</Link></li>
+              <li><Link href="#" className="hover:text-amber-400 transition-colors">Advertise Your Products</Link></li>
             </ul>
           </div>
 
-          {/* Col 3: Customer Service */}
-          <div className="space-y-3">
-            <h3 className="font-bold text-ink text-sm uppercase tracking-wider">Customer Service</h3>
-            <ul className="space-y-2 font-medium">
-              <li><Link href="/orders" className="hover:text-ink">Track Your Orders</Link></li>
-              <li><Link href="#" className="hover:text-ink">Shipping Rates & Policies</Link></li>
-              <li><Link href="#" className="hover:text-ink">Returns & Replacements</Link></li>
-              <li><Link href="#" className="hover:text-ink">Help Center & FAQ</Link></li>
-              <li className="pt-3">
-                <span className="text-xs font-bold text-ink mb-1.5 block uppercase tracking-wide">WhatsApp Support:</span>
-                <a href="https://wa.me/918826817677" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-green-600 transition-colors">
-                  <span className="text-green-500 text-sm">💬</span> +91 88268 17677
-                </a>
-                <a href="https://wa.me/918840108332" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-green-600 transition-colors mt-1">
-                  <span className="text-green-500 text-sm">💬</span> +91 88401 08332
-                </a>
+          {/* Col 4: Let Us Help You */}
+          <div className="space-y-4">
+            <h3 className="font-bold text-white text-sm uppercase tracking-wider">Let Us Help You</h3>
+            <ul className="space-y-2.5 text-xs text-navy-300 font-medium">
+              <li><Link href="/orders" className="hover:text-amber-400 transition-colors">Your Account</Link></li>
+              <li><Link href="/orders" className="hover:text-amber-400 transition-colors">Returns Center</Link></li>
+              <li><Link href="#" className="hover:text-amber-400 transition-colors">100% Purchase Protection</Link></li>
+              <li><Link href="#" className="hover:text-amber-400 transition-colors">Help & Support</Link></li>
+            </ul>
+          </div>
+
+          {/* Col 5: Support */}
+          <div className="space-y-4">
+            <h3 className="font-bold text-white text-sm uppercase tracking-wider">Contact Us</h3>
+            <ul className="space-y-2.5 text-xs text-navy-300 font-medium">
+              <li className="flex items-center gap-2">
+                <span className="text-amber-500">✉</span> support@cartigo.in
               </li>
-            </ul>
-          </div>
-
-          {/* Col 4: Sell on Cartigo */}
-          <div className="space-y-3">
-            <h3 className="font-bold text-ink text-sm uppercase tracking-wider">Sell on Cartigo</h3>
-            <ul className="space-y-2 font-medium">
-              <li><Link href="/reseller" className="hover:text-ink font-bold text-amber-600">Become a Partner Reseller</Link></li>
-              <li><Link href="/reseller/apply" className="hover:text-ink">Submit Application</Link></li>
-              <li><Link href="/reseller/status" className="hover:text-ink">Application Status Tracker</Link></li>
-              <li><Link href="/reseller/dashboard" className="hover:text-ink">Reseller Dashboard</Link></li>
-            </ul>
-          </div>
-
-          {/* Col 5: Legal & Security */}
-          <div className="space-y-3">
-            <h3 className="font-bold text-ink text-sm uppercase tracking-wider">Legal & Trust</h3>
-            <ul className="space-y-2 font-medium">
-              <li><Link href="#" className="hover:text-ink">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-ink">Terms of Use</Link></li>
-              <li><Link href="#" className="hover:text-ink">Buyer Protection Policy</Link></li>
-              <li><Link href="#" className="hover:text-ink">Prohibited Products Policy</Link></li>
+              <li className="flex items-center gap-2">
+                <span className="text-amber-500">☏</span> 1800-CARTIGO
+              </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom copyright row */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <CartigoLogoIcon className="h-7 w-7" />
-            <span className="font-display font-bold text-base text-ink">Cartigo</span>
-            <span className="text-navy-400">© {new Date().getFullYear()} Cartigo Marketplace Inc. All rights reserved.</span>
-          </div>
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-navy-400">
+          <p>© {new Date().getFullYear()} Cartigo Marketplace Inc. All rights reserved.</p>
 
-          <div className="flex items-center gap-6 font-semibold text-navy-600">
-            <span>🛡️ Verified Resellers Only</span>
-            <span>💳 Encrypted Payments</span>
-            <span>📦 Fast Shipping</span>
+          <div className="flex items-center gap-4">
+            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link href="#" className="hover:text-white transition-colors">Seller Agreement</Link>
           </div>
         </div>
       </div>

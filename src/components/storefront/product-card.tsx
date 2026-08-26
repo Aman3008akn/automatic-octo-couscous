@@ -83,13 +83,13 @@ export function ProductCard({
     >
       {/* Product Image Container */}
       <div>
-        <Link href={`/products/${slug}`} className="relative block aspect-square w-full overflow-hidden bg-navy-50/40 p-4">
+        <Link href={`/products/${slug}`} className="relative block aspect-square w-full overflow-hidden bg-white">
           <StorefrontImage
             src={currentImage}
             alt={title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-contain object-center p-2 group-hover:scale-105 transition-all duration-300"
+            className="object-contain object-center p-2 sm:p-4 group-hover:scale-105 transition-all duration-300 mix-blend-multiply"
           />
 
           {/* Discount Badge Pill */}

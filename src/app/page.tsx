@@ -34,23 +34,8 @@ export default async function HomePage() {
       <WelcomeOffer />
       
       <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex-1 space-y-12 overflow-hidden">
-        {/* 0. Large Top Retail Poster */}
-        <RetailPoster />
-
-        {/* 0.5. Premium Spin Wheel Banner */}
-        <SpinBanner />
-
         {/* 1. Hero Promotional Carousel */}
         <HeroCarousel banners={heroBanners.length > 0 ? heroBanners : undefined} />
-
-        {/* 1.5. Countdown Flash Sale Banner */}
-        <CountdownBanner />
-
-        {/* 2. Amazon-Style 4-Card Merchandising Grid */}
-        <MerchandisingGrid />
-
-        {/* 2.5. Bank Offers Banner */}
-        <BankOffersBanner />
 
         {/* 2. Quick Category Grid */}
         <CategoryGrid />
@@ -72,7 +57,7 @@ export default async function HomePage() {
 
           {dealProducts.length === 0 ? (
             <div className="rounded-card border border-dashed border-line bg-white p-8 text-center text-navy-600">
-              <p className="text-sm font-semibold text-navy-800">no products right now:), maybe the reseller has not approved yet</p>
+              <p className="text-sm font-semibold text-navy-800">No deals right now.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -83,7 +68,10 @@ export default async function HomePage() {
           )}
         </section>
 
-        {/* 4. Popular on Cartigo Section */}
+        {/* 4. Amazon-Style 4-Card Merchandising Grid */}
+        <MerchandisingGrid />
+
+        {/* 5. Popular on Cartigo Section */}
         <section>
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -97,7 +85,7 @@ export default async function HomePage() {
 
           {popularProducts.length === 0 ? (
             <div className="rounded-card border border-dashed border-line bg-white p-8 text-center text-navy-600">
-              <p className="text-sm font-semibold text-navy-800">no products right now:), maybe the reseller has not approved yet</p>
+              <p className="text-sm font-semibold text-navy-800">No products found.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -108,72 +96,11 @@ export default async function HomePage() {
           )}
         </section>
 
-        {/* 5. Promotional Middle Banner */}
-        <PromoBanner />
-
-        {/* 5.5. Trending / Editorial Banner */}
-        <TrendingBanner />
-
-        {/* 6. New Arrivals Section */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-display font-bold text-ink">New Arrivals</h2>
-              <p className="text-xs text-navy-600 mt-0.5">Freshly published catalog items from approved partner resellers</p>
-            </div>
-            <Link href="/search?sort=newest" className="text-xs font-bold text-navy-900 hover:text-amber-600 transition-colors">
-              View New Arrivals →
-            </Link>
-          </div>
-
-          {newArrivals.length === 0 ? (
-            <div className="rounded-card border border-dashed border-line bg-white p-8 text-center text-navy-600">
-              <p className="text-sm font-semibold text-navy-800">no products right now:), maybe the reseller has not approved yet</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-              {newArrivals.map((prod) => (
-                <ProductCard key={prod.id} {...prod} />
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* 7. Compact Reseller Program Banner (Lower Section) */}
-        <section className="rounded-card border border-amber-400/40 bg-amber-50/40 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="space-y-1 text-center sm:text-left">
-            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-600">
-              Partner Business Opportunities
-            </span>
-            <h3 className="text-lg font-bold text-ink">Want to sell your catalog on Cartigo?</h3>
-            <p className="text-xs text-navy-600 max-w-xl">
-              Join our verified partner program to reach thousands of buyers. Transparent 15% platform fees, fast bi-weekly payouts, and dedicated seller tools.
-            </p>
-          </div>
-          <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href="/reseller/apply"
-              className="rounded-card bg-navy-900 px-5 py-2.5 text-xs font-bold text-amber-400 hover:bg-navy-600 transition-colors shadow-sm"
-            >
-              Become a Partner Reseller →
-            </Link>
-          </div>
-        </section>
-
-        {/* 7.5. App Download Banner */}
-        <AppDownloadBanner />
-
-        {/* 8. Marketplace Trust Benefits */}
+        {/* 6. Marketplace Trust Benefits */}
         <TrustSection />
       </main>
 
-      {/* 9. Meet the Developers Section */}
-      <TeamSection />
-
-      {/* Floating Action Button for Teams */}
-      <TeamScrollPopup />
-
-      {/* 10. Large Marketplace Footer */}
+      {/* 7. Large Marketplace Footer */}
       <Footer />
     </div>
   );

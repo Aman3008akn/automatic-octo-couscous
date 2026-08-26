@@ -53,46 +53,22 @@ export function HeroCarousel({ banners = BANNERS }: { banners?: any[] }) {
   const banner = banners[current] || banners[0];
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-navy-900 text-white shadow-lg">
-      {/* Background image & gradient overlay */}
-      <div className="absolute inset-0 z-0">
+    <div className="relative overflow-hidden rounded-2xl bg-navy-900 text-white shadow-lg h-[340px] sm:h-[380px]">
+      {/* Slide Image */}
+      <div className="relative z-0 w-full h-full">
         <Image
           src={banner.imageUrl}
           alt={banner.title}
           fill
           priority
-          className="object-cover object-center opacity-30 blur-[1px] transition-opacity duration-700"
+          className="object-cover object-center transition-opacity duration-700"
         />
-        <div className={`absolute inset-0 bg-gradient-to-r ${banner.bgGradient || "from-black/60 to-black/30"} opacity-85`} />
       </div>
 
-      {/* Slide Content */}
-      <div className="relative z-10 px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 flex flex-col justify-center min-h-[340px] sm:min-h-[380px] max-w-3xl">
-        {banner.tag && (
-          <span className="inline-block self-start rounded-full bg-amber-500/20 border border-amber-400/40 px-3 py-1 font-mono text-xs font-bold text-amber-400 uppercase tracking-widest mb-4">
-            {banner.tag}
-          </span>
-        )}
-
-        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
-          {banner.title}
-        </h1>
-
-        {banner.subtitle && (
-          <p className="mt-3 text-sm sm:text-base text-navy-100/90 max-w-xl font-normal leading-relaxed">
-            {banner.subtitle}
-          </p>
-        )}
-
-        <div className="mt-6 flex items-center gap-4">
-          <Link
-            href={banner.linkUrl || banner.ctaUrl || "/"}
-            className="inline-flex items-center gap-2 rounded-card bg-amber-500 px-6 py-3 font-bold text-navy-900 shadow-md hover:bg-amber-400 transition-all active:scale-95 text-sm"
-          >
-            {banner.ctaText || "Shop Now →"}
-          </Link>
-        </div>
-      </div>
+      {/* Clickable Overlay Link */}
+      {(banner.linkUrl || banner.ctaUrl) && (
+        <Link href={banner.linkUrl || banner.ctaUrl || "/"} className="absolute inset-0 z-10 block" aria-label={`Shop ${banner.title}`} />
+      )}
 
       {/* Carousel Prev/Next Buttons */}
       <button
