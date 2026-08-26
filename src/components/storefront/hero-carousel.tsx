@@ -53,7 +53,7 @@ export function HeroCarousel({ banners = BANNERS }: { banners?: any[] }) {
   const banner = banners[current] || banners[0];
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-navy-900 text-white shadow-lg h-[340px] sm:h-[380px]">
+    <div className="relative overflow-hidden rounded-2xl bg-[#0a0f1d] text-white shadow-lg w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9]">
       {/* Slide Image */}
       <div className="relative z-0 w-full h-full">
         <Image
@@ -61,7 +61,9 @@ export function HeroCarousel({ banners = BANNERS }: { banners?: any[] }) {
           alt={banner.title}
           fill
           priority
-          className="object-cover object-center transition-opacity duration-700"
+          quality={100}
+          sizes="100vw"
+          className="object-contain md:object-cover object-center transition-opacity duration-700"
         />
       </div>
 
