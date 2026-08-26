@@ -11,8 +11,8 @@ async function main() {
 
   const banners = [
     {
-      title: "Ultimate Brand Sale",
-      imageUrl: "/images/banners/brand-sale.jpg",
+      title: "Unbeatable Offers",
+      imageUrl: "/images/banners/mega-sale.jpg",
       position: "HERO_CAROUSEL",
       isActive: true,
       order: 1,
