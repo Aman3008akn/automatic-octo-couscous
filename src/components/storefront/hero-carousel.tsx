@@ -72,17 +72,17 @@ export function HeroCarousel({ banners = BANNERS }: { banners?: any[] }) {
         <Link href={banner.linkUrl || banner.ctaUrl || "/"} className="absolute inset-0 z-10 block" aria-label={`Shop ${banner.title}`} />
       )}
 
-      {/* Carousel Prev/Next Buttons */}
+      {/* Carousel Prev/Next Buttons (Hidden on mobile) */}
       <button
         onClick={() => setCurrent((prev) => (prev === 0 ? banners.length - 1 : prev - 1))}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/70 backdrop-blur-sm transition-all"
+        className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/70 backdrop-blur-sm transition-all"
         aria-label="Previous Slide"
       >
         ❮
       </button>
       <button
         onClick={() => setCurrent((prev) => (prev + 1) % banners.length)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/70 backdrop-blur-sm transition-all"
+        className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/70 backdrop-blur-sm transition-all"
         aria-label="Next Slide"
       >
         ❯
