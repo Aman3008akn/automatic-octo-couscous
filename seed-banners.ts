@@ -41,14 +41,6 @@ async function main() {
       isActive: true,
       order: 4,
       linkUrl: "/search?categorySlug=computers-laptops"
-    },
-    {
-      title: "Flash Sale 15% OFF",
-      imageUrl: "/images/banners/flash-sale.jpg",
-      position: "HERO_CAROUSEL",
-      isActive: true,
-      order: 5,
-      linkUrl: "/search?categorySlug=mobiles-tablets"
     }
   ];
 
