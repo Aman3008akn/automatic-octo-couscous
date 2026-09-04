@@ -77,6 +77,26 @@ export async function getMyResellerProducts() {
   });
 }
 
+async function resolveCategoryId(rawIdOrSlug?: string): Promise<string> {
+  if (rawIdOrSlug) {
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(rawIdOrSlug);
+    if (isObjectId) {
+      const byId = await prisma.category.findUnique({ where: { id: rawIdOrSlug } });
+      if (byId) return byId.id;
+    }
+    const bySlug = await prisma.category.findUnique({ where: { slug: rawIdOrSlug } });
+    if (bySlug) return bySlug.id;
+  }
+  const fallback = await prisma.category.findFirst();
+  if (!fallback) {
+    const created = await prisma.category.create({
+      data: { slug: "general", name: "General" },
+    });
+    return created.id;
+  }
+  return fallback.id;
+}
+
 /**
  * Save draft product listing.
  */
@@ -97,11 +117,7 @@ export async function saveProductDraft(input: Partial<ProductInput>): Promise<Pr
     return { ok: false, error: "No reseller profile found." };
   }
 
-  const category = await prisma.category.findFirst();
-  const categoryId = input.categoryId ?? category?.id;
-  if (!categoryId) {
-    return { ok: false, error: "Category is required." };
-  }
+  const categoryId = await resolveCategoryId(input.categoryId);
 
   const title = input.title || "Draft Product Title";
   const slug = `draft-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
@@ -230,6 +246,8 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
     return { ok: false, error: "Approved reseller profile required to submit products." };
   }
 
+  const categoryId = await resolveCategoryId(data.categoryId);
+
   // Generate unique clean slug
   const baseSlug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   const slug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
@@ -254,7 +272,7 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
         prod = await tx.product.update({
           where: { id: data.productId },
           data: {
-            categoryId: data.categoryId,
+            categoryId,
             title: data.title,
             description: data.description,
             brand: data.brand ?? null,
@@ -266,7 +284,7 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
         prod = await tx.product.create({
           data: {
             resellerProfileId,
-            categoryId: data.categoryId,
+            categoryId,
             slug,
             title: data.title,
             description: data.description,

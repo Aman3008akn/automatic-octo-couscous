@@ -92,7 +92,7 @@ export function Header() {
   const isAdmin = ["MODERATOR", "SUPPORT", "FINANCE", "ADMIN", "SUPER_ADMIN"].includes(role ?? "");
 
   return (
-    <header className="sticky top-0 z-50 shadow-sm flex flex-col">
+    <header className="sticky top-0 z-50 shadow-sm flex flex-col bg-white">
       {/* 1. Top Utility Announcement Bar (Hidden on Mobile) */}
       <div className="hidden sm:flex bg-navy-900 text-white text-[11px] py-1.5 px-4 sm:px-8 items-center justify-between font-medium">
         <div className="flex items-center gap-4">
@@ -252,7 +252,7 @@ export function Header() {
       </div>
 
       {/* 3. Category Navigation Strip (Scrollable on mobile) */}
-      <nav className="border-b sm:border-t sm:border-b-0 border-line bg-indigo-50/50 sm:bg-navy-50/60 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <nav className="border-b sm:border-t sm:border-b-0 border-line bg-navy-50 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center gap-6 text-xs sm:text-xs font-semibold py-2.5 sm:py-2 whitespace-nowrap">
           <Link href="/search" className="flex items-center gap-1.5 text-navy-900 font-bold hover:text-amber-600 transition-colors">
             <span className="text-lg leading-none">≡</span> 

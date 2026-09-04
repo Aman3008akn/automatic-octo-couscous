@@ -190,9 +190,13 @@ export default function NewProductWizardPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 {[
                   { id: "electronics", name: "Electronics" },
+                  { id: "mobiles-tablets", name: "Mobiles & Tablets" },
+                  { id: "computers-laptops", name: "Computers & Laptops" },
                   { id: "home-kitchen", name: "Home & Kitchen" },
-                  { id: "apparel", name: "Apparel & Accessories" },
-                  { id: "automotive", name: "Automotive & Tools" },
+                  { id: "fashion-apparel", name: "Fashion & Apparel" },
+                  { id: "beauty-care", name: "Beauty & Care" },
+                  { id: "sports-fitness", name: "Sports & Fitness" },
+                  { id: "gaming", name: "Gaming & Consoles" },
                 ].map((cat) => (
                   <button
                     key={cat.id}
@@ -201,7 +205,7 @@ export default function NewProductWizardPage() {
                       setCategoryId(cat.id);
                       setCategoryName(cat.name);
                     }}
-                    className={`rounded-card border p-4 text-left font-medium text-sm transition-all ${
+                    className={`rounded-xl border p-4 text-left font-medium text-sm transition-all ${
                       categoryId === cat.id
                         ? "bg-navy-900 text-paper border-navy-900 shadow"
                         : "bg-white text-navy-600 border-line hover:border-navy-400"
