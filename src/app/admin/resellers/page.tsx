@@ -25,9 +25,11 @@ export default function AdminResellersQueuePage() {
   const [rejectionReason, setRejectionReason] = useState("");
   const [decisionLoading, setDecisionLoading] = useState(false);
   const [decisionError, setDecisionError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   function loadQueue() {
     setLoading(true);
+    setLoadError(null);
     getAdminResellerApplications(statusFilter, searchQuery)
       .then((res) => {
         const data = res || [];
@@ -36,6 +38,10 @@ export default function AdminResellersQueuePage() {
           const updated = data.find((a) => a?.id === selectedApp.id);
           if (updated) setSelectedApp(updated);
         }
+      })
+      .catch((err: any) => {
+        console.error("Failed to load applications queue:", err);
+        setLoadError(err?.message || "Failed to load reseller applications. You may not have administrative privileges.");
       })
       .finally(() => setLoading(false));
   }
@@ -70,8 +76,6 @@ export default function AdminResellersQueuePage() {
         internalNotes: internalNotes || undefined,
       });
 
-      setDecisionLoading(false);
-
       if (!res || !res.ok) {
         setDecisionError(res?.error || "An unexpected error occurred. Please try again.");
       } else {
@@ -79,8 +83,9 @@ export default function AdminResellersQueuePage() {
         loadQueue();
       }
     } catch (err: any) {
+      setDecisionError(err?.message || "Failed to process the decision.");
+    } finally {
       setDecisionLoading(false);
-      setDecisionError(err.message || "Failed to process the decision.");
     }
   }
 
@@ -133,6 +138,21 @@ export default function AdminResellersQueuePage() {
             <CardContent className="p-0">
               {loading ? (
                 <p className="p-6 text-center text-xs text-navy-600 animate-pulse">Loading reseller applications...</p>
+              ) : loadError ? (
+                <div className="p-12 text-center text-navy-600">
+                  <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-danger/10 text-danger font-bold text-lg">
+                    ⚠️
+                  </div>
+                  <p className="text-sm font-semibold text-danger">{loadError}</p>
+                  <p className="text-xs text-navy-500 mt-1">Please ensure you are signed in with an administrative account.</p>
+                  <Button
+                    variant="secondary"
+                    onClick={loadQueue}
+                    className="mt-4 text-xs font-semibold"
+                  >
+                    Retry Loading Queue
+                  </Button>
+                </div>
               ) : !applications || applications.length === 0 ? (
                 <div className="p-12 text-center text-navy-600">
                   <p className="text-sm font-semibold">No applications found in this queue.</p>

@@ -44,7 +44,7 @@ export async function getCart() {
       product: {
         include: {
           images: { take: 1, orderBy: { sortOrder: "asc" } },
-          resellerProfile: { select: { legalName: true, id: true } },
+          resellerProfile: { select: { legalName: true, id: true, fulfillmentMode: true } },
         },
       },
       inventory: true,
@@ -61,9 +61,15 @@ export async function getCart() {
     const lineTotalCents = unitPriceCents * item.quantity;
     subtotalCents += lineTotalCents;
 
+    const isCartigoFulfill = v?.product.resellerProfile.fulfillmentMode === "cartigo";
+    const deliveryDays = isCartigoFulfill ? 2 : 4;
+    const deliveryDate = new Date(Date.now() + deliveryDays * 24 * 60 * 60 * 1000);
+    const deliveryEstimate = `${isCartigoFulfill ? "Express Delivery" : "Standard Delivery"} by ${deliveryDate.toLocaleDateString("en-IN", { month: "short", day: "numeric", weekday: "short" })}`;
+
     return {
       id: item.id,
       variantId: item.variantId,
+      productId: v?.product.id ?? "",
       quantity: item.quantity,
       unitPriceCents,
       lineTotalCents,
@@ -74,12 +80,15 @@ export async function getCart() {
       resellerName: v?.product.resellerProfile.legalName ?? "Verified Reseller",
       resellerProfileId: v?.product.resellerProfile.id ?? "",
       availableStock: v?.inventory?.available ?? 0,
-      compareAtCents: (v?.product as any)?.compareAtCents ?? unitPriceCents * 1.3,
+      compareAtCents: (v?.product as any)?.compareAtCents ?? Math.round(unitPriceCents * 1.25),
+      deliveryEstimate,
     };
   });
 
-  const shippingCents = subtotalCents > 0 ? (subtotalCents > 10000 ? 0 : 799) : 0; // Free shipping over $100
-  const taxCents = Math.round(subtotalCents * 0.08); // 8% tax rate
+  // Free shipping over ₹999 (99900 cents), otherwise ₹99 (9900 cents)
+  const shippingCents = subtotalCents > 0 ? (subtotalCents >= 99900 ? 0 : 9900) : 0;
+  // 18% GST
+  const taxCents = Math.round(subtotalCents * 0.18);
   const totalCents = subtotalCents + shippingCents + taxCents;
 
   return {
@@ -88,6 +97,7 @@ export async function getCart() {
     subtotalCents,
     shippingCents,
     taxCents,
+    taxLabel: "Estimated GST (18%)",
     totalCents,
   };
 }
@@ -165,38 +175,138 @@ export async function addToCart(variantIdOrSlug: string, quantity = 1): Promise<
 }
 
 /**
- * Update cart item quantity.
+ * Update cart item quantity with strict user ownership and inventory stock validation.
  */
 export async function updateCartItemQuantity(cartItemId: string, quantity: number): Promise<CartActionResult> {
-  await requireSession();
-
-  if (quantity <= 0) {
-    return removeFromCart(cartItemId);
-  }
-
   try {
+    const session = await requireSession();
+    const userId = (session.user as { id: string }).id;
+
+    if (quantity <= 0) {
+      return removeFromCart(cartItemId);
+    }
+
+    // Ownership check: Ensure cart belongs to the signed-in user
+    const item = await prisma.cartItem.findUnique({
+      where: { id: cartItemId },
+      include: { cart: true },
+    });
+
+    if (!item || item.cart.userId !== userId) {
+      return { ok: false, error: "Cart item not found or unauthorized." };
+    }
+
+    // Stock availability validation
+    const variant = await prisma.productVariant.findUnique({
+      where: { id: item.variantId },
+      include: { inventory: true },
+    });
+
+    const available = variant?.inventory?.available ?? 0;
+    if (quantity > available) {
+      return { ok: false, error: `Only ${available} units available in stock.` };
+    }
+
     await prisma.cartItem.update({
       where: { id: cartItemId },
       data: { quantity },
     });
+
     return { ok: true };
-  } catch (error) {
-    return { ok: false, error: (error as Error).message };
+  } catch (error: any) {
+    console.error("Error updating cart quantity:", error);
+    return { ok: false, error: error?.message || "Failed to update quantity." };
   }
 }
 
 /**
- * Remove line item from cart.
+ * Remove line item from cart with user ownership validation.
  */
 export async function removeFromCart(cartItemId: string): Promise<CartActionResult> {
-  await requireSession();
-
   try {
+    const session = await requireSession();
+    const userId = (session.user as { id: string }).id;
+
+    // Ownership check
+    const item = await prisma.cartItem.findUnique({
+      where: { id: cartItemId },
+      include: { cart: true },
+    });
+
+    if (!item || item.cart.userId !== userId) {
+      return { ok: false, error: "Cart item not found or unauthorized." };
+    }
+
     await prisma.cartItem.delete({
       where: { id: cartItemId },
     });
+
     return { ok: true };
-  } catch (error) {
-    return { ok: false, error: (error as Error).message };
+  } catch (error: any) {
+    console.error("Error removing cart item:", error);
+    return { ok: false, error: error?.message || "Failed to remove item." };
+  }
+}
+
+/**
+ * Move item from cart to wishlist (Save for later) with ownership verification.
+ */
+export async function saveForLater(cartItemId: string): Promise<CartActionResult> {
+  try {
+    const session = await requireSession();
+    const userId = (session.user as { id: string }).id;
+
+    // Ownership check & get product reference
+    const item = await prisma.cartItem.findUnique({
+      where: { id: cartItemId },
+      include: { cart: true },
+    });
+
+    if (!item || item.cart.userId !== userId) {
+      return { ok: false, error: "Cart item not found or unauthorized." };
+    }
+
+    const variant = await prisma.productVariant.findUnique({
+      where: { id: item.variantId },
+      select: { productId: true },
+    });
+
+    const productId = variant?.productId;
+
+    await prisma.$transaction(async (tx) => {
+      // 1. Upsert wishlist
+      const wishlist = await tx.wishlist.upsert({
+        where: { userId },
+        update: {},
+        create: { userId },
+      });
+
+      // 2. Add to wishlist if not already there
+      if (productId) {
+        const exists = await tx.wishlistItem.findUnique({
+          where: {
+            wishlistId_productId: { wishlistId: wishlist.id, productId },
+          },
+        });
+        if (!exists) {
+          await tx.wishlistItem.create({
+            data: {
+              wishlistId: wishlist.id,
+              productId,
+            },
+          });
+        }
+      }
+
+      // 3. Remove from cart
+      await tx.cartItem.delete({
+        where: { id: cartItemId },
+      });
+    });
+
+    return { ok: true };
+  } catch (error: any) {
+    console.error("Error saving for later:", error);
+    return { ok: false, error: error?.message || "Failed to save item for later." };
   }
 }

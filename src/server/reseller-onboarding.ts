@@ -77,10 +77,10 @@ export async function getMyResellerStatus() {
  * Save draft reseller application.
  */
 export async function saveResellerApplicationDraft(input: Partial<ResellerApplicationInput>): Promise<ApplicationResult> {
-  const session = await requireSession();
-  const userId = session.user.id;
-
   try {
+    const session = await requireSession();
+    const userId = session.user.id;
+
     const result = await prisma.$transaction(async (tx) => {
       // 1. Create or update profile
       const profile = await tx.resellerProfile.upsert({
@@ -90,7 +90,7 @@ export async function saveResellerApplicationDraft(input: Partial<ResellerApplic
           contactPerson: input.contactPerson ?? session.user.name ?? "Draft Contact",
           contactEmail: input.contactEmail ?? session.user.email ?? "",
           contactPhone: input.contactPhone ?? "",
-          country: input.country ?? "US",
+          country: input.country ?? "IN",
           businessType: input.businessType ?? "LLC",
           fulfillmentMode: input.fulfillmentMode ?? "reseller",
           status: "DRAFT",
@@ -101,7 +101,7 @@ export async function saveResellerApplicationDraft(input: Partial<ResellerApplic
           contactPerson: input.contactPerson ?? session.user.name ?? "Draft Contact",
           contactEmail: input.contactEmail ?? session.user.email ?? "",
           contactPhone: input.contactPhone ?? "",
-          country: input.country ?? "US",
+          country: input.country ?? "IN",
           businessType: input.businessType ?? "LLC",
           fulfillmentMode: input.fulfillmentMode ?? "reseller",
           status: "DRAFT",
@@ -147,8 +147,15 @@ export async function saveResellerApplicationDraft(input: Partial<ResellerApplic
     });
 
     return { ok: true, status: result.profile.status, applicationId: result.app.id };
-  } catch (error) {
-    return { ok: false, error: (error as Error).message };
+  } catch (error: any) {
+    console.error("saveResellerApplicationDraft error:", error);
+    if (error?.name === "UnauthorizedError" || error?.code === "UNAUTHORIZED") {
+      return { ok: false, error: error.message || "Sign in required." };
+    }
+    return {
+      ok: false,
+      error: "Unable to save draft at this time. Please try again.",
+    };
   }
 }
 
@@ -156,19 +163,25 @@ export async function saveResellerApplicationDraft(input: Partial<ResellerApplic
  * Submit reseller application for admin review.
  */
 export async function submitResellerApplication(input: ResellerApplicationInput): Promise<ApplicationResult> {
-  const session = await requireSession();
-  const userId = session.user.id;
-
-  const parsed = resellerApplicationSchema.safeParse(input);
-  if (!parsed.success) {
-    const errorMsg = parsed.error.issues.map((i) => i.message).join(" ");
-    return { ok: false, error: errorMsg, code: "VALIDATION_ERROR" };
-  }
-
-  const data = parsed.data;
-
   try {
+    const session = await requireSession();
+    const userId = session.user.id;
+
+    const parsed = resellerApplicationSchema.safeParse(input);
+    if (!parsed.success) {
+      const errorMsg = parsed.error.issues.map((i) => i.message).join(" ");
+      return { ok: false, error: errorMsg, code: "VALIDATION_ERROR" };
+    }
+
+    const data = parsed.data;
+
     const result = await prisma.$transaction(async (tx) => {
+      // 0. Detect existing status before upsert to avoid hardcoded DRAFT
+      const existingProfile = await tx.resellerProfile.findUnique({
+        where: { userId },
+      });
+      const previousStatus = existingProfile?.status ?? "DRAFT";
+
       // 1. Upsert Reseller Profile
       const profile = await tx.resellerProfile.upsert({
         where: { userId },
@@ -201,39 +214,67 @@ export async function submitResellerApplication(input: ResellerApplicationInput)
         data: { role: "RESELLER_APPLICANT" },
       });
 
-      // 3. Create active ResellerApplication entry
-      const app = await tx.resellerApplication.create({
-        data: {
+      // 3. Update existing DRAFT application if present, otherwise create new
+      const existingApp = await tx.resellerApplication.findFirst({
+        where: {
           resellerProfileId: profile.id,
-          status: "PENDING_REVIEW",
-          categories: data.categories,
-          monthlyVolumeEst: data.monthlyVolumeEst ?? null,
-          returnPolicyNote: data.returnPolicyNote ?? null,
-          businessDescription: data.businessDescription ?? null,
-          submittedAt: new Date(),
+          status: "DRAFT",
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       });
 
-      // 4. Record status history
+      let app;
+      if (existingApp) {
+        app = await tx.resellerApplication.update({
+          where: { id: existingApp.id },
+          data: {
+            status: "PENDING_REVIEW",
+            categories: data.categories,
+            monthlyVolumeEst: data.monthlyVolumeEst ?? null,
+            returnPolicyNote: data.returnPolicyNote ?? null,
+            businessDescription: data.businessDescription ?? null,
+            submittedAt: new Date(),
+          },
+        });
+      } else {
+        app = await tx.resellerApplication.create({
+          data: {
+            resellerProfileId: profile.id,
+            status: "PENDING_REVIEW",
+            categories: data.categories,
+            monthlyVolumeEst: data.monthlyVolumeEst ?? null,
+            returnPolicyNote: data.returnPolicyNote ?? null,
+            businessDescription: data.businessDescription ?? null,
+            submittedAt: new Date(),
+          },
+        });
+      }
+
+      // 4. Record status history with dynamic previous status
       await tx.resellerStatusHistory.create({
         data: {
           resellerProfileId: profile.id,
-          fromStatus: "DRAFT",
+          fromStatus: previousStatus,
           toStatus: "PENDING_REVIEW",
           actorUserId: userId,
           reason: "Application submitted by reseller",
         },
       });
 
-      // 5. Create Audit Log
+      // 5. Create Audit Log with dynamic before/after and agreedToTerms recorded
       await tx.auditLog.create({
         data: {
           actorUserId: userId,
           action: "reseller_application.submit",
           entityType: "ResellerApplication",
           entityId: app.id,
-          beforeJson: { status: "DRAFT" },
-          afterJson: { status: "PENDING_REVIEW" },
+          beforeJson: { status: previousStatus },
+          afterJson: {
+            status: "PENDING_REVIEW",
+            agreedToTerms: data.agreedToTerms,
+          },
         },
       });
 
@@ -241,7 +282,14 @@ export async function submitResellerApplication(input: ResellerApplicationInput)
     });
 
     return { ok: true, status: result.profile.status, applicationId: result.app.id };
-  } catch (error) {
-    return { ok: false, error: (error as Error).message };
+  } catch (error: any) {
+    console.error("submitResellerApplication error:", error);
+    if (error?.name === "UnauthorizedError" || error?.code === "UNAUTHORIZED") {
+      return { ok: false, error: error.message || "Sign in required." };
+    }
+    return {
+      ok: false,
+      error: "Unable to submit application at this time. Please verify your details and try again.",
+    };
   }
 }

@@ -27,7 +27,7 @@ export default function ResellerApplicationPage() {
   const [contactPerson, setContactPerson] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
-  const [country, setCountry] = useState("US");
+  const [country, setCountry] = useState("IN");
   const [businessType, setBusinessType] = useState("LLC");
 
   const [fulfillmentMode, setFulfillmentMode] = useState<"reseller" | "cartigo">("reseller");
@@ -90,26 +90,32 @@ export default function ResellerApplicationPage() {
     setError(null);
     setDraftSavedMessage(null);
 
-    const res = await saveResellerApplicationDraft({
-      legalName,
-      contactPerson,
-      contactEmail: contactEmail || session?.user?.email || "",
-      contactPhone,
-      country,
-      businessType,
-      fulfillmentMode,
-      categories,
-      monthlyVolumeEst,
-      returnPolicyNote,
-      businessDescription,
-    });
+    try {
+      const res = await saveResellerApplicationDraft({
+        legalName,
+        contactPerson,
+        contactEmail: contactEmail || session?.user?.email || "",
+        contactPhone,
+        country,
+        businessType,
+        fulfillmentMode,
+        categories,
+        monthlyVolumeEst,
+        returnPolicyNote,
+        businessDescription,
+      });
 
-    setSavingDraft(false);
-    if (!res.ok) {
-      setError(res.error);
-    } else {
-      setDraftSavedMessage("Draft application saved successfully!");
-      setTimeout(() => setDraftSavedMessage(null), 4000);
+      if (!res.ok) {
+        setError(res.error || "Failed to save draft.");
+      } else {
+        setDraftSavedMessage("Draft application saved successfully!");
+        setTimeout(() => setDraftSavedMessage(null), 4000);
+      }
+    } catch (err: any) {
+      console.error("Save draft error:", err);
+      setError(err?.message || "An unexpected error occurred while saving draft.");
+    } finally {
+      setSavingDraft(false);
     }
   }
 
@@ -124,27 +130,32 @@ export default function ResellerApplicationPage() {
 
     setLoading(true);
 
-    const res = await submitResellerApplication({
-      legalName,
-      contactPerson,
-      contactEmail: contactEmail || session?.user?.email || "",
-      contactPhone,
-      country,
-      businessType,
-      fulfillmentMode,
-      categories,
-      monthlyVolumeEst,
-      returnPolicyNote,
-      businessDescription,
-      agreedToTerms,
-    });
+    try {
+      const res = await submitResellerApplication({
+        legalName,
+        contactPerson,
+        contactEmail: contactEmail || session?.user?.email || "",
+        contactPhone,
+        country,
+        businessType,
+        fulfillmentMode,
+        categories,
+        monthlyVolumeEst,
+        returnPolicyNote,
+        businessDescription,
+        agreedToTerms,
+      });
 
-    setLoading(false);
-
-    if (!res.ok) {
-      setError(res.error);
-    } else {
-      router.push("/reseller/status");
+      if (!res.ok) {
+        setError(res.error || "Failed to submit application.");
+      } else {
+        router.push("/reseller/status");
+      }
+    } catch (err: any) {
+      console.error("Submit application error:", err);
+      setError(err?.message || "An unexpected error occurred while submitting. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -272,11 +283,11 @@ export default function ResellerApplicationPage() {
                     onChange={(e) => setCountry(e.target.value)}
                     className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none focus:border-navy-400"
                   >
+                    <option value="IN">India</option>
                     <option value="US">United States</option>
                     <option value="CA">Canada</option>
                     <option value="GB">United Kingdom</option>
                     <option value="AU">Australia</option>
-                    <option value="IN">India</option>
                     <option value="DE">Germany</option>
                   </select>
                 </div>
@@ -451,6 +462,12 @@ export default function ResellerApplicationPage() {
                 </span>
               </label>
             </CardContent>
+          )}
+
+          {error && (
+            <div className="mx-6 mb-2 rounded-card bg-danger/10 border border-danger/20 p-3 text-xs font-medium text-danger">
+              ⚠️ {error}
+            </div>
           )}
 
           {/* Footer actions */}

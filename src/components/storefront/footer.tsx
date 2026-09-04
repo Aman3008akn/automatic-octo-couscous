@@ -75,10 +75,16 @@ export function Footer() {
             <h3 className="font-bold text-white text-sm uppercase tracking-wider">Contact Us</h3>
             <ul className="space-y-2.5 text-xs text-navy-300 font-medium">
               <li className="flex items-center gap-2">
-                <span className="text-amber-500">✉</span> support@cartigo.in
+                <span className="text-amber-500">✉</span>
+                <a href="mailto:admindesk@cartigo.com" className="hover:text-white transition-colors">
+                  admindesk@cartigo.com
+                </a>
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-amber-500">☏</span> 1800-CARTIGO
+                <span className="text-amber-500">☏</span>
+                <a href="tel:+918826817677" className="hover:text-white transition-colors">
+                  +91 8826817677
+                </a>
               </li>
             </ul>
           </div>

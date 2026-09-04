@@ -15,9 +15,25 @@ export async function requireSession() {
   
   if (error || !user?.id) throw new UnauthorizedError("Sign in required.");
   
-  const dbUser = await prisma.user.findUnique({
+  let dbUser = await prisma.user.findUnique({
     where: { email: user.email },
   });
+
+  if (!dbUser && user.email) {
+    try {
+      dbUser = await prisma.user.create({
+        data: {
+          email: user.email,
+          name: user.user_metadata?.name || user.user_metadata?.full_name || user.email.split('@')[0],
+          role: "CUSTOMER",
+        },
+      });
+    } catch {
+      dbUser = await prisma.user.findUnique({
+        where: { email: user.email },
+      });
+    }
+  }
 
   if (!dbUser) throw new UnauthorizedError("User profile not found in database.");
 

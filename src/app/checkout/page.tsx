@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/supabase/hooks";
 import { createOrderFromCart } from "@/server/orders";
+import { getCart } from "@/server/cart";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { data: session } = useSession();
+
+  const [checkingCart, setCheckingCart] = useState(true);
+  const [cartSummary, setCartSummary] = useState<any>(null);
 
   const [line1, setLine1] = useState("");
   const [city, setCity] = useState("");
@@ -22,6 +26,22 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [loadingPincode, setLoadingPincode] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getCart()
+      .then((cart) => {
+        if (!cart || cart.items.length === 0) {
+          router.replace("/cart");
+        } else {
+          setCartSummary(cart);
+          setCheckingCart(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load cart for checkout:", err);
+        router.replace("/cart");
+      });
+  }, [router]);
 
   async function handlePincodeChange(e: React.ChangeEvent<HTMLInputElement>) {
     const val = e.target.value.replace(/\D/g, "").slice(0, 6);
@@ -71,6 +91,14 @@ export default function CheckoutPage() {
     } else {
       router.push(`/orders?placed=${res.orderNumber}`);
     }
+  }
+
+  if (checkingCart) {
+    return (
+      <main className="mx-auto flex min-h-[50vh] max-w-2xl items-center justify-center p-6">
+        <p className="text-sm font-medium text-navy-600 animate-pulse">Verifying cart items & stock...</p>
+      </main>
+    );
   }
 
   return (
@@ -233,6 +261,29 @@ export default function CheckoutPage() {
               </div>
 
               <div className="p-6 text-sm text-navy-600">
+                {cartSummary && (
+                  <div className="space-y-3 mb-6 pb-4 border-b border-line text-xs">
+                    <div className="flex justify-between items-center text-navy-800">
+                      <span>Items ({cartSummary.items.length})</span>
+                      <span className="font-semibold">₹{(cartSummary.subtotalCents / 100).toLocaleString("en-IN", { maximumFractionDigits: 0 })}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-navy-800">
+                      <span>Shipping</span>
+                      <span className="font-bold text-success">
+                        {cartSummary.shippingCents === 0 ? "FREE" : `₹${(cartSummary.shippingCents / 100).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-navy-800">
+                      <span>{cartSummary.taxLabel || "Estimated GST (18%)"}</span>
+                      <span className="font-semibold">₹{(cartSummary.taxCents / 100).toLocaleString("en-IN", { maximumFractionDigits: 0 })}</span>
+                    </div>
+                    <div className="pt-2 border-t border-dashed border-line flex justify-between items-center text-sm font-bold text-navy-900">
+                      <span>Order Total</span>
+                      <span>₹{(cartSummary.totalCents / 100).toLocaleString("en-IN", { maximumFractionDigits: 0 })}</span>
+                    </div>
+                  </div>
+                )}
+
                 <div className="rounded-lg bg-blue-50 border border-blue-100 p-4 space-y-2 mb-6">
                   <div className="flex items-start gap-2">
                     <span className="text-blue-600 text-lg">💡</span>

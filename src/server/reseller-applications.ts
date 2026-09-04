@@ -33,9 +33,9 @@ export async function decideResellerApplication(
 
   let session;
   try {
-    session = await requireRole(["MODERATOR", "ADMIN", "SUPER_ADMIN"]);
+    session = await requireRole(["ADMIN", "SUPER_ADMIN"]);
   } catch {
-    return { ok: false, error: "Not authorized.", code: "FORBIDDEN" };
+    return { ok: false, error: "Not authorized. Admin privileges required.", code: "FORBIDDEN" };
   }
 
   const { applicationId, decision, reason, internalNotes } = parsed.data;

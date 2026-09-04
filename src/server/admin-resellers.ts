@@ -17,7 +17,7 @@ function tryParseJson(val: string) {
  */
 export async function getAdminResellerApplications(statusFilter?: ResellerStatus | "ALL", searchQuery?: string) {
   try {
-    await requireRole(["MODERATOR", "SUPPORT", "FINANCE", "ADMIN", "SUPER_ADMIN"]);
+    await requireRole(["ADMIN", "SUPER_ADMIN"]);
 
     const whereClause: Record<string, unknown> = {};
 
@@ -82,8 +82,10 @@ export async function getAdminResellerApplications(statusFilter?: ResellerStatus
       },
     }));
   } catch (error: any) {
-    console.error("Database connection error in getAdminResellerApplications:");
-    console.error(error?.stack || error);
-    return [];
+    if (error?.code === "FORBIDDEN" || error?.code === "UNAUTHORIZED" || error?.name === "ForbiddenError" || error?.name === "UnauthorizedError") {
+      throw error;
+    }
+    console.error("Error in getAdminResellerApplications:", error);
+    throw new Error("Unable to load reseller applications from database.");
   }
 }
