@@ -59,18 +59,18 @@ export function CategoryGrid() {
           <Link
             key={cat.slug}
             href={`/search?categorySlug=${cat.slug}`}
-            className="group relative flex flex-col items-center overflow-hidden rounded-card border border-line bg-white p-3 text-center transition-all hover:border-navy-400 hover:shadow-md"
+            className="group relative flex flex-col items-center overflow-hidden rounded-xl border border-line bg-white p-3.5 text-center transition-all duration-200 hover:border-navy-400 hover:shadow-[0_4px_12px_rgba(18,23,43,0.06)]"
           >
-            <div className="relative h-16 w-16 overflow-hidden rounded-full bg-navy-50 mb-2">
+            <div className="relative h-16 w-16 overflow-hidden rounded-lg bg-navy-50 mb-2.5 border border-line/60">
               <Image
                 src={cat.imageUrl}
                 alt={cat.name}
                 fill
                 sizes="64px"
-                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-ink group-hover:text-navy-600 line-clamp-2 leading-tight">
+            <span className="text-xs font-semibold text-ink group-hover:text-navy-900 line-clamp-2 leading-tight">
               {cat.name}
             </span>
           </Link>

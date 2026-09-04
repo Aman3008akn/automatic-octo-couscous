@@ -49,28 +49,43 @@ export async function createOrderFromCart(input: CheckoutInput): Promise<OrderAc
 
   try {
     const result = await prisma.$transaction(async (tx) => {
-      // 2. Validate and reserve stock for each variant
+      // 2. Validate and atomically reserve stock for each variant with sellable checks
       for (const item of cart.items) {
         const variant = await tx.productVariant.findUnique({
           where: { id: item.variantId },
-          include: { inventory: true },
+          include: {
+            inventory: true,
+            product: { include: { resellerProfile: true } },
+          },
         });
 
-        if (!variant || (variant.inventory?.available ?? 0) < item.quantity) {
-          throw new Error(`Insufficient stock for "${item.title}". Only ${variant?.inventory?.available ?? 0} available.`);
+        if (!variant) {
+          throw new Error(`Product variant for "${item.title}" not found.`);
         }
 
-        // Reserve stock
-        await tx.inventory.update({
-          where: { variantId: item.variantId },
+        if (variant.product.status !== "APPROVED" || variant.product.resellerProfile?.status !== "APPROVED") {
+          throw new Error(`"${item.title}" is no longer available from a verified reseller.`);
+        }
+
+        // Atomic concurrent reservation: checks and decrements in single query
+        const updateRes = await tx.inventory.updateMany({
+          where: {
+            variantId: item.variantId,
+            available: { gte: item.quantity },
+          },
           data: {
             available: { decrement: item.quantity },
             reserved: { increment: item.quantity },
           },
         });
+
+        if (updateRes.count === 0) {
+          throw new Error(`Insufficient stock for "${item.title}". Only ${variant.inventory?.available ?? 0} available.`);
+        }
       }
 
-      const initialStatus = data.paymentMethod === "COD" ? "PENDING_PAYMENT" : "PAID";
+      // Security fix: CARD and COD both start at PENDING_PAYMENT until payment confirmation
+      const initialStatus: OrderStatus = "PENDING_PAYMENT";
 
       // 3. Create Order
       const orderData: any = {
@@ -116,43 +131,92 @@ export async function createOrderFromCart(input: CheckoutInput): Promise<OrderAc
         });
       }
 
-      // 5. Record OrderStatusHistory
-      if (initialStatus !== "PENDING_PAYMENT") {
-        await tx.orderStatusHistory.create({
-          data: {
-            orderId: order.id,
-            fromStatus: "PENDING_PAYMENT",
-            toStatus: initialStatus,
-            actorUserId: userId,
-          },
-        });
+      // 5. Clear the user's cart
+      const userCart = await tx.cart.findUnique({ where: { userId } });
+      if (userCart) {
+        await tx.cartItem.deleteMany({ where: { cartId: userCart.id } });
       }
 
-      // 6. Clear user cart
-      if (cart.id) {
-        await tx.cartItem.deleteMany({
-          where: { cartId: cart.id },
-        });
-      }
-
-      // 7. Audit log
+      // 6. Record Audit Log
       await tx.auditLog.create({
         data: {
           actorUserId: userId,
           action: "order.create",
           entityType: "Order",
           entityId: order.id,
-          afterJson: { orderNumber, totalCents: cart.totalCents, status: initialStatus, paymentMethod: data.paymentMethod },
+          afterJson: {
+            orderNumber: order.orderNumber,
+            totalCents: order.totalCents,
+            paymentMethod: data.paymentMethod,
+            status: initialStatus,
+          },
         },
       });
 
-      return order;
+      return { order, orderNumber: order.orderNumber };
     });
 
-    return { ok: true, orderId: result.id, orderNumber: result.orderNumber };
+    return { ok: true, orderId: result.order.id, orderNumber: result.orderNumber };
   } catch (error) {
+    console.error("Error creating order from cart:", error);
     return { ok: false, error: (error as Error).message };
   }
+}
+
+/**
+ * Confirm payment for a pending order (called by payment gateway webhook or client verification).
+ */
+export async function confirmOrderPayment(orderId: string, paymentIntentId: string) {
+  const session = await requireSession();
+  const userId = session.user.id;
+
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+  });
+
+  if (!order) {
+    return { ok: false, error: "Order not found." };
+  }
+
+  if (order.userId !== userId && !["ADMIN", "SUPER_ADMIN"].includes(session.user.role)) {
+    return { ok: false, error: "Unauthorized access to order." };
+  }
+
+  if (order.status === "PAID") {
+    return { ok: true, message: "Order is already marked as paid." };
+  }
+
+  if (!paymentIntentId || paymentIntentId.trim().length < 5) {
+    return { ok: false, error: "Invalid payment confirmation reference." };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.order.update({
+      where: { id: orderId },
+      data: { status: "PAID" },
+    });
+
+    await tx.orderStatusHistory.create({
+      data: {
+        orderId,
+        fromStatus: "PENDING_PAYMENT",
+        toStatus: "PAID",
+        actorUserId: userId,
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        actorUserId: userId,
+        action: "order.payment_confirmed",
+        entityType: "Order",
+        entityId: orderId,
+        afterJson: { paymentIntentId, status: "PAID" },
+      },
+    });
+  });
+
+  return { ok: true };
 }
 
 /**
@@ -192,15 +256,23 @@ export async function getMyOrders() {
 export async function getResellerFulfillmentOrders() {
   const session = await requireRole(["APPROVED_RESELLER", "SUPER_ADMIN", "ADMIN"]);
   const userId = session.user.id;
+  const userRole = session.user.role;
 
-  const profile = await prisma.resellerProfile.findUnique({
-    where: { userId },
-  });
+  let whereClause: any = {};
 
-  const resellerProfileId = profile?.id;
+  // Strict check: if role is APPROVED_RESELLER, must have a profile and only see own order items
+  if (userRole === "APPROVED_RESELLER") {
+    const profile = await prisma.resellerProfile.findUnique({
+      where: { userId },
+    });
+    if (!profile) {
+      return [];
+    }
+    whereClause = { resellerProfileId: profile.id };
+  }
 
   const orderItems = await prisma.orderItem.findMany({
-    where: resellerProfileId ? { resellerProfileId } : {},
+    where: whereClause,
     include: {
       order: {
         include: {
@@ -234,10 +306,32 @@ export async function getResellerFulfillmentOrders() {
 export async function updateFulfillmentStatus(orderId: string, toStatus: OrderStatus, trackingNumber?: string, carrier?: string) {
   const session = await requireRole(["APPROVED_RESELLER", "MODERATOR", "ADMIN", "SUPER_ADMIN"]);
   const userId = session.user.id;
+  const userRole = session.user.role;
 
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order) {
     return { ok: false, error: "Order not found." };
+  }
+
+  // Security Check: If the caller is an APPROVED_RESELLER, they must own an item in this order
+  if (userRole === "APPROVED_RESELLER") {
+    const profile = await prisma.resellerProfile.findUnique({
+      where: { userId },
+    });
+    if (!profile) {
+      return { ok: false, error: "Reseller profile not found." };
+    }
+
+    const orderItem = await prisma.orderItem.findFirst({
+      where: {
+        orderId,
+        resellerProfileId: profile.id,
+      },
+    });
+
+    if (!orderItem) {
+      return { ok: false, error: "You are not authorized to update this order." };
+    }
   }
 
   try {

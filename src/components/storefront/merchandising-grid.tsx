@@ -156,7 +156,7 @@ export function MerchandisingGrid() {
       {CAMPAIGN_CARDS.map((card) => (
         <div
           key={card.id}
-          className="flex flex-col justify-between rounded-card border border-line bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
+          className="flex flex-col justify-between rounded-xl border border-line bg-white p-5 shadow-[0_2px_8px_rgba(18,23,43,0.04)] hover:shadow-[0_8px_20px_rgba(18,23,43,0.06)] transition-all"
         >
           <div>
             <div className="flex items-center justify-between gap-2 mb-3">
@@ -164,7 +164,7 @@ export function MerchandisingGrid() {
                 {card.title}
               </h3>
               {card.badge && (
-                <span className="shrink-0 rounded bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-mono font-bold text-amber-600 uppercase">
+                <span className="shrink-0 rounded-full bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-mono font-bold text-amber-600 uppercase">
                   {card.badge}
                 </span>
               )}
@@ -176,7 +176,7 @@ export function MerchandisingGrid() {
                 <Link
                   key={idx}
                   href={`/products/${item.slug}`}
-                  className="group relative flex flex-col items-center justify-between rounded-md border border-line/60 bg-navy-50/30 p-2 text-center hover:border-navy-400 hover:bg-white transition-all"
+                  className="group relative flex flex-col items-center justify-between rounded-lg border border-line/60 bg-navy-50/20 p-2 text-center hover:border-navy-400 hover:bg-white transition-all"
                 >
                   <div className="relative aspect-square w-full overflow-hidden mb-1.5">
                     <StorefrontImage

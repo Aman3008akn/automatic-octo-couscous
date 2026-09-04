@@ -44,7 +44,7 @@ export async function getCart() {
       product: {
         include: {
           images: { take: 1, orderBy: { sortOrder: "asc" } },
-          resellerProfile: { select: { legalName: true, id: true, fulfillmentMode: true } },
+          resellerProfile: { select: { legalName: true, id: true, fulfillmentMode: true, status: true } },
         },
       },
       inventory: true,
@@ -59,7 +59,12 @@ export async function getCart() {
     const v = variantMap.get(item.variantId);
     const unitPriceCents = v?.priceCents ?? 0;
     const lineTotalCents = unitPriceCents * item.quantity;
-    subtotalCents += lineTotalCents;
+    
+    // Check product and reseller approval status
+    const isSellable = v?.product.status === "APPROVED" && v?.product.resellerProfile?.status === "APPROVED";
+    if (isSellable) {
+      subtotalCents += lineTotalCents;
+    }
 
     const isCartigoFulfill = v?.product.resellerProfile.fulfillmentMode === "cartigo";
     const deliveryDays = isCartigoFulfill ? 2 : 4;
@@ -82,6 +87,7 @@ export async function getCart() {
       availableStock: v?.inventory?.available ?? 0,
       compareAtCents: (v?.product as any)?.compareAtCents ?? Math.round(unitPriceCents * 1.25),
       deliveryEstimate,
+      isAvailable: isSellable,
     };
   });
 
@@ -109,26 +115,39 @@ export async function addToCart(variantIdOrSlug: string, quantity = 1): Promise<
   const session = await requireSession();
   const userId = (session.user as { id: string }).id;
 
-  let variant = null;
+  let variant: any = null;
   
   // Only query by ID if it's a valid 24-character hex string (MongoDB ObjectId)
   if (/^[0-9a-fA-F]{24}$/.test(variantIdOrSlug)) {
     variant = await prisma.productVariant.findUnique({
       where: { id: variantIdOrSlug },
-      include: { inventory: true },
+      include: {
+        inventory: true,
+        product: { include: { resellerProfile: true } },
+      },
     });
   }
 
   if (!variant) {
     const product = await prisma.product.findUnique({
       where: { slug: variantIdOrSlug },
-      include: { variants: { include: { inventory: true }, take: 1 } },
+      include: {
+        resellerProfile: true,
+        variants: { include: { inventory: true }, take: 1 },
+      },
     });
-    variant = product?.variants[0] ?? null;
+    if (product && product.variants.length > 0) {
+      variant = { ...product.variants[0], product };
+    }
   }
 
   if (!variant) {
     return { ok: false, error: "Product variant not found." };
+  }
+
+  // Marketplace integrity check: Product and Reseller must both be APPROVED
+  if (variant.product.status !== "APPROVED" || variant.product.resellerProfile?.status !== "APPROVED") {
+    return { ok: false, error: "This product is currently unavailable from verified sellers." };
   }
 
   const available = variant.inventory?.available ?? 0;

@@ -52,12 +52,7 @@ export async function searchCatalog(params: SearchParams = {}) {
       };
     }
 
-    let orderBy: Record<string, "asc" | "desc"> = { createdAt: "desc" };
-    if (sortBy === "price_asc") {
-      orderBy = { createdAt: "asc" };
-    } else if (sortBy === "price_desc") {
-      orderBy = { createdAt: "desc" };
-    }
+    const isPriceSort = sortBy === "price_asc" || sortBy === "price_desc";
 
     const [products, totalCount] = await Promise.all([
       prisma.product.findMany({
@@ -73,14 +68,14 @@ export async function searchCatalog(params: SearchParams = {}) {
             select: { legalName: true },
           },
         },
-        orderBy,
-        take,
-        skip,
+        orderBy: { createdAt: "desc" },
+        take: isPriceSort ? Math.max(take * 3, 100) : take,
+        skip: isPriceSort ? 0 : skip,
       }),
       prisma.product.count({ where: whereClause }),
     ]);
 
-    const items = products.map((p) => {
+    let items = products.map((p) => {
       const variant = p.variants[0];
       const priceCents = variant?.priceCents ?? 0;
       const compareAtCents = variant?.compareAtCents ?? 0;
@@ -107,6 +102,16 @@ export async function searchCatalog(params: SearchParams = {}) {
         reviewCount: 42 + (p.title.length % 50),
       };
     });
+
+    if (sortBy === "price_asc") {
+      items.sort((a, b) => a.priceCents - b.priceCents);
+    } else if (sortBy === "price_desc") {
+      items.sort((a, b) => b.priceCents - a.priceCents);
+    }
+
+    if (isPriceSort) {
+      items = items.slice(skip, skip + take);
+    }
 
     return {
       items,

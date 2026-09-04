@@ -83,11 +83,12 @@ export async function getMyResellerProducts() {
 export async function saveProductDraft(input: Partial<ProductInput>): Promise<ProductActionResult> {
   const session = await requireRole(["APPROVED_RESELLER", "SUPER_ADMIN", "ADMIN"]);
   const userId = session.user.id;
+  const isReseller = session.user.role === "APPROVED_RESELLER";
 
   const profile = await prisma.resellerProfile.findUnique({
     where: { userId },
   });
-  if (!profile && session.user.role === "APPROVED_RESELLER") {
+  if (!profile && isReseller) {
     return { ok: false, error: "Approved reseller profile required." };
   }
 
@@ -112,6 +113,19 @@ export async function saveProductDraft(input: Partial<ProductInput>): Promise<Pr
     const product = await prisma.$transaction(async (tx) => {
       let prod;
       if (input.productId) {
+        // Strict ownership check: prevent editing products belonging to other resellers
+        const existing = await tx.product.findUnique({
+          where: { id: input.productId },
+        });
+
+        if (!existing) {
+          throw new Error("Product not found.");
+        }
+
+        if (isReseller && existing.resellerProfileId !== profile?.id) {
+          throw new Error("Unauthorized: You do not own this product.");
+        }
+
         prod = await tx.product.update({
           where: { id: input.productId },
           data: {
@@ -194,6 +208,7 @@ export async function saveProductDraft(input: Partial<ProductInput>): Promise<Pr
 export async function submitProductForReview(input: ProductInput): Promise<ProductActionResult> {
   const session = await requireRole(["APPROVED_RESELLER", "SUPER_ADMIN", "ADMIN"]);
   const userId = session.user.id;
+  const isReseller = session.user.role === "APPROVED_RESELLER";
 
   const parsed = productInputSchema.safeParse(input);
   if (!parsed.success) {
@@ -205,6 +220,10 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
   const profile = await prisma.resellerProfile.findUnique({
     where: { userId },
   });
+
+  if (isReseller && !profile) {
+    return { ok: false, error: "Approved reseller profile required to submit products." };
+  }
 
   const resellerProfileId = profile?.id ?? (await prisma.resellerProfile.findFirst())?.id;
   if (!resellerProfileId) {
@@ -219,6 +238,19 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
     const product = await prisma.$transaction(async (tx) => {
       let prod;
       if (data.productId) {
+        // Strict ownership check: prevent submitting products belonging to other resellers
+        const existing = await tx.product.findUnique({
+          where: { id: data.productId },
+        });
+
+        if (!existing) {
+          throw new Error("Product not found.");
+        }
+
+        if (isReseller && existing.resellerProfileId !== profile?.id) {
+          throw new Error("Unauthorized: You do not own this product.");
+        }
+
         prod = await tx.product.update({
           where: { id: data.productId },
           data: {
