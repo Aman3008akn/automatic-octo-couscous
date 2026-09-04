@@ -28,6 +28,18 @@ export type ApplicationResult =
   | { ok: false; error: string; code?: string };
 
 /**
+ * Get current user role from database.
+ */
+export async function getCurrentUserRole(): Promise<string | null> {
+  try {
+    const session = await requireSession();
+    return session.user.role;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetch profile and status for the current session user.
  * STRICT PRIVACY REQUIREMENT: Admin `internalNotes` are NEVER exposed to the reseller.
  * Only `rejectionReason` (if REJECTED) or public status fields are returned.
@@ -59,6 +71,7 @@ export async function getMyResellerStatus() {
   return {
     hasProfile: true,
     profileId: profile.id,
+    role: session.user.role,
     status: profile.status,
     legalName: profile.legalName,
     contactPerson: profile.contactPerson,
@@ -71,6 +84,98 @@ export async function getMyResellerStatus() {
     rejectionReason: profile.status === "REJECTED" ? latestApp?.rejectionReason ?? null : null,
     updatedAt: profile.updatedAt,
   };
+}
+
+/**
+ * Fetch seller operations dashboard statistics and authorization status from MongoDB.
+ */
+export async function getResellerDashboardData() {
+  try {
+    const session = await requireSession();
+    const userId = session.user.id;
+    const userRole = session.user.role;
+
+    const profile = await prisma.resellerProfile.findUnique({
+      where: { userId },
+    });
+
+    const isAuthorized =
+      profile?.status === "APPROVED" ||
+      userRole === "APPROVED_RESELLER" ||
+      userRole === "SUPER_ADMIN" ||
+      userRole === "ADMIN";
+
+    if (!isAuthorized) {
+      return {
+        isAuthorized: false,
+        status: profile?.status ?? "RESELLER_APPLICANT",
+        role: userRole,
+        legalName: profile?.legalName ?? session.user.name ?? "Seller",
+        activeProductsCount: 0,
+        pendingProductsCount: 0,
+        ordersCount: 0,
+        products: [],
+      };
+    }
+
+    const resellerProfileId = profile?.id;
+
+    const [activeProductsCount, pendingProductsCount, products, ordersCount] = await Promise.all([
+      resellerProfileId
+        ? prisma.product.count({ where: { resellerProfileId, status: "APPROVED" } })
+        : prisma.product.count({ where: { status: "APPROVED" } }),
+      resellerProfileId
+        ? prisma.product.count({ where: { resellerProfileId, status: "PENDING_REVIEW" } })
+        : prisma.product.count({ where: { status: "PENDING_REVIEW" } }),
+      resellerProfileId
+        ? prisma.product.findMany({
+            where: { resellerProfileId },
+            include: {
+              variants: { include: { inventory: true } },
+            },
+            take: 5,
+            orderBy: { updatedAt: "desc" },
+          })
+        : [],
+      resellerProfileId
+        ? prisma.orderItem.count({ where: { resellerProfileId } })
+        : 0,
+    ]);
+
+    return {
+      isAuthorized: true,
+      status: profile?.status ?? "APPROVED",
+      role: userRole,
+      legalName: profile?.legalName ?? session.user.name ?? "Verified Partner",
+      fulfillmentMode: profile?.fulfillmentMode ?? "reseller",
+      activeProductsCount,
+      pendingProductsCount,
+      ordersCount,
+      products: products.map((p) => {
+        const variant = p.variants[0];
+        return {
+          id: p.id,
+          title: p.title,
+          sku: variant?.sku ?? "SKU-PROD",
+          priceCents: variant?.priceCents ?? 0,
+          availableStock: variant?.inventory?.available ?? 0,
+          status: p.status,
+        };
+      }),
+    };
+  } catch (err: any) {
+    return {
+      isAuthorized: false,
+      status: "RESELLER_APPLICANT",
+      role: "CUSTOMER",
+      legalName: "Seller",
+      activeProductsCount: 0,
+      pendingProductsCount: 0,
+      ordersCount: 0,
+      products: [],
+      error: err.message,
+    };
+  }
 }
 
 /**
