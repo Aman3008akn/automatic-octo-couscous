@@ -52,8 +52,8 @@ export function AppDownloadBanner() {
       <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
         {/* Left Side: Content */}
         <div className="w-full lg:w-3/5 text-center lg:text-left space-y-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-bold tracking-wider uppercase">
-            <Smartphone className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-3 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-bold tracking-wider uppercase">
+            <img src="/icons/cartigo-app-logo.png" alt="Cartigo APK" className="w-5 h-5 rounded-full object-cover" />
             <span>Official Mobile Experience</span>
           </div>
 
@@ -108,10 +108,14 @@ export function AppDownloadBanner() {
 
             {/* App UI Simulation */}
             <div className="flex-1 rounded-2xl bg-[#12172B] p-4 flex flex-col justify-between border border-navy-700/50">
-              {/* App Header */}
+              {/* App Header with Official 3D Logo */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <CartigoLogoIcon className="w-6 h-6 text-amber-400" />
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/icons/cartigo-app-logo.png"
+                    alt="Cartigo Logo"
+                    className="w-8 h-8 rounded-lg object-cover shadow-sm"
+                  />
                   <span className="font-display font-black text-sm text-white tracking-wider">CARTIGO</span>
                 </div>
                 <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">
