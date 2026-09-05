@@ -327,7 +327,7 @@ export function CartigoLaunchAnimation({
 
 const styles = StyleSheet.create({
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "#080D1A", // Deep Ledger Navy
     zIndex: 99999,
     justifyContent: "center",
