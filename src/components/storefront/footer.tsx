@@ -86,6 +86,12 @@ export function Footer() {
                   +91 8826817677
                 </a>
               </li>
+              <li className="flex items-center gap-2">
+                <span className="text-amber-500">☏</span>
+                <a href="tel:+918840108332" className="hover:text-white transition-colors">
+                  +91 8840108332
+                </a>
+              </li>
             </ul>
           </div>
         </div>
