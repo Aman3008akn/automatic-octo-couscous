@@ -11,6 +11,7 @@ import { TeamSection } from "@/components/storefront/team-section";
 import { TeamScrollPopup } from "@/components/storefront/team-scroll-popup";
 import { Footer } from "@/components/storefront/footer";
 import { WelcomeOffer } from "@/components/storefront/welcome-offer";
+import { AppDownloadBanner } from "@/components/storefront/app-download-banner";
 import { getBanners } from "@/server/banners";
 
 export default async function HomePage() {
@@ -92,12 +93,15 @@ export default async function HomePage() {
 
         {/* 7. Meet the Builders: The Minds Behind Cartigo */}
         <TeamSection />
+
+        {/* 8. Download Cartigo App / APK Banner */}
+        <AppDownloadBanner />
       </main>
 
       {/* Floating Action Badge to scroll to Team Section */}
       <TeamScrollPopup />
 
-      {/* 8. Marketplace Footer */}
+      {/* 9. Marketplace Footer */}
       <Footer />
     </div>
   );

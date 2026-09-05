@@ -67,6 +67,7 @@ export function Footer() {
               <li><Link href="/orders" className="hover:text-amber-400 transition-colors">Returns Center</Link></li>
               <li><Link href="#" className="hover:text-amber-400 transition-colors">100% Purchase Protection</Link></li>
               <li><Link href="#" className="hover:text-amber-400 transition-colors">Help & Support</Link></li>
+              <li><a href="#cartigo-app-download" className="text-amber-400 font-bold hover:underline flex items-center gap-1"><span>📱</span> Download Mobile App</a></li>
             </ul>
           </div>
 
