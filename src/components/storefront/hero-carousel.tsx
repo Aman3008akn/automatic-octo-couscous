@@ -33,7 +33,7 @@ export function HeroCarousel({ banners = BANNERS }: { banners?: any[] }) {
   const banner = banners[current] || banners[0];
 
   return (
-    <div className="relative overflow-hidden rounded-2xl text-white shadow-lg w-full aspect-[16/9]">
+    <div className="relative overflow-hidden rounded-2xl text-white shadow-lg w-full aspect-[1024/545]">
       {/* Slide Images */}
       <div className="absolute inset-0">
         {banners.map((banner, index) => (
@@ -52,7 +52,7 @@ export function HeroCarousel({ banners = BANNERS }: { banners?: any[] }) {
               priority={index === 0}
               quality={100}
               sizes="100vw"
-              className="object-cover object-center"
+              className="object-cover object-center w-full h-full"
             />
           </div>
         ))}
@@ -90,7 +90,7 @@ export function HeroCarousel({ banners = BANNERS }: { banners?: any[] }) {
       </button>
 
       {/* Dots */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+      <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
         {banners.map((_, idx) => (
           <button
             key={idx}
