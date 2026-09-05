@@ -366,3 +366,69 @@ export async function updateFulfillmentStatus(orderId: string, toStatus: OrderSt
     return { ok: false, error: (error as Error).message };
   }
 }
+
+/**
+ * Fetch a single order by ID or orderNumber for current user or admin.
+ */
+export async function getOrderById(orderIdOrNumber: string) {
+  const session = await requireSession();
+  const userId = session.user.id;
+  const isPrivileged = ["ADMIN", "SUPER_ADMIN", "SUPPORT"].includes(session.user.role);
+
+  const order = await prisma.order.findFirst({
+    where: {
+      OR: [{ id: orderIdOrNumber }, { orderNumber: orderIdOrNumber }],
+      ...(isPrivileged ? {} : { userId }),
+    },
+    include: {
+      items: true,
+      statusLog: { orderBy: { createdAt: "desc" } },
+    },
+  });
+
+  return order;
+}
+
+/**
+ * Cancel an order if it is in PENDING_PAYMENT or FULFILLING.
+ */
+export async function cancelOrder(orderId: string) {
+  const session = await requireSession();
+  const userId = session.user.id;
+  const isPrivileged = ["ADMIN", "SUPER_ADMIN", "SUPPORT"].includes(session.user.role);
+
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+  });
+
+  if (!order) {
+    return { ok: false, error: "Order not found." };
+  }
+
+  if (order.userId !== userId && !isPrivileged) {
+    return { ok: false, error: "Unauthorized access to order." };
+  }
+
+  if (["DELIVERED", "CANCELLED", "REFUNDED"].includes(order.status)) {
+    return { ok: false, error: `Cannot cancel an order with status ${order.status}.` };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.order.update({
+      where: { id: orderId },
+      data: { status: "CANCELLED" },
+    });
+
+    await tx.orderStatusHistory.create({
+      data: {
+        orderId,
+        fromStatus: order.status,
+        toStatus: "CANCELLED",
+        actorUserId: userId,
+      },
+    });
+  });
+
+  return { ok: true };
+}
+
