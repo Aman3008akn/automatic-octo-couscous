@@ -26,7 +26,6 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
@@ -35,11 +34,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "eas": {
-        "projectId": "cartigo-native-app"
-      }
     }
   }
 }
