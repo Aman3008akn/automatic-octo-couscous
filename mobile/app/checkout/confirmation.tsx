@@ -1,12 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  withDelay,
+  FadeInDown,
+} from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 import { colors, radius, shadows } from "../../src/theme";
 import { Button } from "../../src/components/common/Button";
 import { formatRupees } from "../../src/utils/format";
@@ -15,21 +25,62 @@ export default function OrderConfirmationScreen() {
   const router = useRouter();
   const { orderNumber, amount } = useLocalSearchParams<{ orderNumber: string; amount: string }>();
 
+  const checkmarkScale = useSharedValue(0);
+  const ringScale = useSharedValue(0.8);
+  const ringOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    // Tactile success feedback
+    try {
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      }
+    } catch {}
+
+    checkmarkScale.value = withDelay(
+      150,
+      withSpring(1, { damping: 9, stiffness: 180 })
+    );
+
+    ringOpacity.value = withDelay(
+      200,
+      withTiming(0.4, { duration: 200 })
+    );
+    ringScale.value = withDelay(
+      200,
+      withSpring(1.3, { damping: 11, stiffness: 120 })
+    );
+  }, []);
+
+  const rCheckmarkStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: checkmarkScale.value }],
+  }));
+
+  const rRingStyle = useAnimatedStyle(() => ({
+    opacity: ringOpacity.value,
+    transform: [{ scale: ringScale.value }],
+  }));
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.container}>
-        {/* Success Icon */}
-        <View style={styles.successCircle}>
-          <Ionicons name="checkmark-sharp" size={44} color={colors.white} />
+        {/* Animated Success Badge with expanding ripple */}
+        <View style={styles.iconArea}>
+          <Animated.View style={[styles.rippleRing, rRingStyle]} />
+          <Animated.View style={[styles.successCircle, rCheckmarkStyle]}>
+            <Ionicons name="checkmark-sharp" size={44} color={colors.white} />
+          </Animated.View>
         </View>
 
-        <Text style={styles.title}>Order Confirmed!</Text>
-        <Text style={styles.subtitle}>
-          Thank you for shopping on Cartigo. Your order has been placed into our verified dispatch queue.
-        </Text>
+        <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.headerBlock}>
+          <Text style={styles.title}>Order Confirmed!</Text>
+          <Text style={styles.subtitle}>
+            Thank you for shopping on Cartigo. Your order has been placed into our verified dispatch queue.
+          </Text>
+        </Animated.View>
 
         {/* Order Details Card */}
-        <View style={styles.detailsCard}>
+        <Animated.View entering={FadeInDown.delay(450).springify()} style={styles.detailsCard}>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Order Reference</Text>
             <Text style={styles.orderNumberText}>{orderNumber || "CTG-2026-84912"}</Text>
@@ -50,10 +101,10 @@ export default function OrderConfirmationScreen() {
             <Text style={styles.detailLabel}>Estimated Delivery</Text>
             <Text style={styles.deliveryText}>2–4 Business Days (Express)</Text>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Action Buttons */}
-        <View style={styles.actions}>
+        <Animated.View entering={FadeInDown.delay(600).springify()} style={styles.actions}>
           <Button
             title="Track Order Milestones →"
             onPress={() => router.replace(`/orders/${orderNumber || "CTG-2026-84912"}` as any)}
@@ -65,7 +116,7 @@ export default function OrderConfirmationScreen() {
             variant="outline"
             onPress={() => router.replace("/(tabs)" as any)}
           />
-        </View>
+        </Animated.View>
       </View>
     </SafeAreaView>
   );
@@ -82,6 +133,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 24,
   },
+  iconArea: {
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+    width: 100,
+    height: 100,
+  },
+  rippleRing: {
+    position: "absolute",
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    borderWidth: 3,
+    borderColor: colors.status.success,
+  },
   successCircle: {
     width: 84,
     height: 84,
@@ -89,8 +156,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.status.success,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
     ...shadows.card,
+  },
+  headerBlock: {
+    alignItems: "center",
   },
   title: {
     fontSize: 24,

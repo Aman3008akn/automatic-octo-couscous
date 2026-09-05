@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { useQuery } from "@tanstack/react-query";
 import { colors, radius, shadows } from "../src/theme";
 import { api } from "../src/api/client";
@@ -86,21 +87,24 @@ export default function SearchScreen() {
           data={results}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.resultsList}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.resultItem}
-              onPress={() => router.push(`/products/${item.id}` as any)}
-            >
-              <Image source={{ uri: item.imageUrl }} style={styles.resultImage} />
-              <View style={styles.resultInfo}>
-                <Text style={styles.resultBrand}>{item.brand || "VERIFIED"}</Text>
-                <Text style={styles.resultTitle} numberOfLines={1}>
-                  {item.title}
-                </Text>
-                <Text style={styles.resultPrice}>{formatRupees(item.priceCents)}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={16} color={colors.text.muted} />
-            </TouchableOpacity>
+          renderItem={({ item, index }: { item: any; index: number }) => (
+            <Animated.View entering={FadeInDown.delay(index * 35).springify()}>
+              <TouchableOpacity
+                style={styles.resultItem}
+                onPress={() => router.push(`/products/${item.id}` as any)}
+                activeOpacity={0.8}
+              >
+                <Image source={{ uri: item.imageUrl }} style={styles.resultImage} />
+                <View style={styles.resultInfo}>
+                  <Text style={styles.resultBrand}>{item.brand || "VERIFIED"}</Text>
+                  <Text style={styles.resultTitle} numberOfLines={1}>
+                    {item.title}
+                  </Text>
+                  <Text style={styles.resultPrice}>{formatRupees(item.priceCents)}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={16} color={colors.text.muted} />
+              </TouchableOpacity>
+            </Animated.View>
           )}
           ListEmptyComponent={
             !isFetching ? (
@@ -126,17 +130,18 @@ export default function SearchScreen() {
               </View>
               <View style={styles.tagsRow}>
                 {recentSearches.map((term, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.tag}
-                    onPress={() => {
-                      setQuery(term);
-                      handleSearchSubmit(term);
-                    }}
-                  >
-                    <Ionicons name="time-outline" size={12} color={colors.text.secondary} />
-                    <Text style={styles.tagText}>{term}</Text>
-                  </TouchableOpacity>
+                  <Animated.View key={index} entering={FadeInDown.delay(index * 30).springify()}>
+                    <TouchableOpacity
+                      style={styles.tag}
+                      onPress={() => {
+                        setQuery(term);
+                        handleSearchSubmit(term);
+                      }}
+                    >
+                      <Ionicons name="time-outline" size={12} color={colors.text.secondary} />
+                      <Text style={styles.tagText}>{term}</Text>
+                    </TouchableOpacity>
+                  </Animated.View>
                 ))}
               </View>
             </View>
@@ -147,17 +152,18 @@ export default function SearchScreen() {
             <Text style={styles.sectionTitle}>POPULAR SEARCHES</Text>
             <View style={styles.tagsRow}>
               {TRENDING_TAGS.map((tag, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.trendingTag}
-                  onPress={() => {
-                    setQuery(tag);
-                    handleSearchSubmit(tag);
-                  }}
-                >
-                  <Ionicons name="trending-up" size={13} color={colors.amber[600]} />
-                  <Text style={styles.trendingText}>{tag}</Text>
-                </TouchableOpacity>
+                <Animated.View key={index} entering={FadeInDown.delay(index * 30).springify()}>
+                  <TouchableOpacity
+                    style={styles.trendingTag}
+                    onPress={() => {
+                      setQuery(tag);
+                      handleSearchSubmit(tag);
+                    }}
+                  >
+                    <Ionicons name="trending-up" size={13} color={colors.amber[600]} />
+                    <Text style={styles.trendingText}>{tag}</Text>
+                  </TouchableOpacity>
+                </Animated.View>
               ))}
             </View>
           </View>

@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { View } from "react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -6,13 +7,22 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../src/api/queryClient";
 import { useAuthStore } from "../src/store/useAuthStore";
 import { colors } from "../src/theme";
+import { CartigoLaunchAnimation } from "../src/components/common/CartigoLaunchAnimation";
+
+let hasSeenLaunchAnimation = false;
 
 export default function RootLayout() {
-  const restoreSession = useAuthStore((s) => s.restoreSession);
+  const restoreSession = useAuthStore((s: any) => s.restoreSession);
+  const [showSplash, setShowSplash] = useState(!hasSeenLaunchAnimation);
 
   useEffect(() => {
     restoreSession();
   }, []);
+
+  const handleSplashFinish = () => {
+    hasSeenLaunchAnimation = true;
+    setShowSplash(false);
+  };
 
   return (
     <SafeAreaProvider>
@@ -39,6 +49,7 @@ export default function RootLayout() {
           <Stack.Screen name="notifications" options={{ headerShown: false }} />
           <Stack.Screen name="help" options={{ headerShown: false }} />
         </Stack>
+        {showSplash && <CartigoLaunchAnimation onFinish={handleSplashFinish} />}
       </QueryClientProvider>
     </SafeAreaProvider>
   );

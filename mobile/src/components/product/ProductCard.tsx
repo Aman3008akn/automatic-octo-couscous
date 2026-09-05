@@ -1,12 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   ViewStyle,
+  Platform,
 } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, radius, shadows } from "../../theme";
@@ -20,26 +30,84 @@ interface ProductCardProps {
   style?: ViewStyle;
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 export const ProductCard: React.FC<ProductCardProps> = ({ product, style }) => {
   const router = useRouter();
   const { isInWishlist, toggleWishlist } = useWishlistStore();
-  const addItem = useCartStore((s) => s.addItem);
+  const addItem = useCartStore((s: any) => s.addItem);
+  const [justAdded, setJustAdded] = useState(false);
+
+  // Micro-animation shared values
+  const cardScale = useSharedValue(1);
+  const heartScale = useSharedValue(1);
+  const addBtnScale = useSharedValue(1);
 
   const inWishlist = isInWishlist(product.id);
+
+  const triggerHaptic = (type: "light" | "medium") => {
+    try {
+      if (Platform.OS !== "web") {
+        if (type === "light") {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+        } else {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+        }
+      }
+    } catch {
+      // Safe fallback
+    }
+  };
 
   const handlePress = () => {
     router.push(`/products/${product.id}` as any);
   };
 
-  const handleAddToCart = (e: any) => {
-    addItem(product, product.primaryVariant?.id || product.variants?.[0]?.id, 1);
+  const handleWishlistToggle = () => {
+    triggerHaptic("light");
+    heartScale.value = withSequence(
+      withSpring(1.4, { damping: 6, stiffness: 300 }),
+      withSpring(1.0, { damping: 12, stiffness: 150 })
+    );
+    toggleWishlist(product);
   };
 
+  const handleAddToCart = () => {
+    triggerHaptic("medium");
+    addBtnScale.value = withSequence(
+      withTiming(0.85, { duration: 80 }),
+      withSpring(1.15, { damping: 8, stiffness: 250 }),
+      withSpring(1.0, { damping: 14, stiffness: 160 })
+    );
+    setJustAdded(true);
+    addItem(product, product.primaryVariant?.id || product.variants?.[0]?.id, 1);
+    setTimeout(() => {
+      setJustAdded(false);
+    }, 1200);
+  };
+
+  const rCardStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: cardScale.value }],
+  }));
+
+  const rHeartStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: heartScale.value }],
+  }));
+
+  const rAddBtnStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: addBtnScale.value }],
+  }));
+
   return (
-    <TouchableOpacity
-      activeOpacity={0.88}
+    <AnimatedPressable
       onPress={handlePress}
-      style={[styles.card, style]}
+      onPressIn={() => {
+        cardScale.value = withTiming(0.975, { duration: 90 });
+      }}
+      onPressOut={() => {
+        cardScale.value = withSpring(1.0, { damping: 14, stiffness: 180 });
+      }}
+      style={[styles.card, rCardStyle, style]}
     >
       {/* Thumbnail Container */}
       <View style={styles.imageContainer}>
@@ -58,18 +126,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, style }) => {
           </View>
         ) : null}
 
-        {/* Wishlist Heart Button */}
-        <TouchableOpacity
-          style={styles.wishlistButton}
-          onPress={() => toggleWishlist(product)}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Ionicons
-            name={inWishlist ? "heart" : "heart-outline"}
-            size={18}
-            color={inWishlist ? colors.status.danger : colors.ink}
-          />
-        </TouchableOpacity>
+        {/* Wishlist Heart Button with Spring Animation */}
+        <Animated.View style={[styles.wishlistWrapper, rHeartStyle]}>
+          <TouchableOpacity
+            style={styles.wishlistButton}
+            onPress={handleWishlistToggle}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            activeOpacity={0.8}
+          >
+            <Ionicons
+              name={inWishlist ? "heart" : "heart-outline"}
+              size={18}
+              color={inWishlist ? colors.status.danger : colors.ink}
+            />
+          </TouchableOpacity>
+        </Animated.View>
       </View>
 
       {/* Details */}
@@ -105,16 +176,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, style }) => {
             ) : null}
           </View>
 
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={handleAddToCart}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="add" size={18} color={colors.navy[900]} />
-          </TouchableOpacity>
+          {/* Add Button with Micro Bounce */}
+          <Animated.View style={rAddBtnStyle}>
+            <TouchableOpacity
+              style={[
+                styles.addButton,
+                justAdded && styles.addedButtonActive,
+              ]}
+              onPress={handleAddToCart}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name={justAdded ? "checkmark" : "add"}
+                size={18}
+                color={justAdded ? colors.white : colors.navy[900]}
+              />
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </View>
-    </TouchableOpacity>
+    </AnimatedPressable>
   );
 };
 
@@ -147,20 +228,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: radius.sm,
+    zIndex: 2,
   },
   discountText: {
     color: colors.white,
     fontSize: 10,
     fontWeight: "800",
   },
-  wishlistButton: {
+  wishlistWrapper: {
     position: "absolute",
     top: 8,
     right: 8,
+    zIndex: 2,
+  },
+  wishlistButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     alignItems: "center",
     justifyContent: "center",
     ...shadows.subtle,
@@ -240,5 +325,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.amber[400],
     alignItems: "center",
     justifyContent: "center",
+  },
+  addedButtonActive: {
+    backgroundColor: colors.status.success,
   },
 });
