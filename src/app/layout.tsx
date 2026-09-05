@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { SessionProvider } from "@/components/providers/session-provider";
+import { PwaLaunchAnimation } from "@/components/pwa/pwa-launch-animation";
 
 export const metadata: Metadata = {
   title: "Cartigo — Verified Reseller Marketplace",
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen bg-paper text-ink font-body flex flex-col antialiased">
         <SessionProvider>
+          <PwaLaunchAnimation />
           <Header />
           <div className="flex-1">{children}</div>
           <footer className="border-t border-line bg-paper py-8 text-center text-xs text-navy-400">

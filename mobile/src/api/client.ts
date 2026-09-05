@@ -1,8 +1,25 @@
+import Constants from "expo-constants";
 import { getAuthToken } from "../utils/storage";
 import { Product, Category, Banner, Cart, Order } from "../types";
 import { MOCK_BANNERS, MOCK_CATEGORIES, MOCK_PRODUCTS, MOCK_ORDERS } from "./mockData";
 
-const API_BASE = process.env.EXPO_PUBLIC_API_URL || "http://10.0.2.2:3000";
+export function getApiBaseUrl(): string {
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    return process.env.EXPO_PUBLIC_API_URL;
+  }
+  // If running in Expo Go or development, extract the host IP dynamically
+  const hostUri = Constants.expoConfig?.hostUri;
+  if (hostUri) {
+    const host = hostUri.split(":")[0];
+    if (host) {
+      return `http://${host}:3000`;
+    }
+  }
+  // Default to the computer's LAN IP
+  return "http://192.168.1.8:3000";
+}
+
+const API_BASE = getApiBaseUrl();
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = await getAuthToken();
