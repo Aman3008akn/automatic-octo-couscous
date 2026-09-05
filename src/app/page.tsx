@@ -7,7 +7,8 @@ import { CategoryGrid } from "@/components/storefront/category-grid";
 import { ProductCard } from "@/components/storefront/product-card";
 import { CartigoDrop } from "@/components/storefront/cartigo-drop";
 import { PriceDrops } from "@/components/storefront/price-drops";
-import { TrustSection } from "@/components/storefront/trust-section";
+import { TeamSection } from "@/components/storefront/team-section";
+import { TeamScrollPopup } from "@/components/storefront/team-scroll-popup";
 import { Footer } from "@/components/storefront/footer";
 import { WelcomeOffer } from "@/components/storefront/welcome-offer";
 import { getBanners } from "@/server/banners";
@@ -89,9 +90,12 @@ export default async function HomePage() {
           )}
         </section>
 
-        {/* 7. Marketplace Trust Section: BUY WITH CONFIDENCE + Fintech Metrics */}
-        <TrustSection />
+        {/* 7. Meet the Builders: The Minds Behind Cartigo */}
+        <TeamSection />
       </main>
+
+      {/* Floating Action Badge to scroll to Team Section */}
+      <TeamScrollPopup />
 
       {/* 8. Marketplace Footer */}
       <Footer />

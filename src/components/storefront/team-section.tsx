@@ -40,29 +40,37 @@ export function TeamSection() {
   ];
 
   return (
-    <section id="team-section" className="bg-navy-900 py-16 sm:py-24 text-paper overflow-hidden relative">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-amber-500/10 blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-blue-500/10 blur-3xl"></div>
+    <section id="team-section" className="relative rounded-2xl bg-navy-900 text-paper p-6 sm:p-10 lg:p-14 border border-navy-800 shadow-xl overflow-hidden">
+      {/* Decorative architectural glows */}
+      <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-sm font-mono font-bold uppercase tracking-wider text-amber-400 mb-2 block">
-            Meet the Builders
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-display font-bold text-white mb-4">
+      <div className="relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 mb-2 px-3 py-1 rounded-full bg-navy-800/80 border border-navy-700">
+            <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-amber-400">
+              MEET THE BUILDERS
+            </span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white mb-3 tracking-tight">
             The Minds Behind Cartigo
           </h2>
-          <p className="text-navy-100 text-sm sm:text-base">
-            Cartigo is proudly engineered by a dedicated team of developers committed to creating the most secure and premium marketplace experience.
+          <p className="text-navy-200 text-xs sm:text-base max-w-2xl mx-auto leading-relaxed">
+            Cartigo is proudly engineered by a dedicated team of builders committed to creating India's most secure, reliable, and premium marketplace experience.
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-6 w-full max-w-7xl mx-auto">
+        {/* Team Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {teamMembers.map((member) => (
-            <div key={member.name} className="flex flex-col items-center text-center gap-6 bg-navy-800/50 rounded-2xl p-6 sm:p-8 border border-navy-700 hover:border-amber-500/30 transition-colors shadow-lg backdrop-blur-sm w-full max-w-sm">
+            <div
+              key={member.name}
+              className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 bg-navy-800/60 rounded-3xl p-6 sm:p-8 border border-navy-700/80 hover:border-amber-500/50 transition-all duration-300 shadow-xl backdrop-blur-sm group"
+            >
+              {/* Large Photo */}
               <div className="shrink-0 relative">
-                <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 border-amber-500/50 shadow-xl rotate-[-2deg] hover:rotate-0 transition-transform">
+                <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border-2 border-amber-400/80 shadow-2xl rotate-[-2deg] group-hover:rotate-0 group-hover:scale-105 transition-all duration-300 bg-navy-950">
                   <img
                     src={member.image}
                     alt={member.name}
@@ -70,27 +78,34 @@ export function TeamSection() {
                   />
                 </div>
               </div>
-              
-              <div className="flex flex-col justify-center">
-                <h3 className="text-2xl font-bold text-white font-display">{member.name}</h3>
-                <p className="text-amber-400 font-mono text-xs mb-3 uppercase tracking-wider">{member.role}</p>
-                
-                <div className="space-y-4 mt-2">
-                  <p className="text-sm text-navy-100 leading-relaxed text-left">
-                    <span className="font-semibold text-white">About:</span> {member.bio}
+
+              {/* Info, Role, Bio, Goal */}
+              <div className="flex-1 text-center sm:text-left space-y-3.5">
+                <div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-white font-display tracking-tight">
+                    {member.name}
+                  </h3>
+                  <span className="inline-block mt-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-400 font-mono text-xs font-bold uppercase tracking-wider">
+                    {member.role}
+                  </span>
+                </div>
+
+                <p className="text-xs sm:text-sm text-navy-200 leading-relaxed">
+                  <span className="font-semibold text-white">About: </span>
+                  {member.bio}
+                </p>
+
+                <div className="bg-navy-900/90 rounded-xl p-4 border border-navy-700/60 text-left">
+                  <p className="text-xs text-navy-100 leading-relaxed italic">
+                    <span className="font-bold text-amber-400 not-italic block mb-1 text-[11px] uppercase tracking-wider">
+                      🎯 Vision & Goal:
+                    </span>
+                    "{member.goal}"
                   </p>
-                  <div className="bg-navy-900/80 rounded-lg p-4 border border-navy-700/50 text-left">
-                    <p className="text-xs text-navy-50 leading-relaxed italic">
-                      <span className="font-bold text-amber-500 not-italic block mb-1">🎯 Vision & Goal:</span>
-                      "{member.goal}"
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
           ))}
-          
-          {/* Both developers are now loaded */}
         </div>
       </div>
     </section>
