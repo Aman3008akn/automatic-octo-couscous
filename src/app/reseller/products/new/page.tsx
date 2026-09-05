@@ -36,7 +36,11 @@ export default function NewProductWizardPage() {
   const [brand, setBrand] = useState("");
   const [condition, setCondition] = useState("New");
 
-  const [imageUrl, setImageUrl] = useState("https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=600&auto=format&fit=crop");
+  const [imageUrl, setImageUrl] = useState("");
+  const [uploadMode, setUploadMode] = useState<"gallery" | "url">("gallery");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const [productVisibility, setProductVisibility] = useState<"APPROVED" | "UNPUBLISHED" | "DRAFT">("APPROVED");
 
   const [sku, setSku] = useState("");
   const [colorOption, setColorOption] = useState("Default");
@@ -57,6 +61,44 @@ export default function NewProductWizardPage() {
   const priceCents = Math.round((parseFloat(priceDollars) || 0) * 100);
   const compareAtCents = compareAtDollars ? Math.round((parseFloat(compareAtDollars) || 0) * 100) : undefined;
 
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setImageUploadError("Please select a valid image file (PNG, JPG, WebP).");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setImageUploadError("Image size must be less than 5MB.");
+      return;
+    }
+
+    setUploadingImage(true);
+    setImageUploadError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Upload failed. Please try again.");
+      }
+
+      setImageUrl(data.url);
+    } catch (err: any) {
+      setImageUploadError(err.message || "Failed to upload photo from device.");
+    } finally {
+      setUploadingImage(false);
+    }
+  }
+
   async function handleSaveDraft() {
     setSavingDraft(true);
     setError(null);
@@ -69,7 +111,7 @@ export default function NewProductWizardPage() {
       description,
       brand,
       condition,
-      imageUrl,
+      imageUrl: imageUrl || "https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=600&auto=format&fit=crop",
       sku: sku || `SKU-${Date.now()}`,
       optionsJson: { color: colorOption },
       priceCents,
@@ -97,6 +139,11 @@ export default function NewProductWizardPage() {
       return;
     }
 
+    if (!imageUrl) {
+      setError("Please upload or provide at least one product photo.");
+      return;
+    }
+
     setLoading(true);
 
     const res = await submitProductForReview({
@@ -112,6 +159,7 @@ export default function NewProductWizardPage() {
       priceCents,
       compareAtCents,
       inventoryCount,
+      status: productVisibility,
     });
 
     setLoading(false);
@@ -283,26 +331,137 @@ export default function NewProductWizardPage() {
           {step === 3 && (
             <CardContent className="pt-6 space-y-4">
               <CardTitle>Step 3: Product Imagery</CardTitle>
-              <CardDescription>Provide high-resolution image URLs for storefront display.</CardDescription>
+              <CardDescription>
+                Upload high-quality product photos directly from your phone/computer gallery or paste a link.
+              </CardDescription>
 
-              <div>
-                <label className="block text-xs font-semibold uppercase text-navy-600 mb-1">Primary Image URL *</label>
-                <input
-                  type="url"
-                  required
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none focus:border-navy-400"
-                />
+              {/* Mode Toggle Tabs */}
+              <div className="flex rounded-lg border border-line bg-navy-50 p-1 w-fit gap-1">
+                <button
+                  type="button"
+                  onClick={() => setUploadMode("gallery")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    uploadMode === "gallery"
+                      ? "bg-white text-ink shadow-sm"
+                      : "text-navy-500 hover:text-ink"
+                  }`}
+                >
+                  📱 Device / Gallery Upload
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUploadMode("url")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    uploadMode === "url"
+                      ? "bg-white text-ink shadow-sm"
+                      : "text-navy-500 hover:text-ink"
+                  }`}
+                >
+                  🔗 Image Link URL
+                </button>
               </div>
 
-              {imageUrl && (
-                <div className="pt-2">
-                  <p className="text-xs font-semibold text-navy-600 mb-2">Image Preview:</p>
-                  <div className="w-48 h-48 rounded-card border border-line overflow-hidden bg-navy-50 flex items-center justify-center">
-                    <img src={imageUrl} alt="Product Preview" className="w-full h-full object-cover" />
+              {imageUploadError && (
+                <div className="rounded-card bg-danger/10 border border-danger/20 p-3 text-xs font-medium text-danger">
+                  ⚠️ {imageUploadError}
+                </div>
+              )}
+
+              {uploadMode === "gallery" ? (
+                <div className="space-y-3">
+                  <label className="block text-xs font-semibold uppercase text-navy-600">
+                    Upload from Gallery / Files *
+                  </label>
+
+                  {imageUrl ? (
+                    <div className="flex flex-col sm:flex-row items-center gap-4 p-4 border-2 border-dashed border-emerald-300 bg-emerald-50/20 rounded-xl">
+                      <div className="w-36 h-36 rounded-lg border border-line overflow-hidden bg-white shrink-0 flex items-center justify-center shadow-sm">
+                        <img src={imageUrl} alt="Uploaded preview" className="w-full h-full object-contain p-1" />
+                      </div>
+                      <div className="space-y-2 text-center sm:text-left">
+                        <span className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800">
+                          ✓ Photo Uploaded Successfully
+                        </span>
+                        <p className="text-xs text-navy-500 break-all max-w-sm">
+                          {imageUrl}
+                        </p>
+                        <div className="pt-1">
+                          <label className="inline-flex items-center gap-2 cursor-pointer bg-navy-900 text-white text-xs font-semibold px-3 py-2 rounded-lg hover:bg-navy-800 transition-colors">
+                            <span>🔄 Choose Different Photo</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              disabled={uploadingImage}
+                              onChange={handleFileUpload}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 cursor-pointer transition-all ${
+                      uploadingImage
+                        ? "border-amber-400 bg-amber-50/40 cursor-wait"
+                        : "border-navy-200 bg-navy-50/30 hover:border-navy-400 hover:bg-navy-50/60"
+                    }`}>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        disabled={uploadingImage}
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                      {uploadingImage ? (
+                        <div className="text-center space-y-2">
+                          <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                          <p className="text-sm font-bold text-navy-900">Uploading photo to cloud storage...</p>
+                          <p className="text-xs text-navy-500">Please wait a moment</p>
+                        </div>
+                      ) : (
+                        <div className="text-center space-y-2">
+                          <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto text-xl font-bold">
+                            📷
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-ink">
+                              Click or tap to choose photo from Gallery
+                            </p>
+                            <p className="text-xs text-navy-500 mt-1">
+                              Supports JPG, PNG, WebP up to 5MB
+                            </p>
+                          </div>
+                          <span className="inline-block mt-2 px-3 py-1.5 rounded-lg bg-navy-900 text-amber-400 text-xs font-semibold shadow-sm">
+                            Browse Photo Library →
+                          </span>
+                        </div>
+                      )}
+                    </label>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold uppercase text-navy-600 mb-1">
+                      Primary Image URL *
+                    </label>
+                    <input
+                      type="url"
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                      placeholder="https://images.unsplash.com/..."
+                      className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none focus:border-navy-400"
+                    />
                   </div>
+
+                  {imageUrl && (
+                    <div className="pt-2">
+                      <p className="text-xs font-semibold text-navy-600 mb-2">Image Preview:</p>
+                      <div className="w-48 h-48 rounded-card border border-line overflow-hidden bg-navy-50 flex items-center justify-center">
+                        <img src={imageUrl} alt="Product Preview" className="w-full h-full object-contain" />
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -464,17 +623,78 @@ export default function NewProductWizardPage() {
             </CardContent>
           )}
 
-          {/* STEP 10: Submit */}
+          {/* STEP 10: Visibility & Publish */}
           {step === 10 && (
-            <CardContent className="pt-6 space-y-4">
-              <CardTitle>Step 10: Final Submission for Admin Review</CardTitle>
+            <CardContent className="pt-6 space-y-5">
+              <CardTitle>Step 10: Product Visibility & Publish Status</CardTitle>
               <CardDescription>
-                Submitting this product listing places it into the Cartigo admin moderation queue.
+                Choose whether to publish this product immediately Live (ON), keep it Hidden (OFF), or save as a Private Draft.
               </CardDescription>
 
-              <div className="rounded-card bg-amber-50/50 border border-amber-400/30 p-4 text-xs text-navy-900 space-y-2">
-                <p className="font-semibold text-amber-700">Moderation Notice:</p>
-                <p>Products are reviewed for catalog quality, accuracy, price logic, and authenticity. Approved listings publish automatically.</p>
+              <div className="space-y-3">
+                <label className="block text-xs font-semibold uppercase text-navy-600">
+                  Select Status for this Product *
+                </label>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div
+                    onClick={() => setProductVisibility("APPROVED")}
+                    className={`cursor-pointer rounded-xl border p-4 transition-all ${
+                      productVisibility === "APPROVED"
+                        ? "border-emerald-500 bg-emerald-50/50 shadow-sm ring-2 ring-emerald-500/20"
+                        : "border-line bg-white hover:border-navy-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="flex h-3 w-3 rounded-full bg-emerald-500" />
+                      <span className="font-bold text-sm text-ink">🟢 Live (ON)</span>
+                    </div>
+                    <p className="text-xs text-navy-600">
+                      Product goes Live on Cartigo storefront immediately. Buyers can search and purchase.
+                    </p>
+                  </div>
+
+                  <div
+                    onClick={() => setProductVisibility("UNPUBLISHED")}
+                    className={`cursor-pointer rounded-xl border p-4 transition-all ${
+                      productVisibility === "UNPUBLISHED"
+                        ? "border-gray-500 bg-gray-50 shadow-sm ring-2 ring-gray-500/20"
+                        : "border-line bg-white hover:border-navy-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="flex h-3 w-3 rounded-full bg-gray-400" />
+                      <span className="font-bold text-sm text-ink">⚪ Hidden (OFF)</span>
+                    </div>
+                    <p className="text-xs text-navy-600">
+                      Saved in your catalog as inactive. Hidden from store search until you toggle it ON.
+                    </p>
+                  </div>
+
+                  <div
+                    onClick={() => setProductVisibility("DRAFT")}
+                    className={`cursor-pointer rounded-xl border p-4 transition-all ${
+                      productVisibility === "DRAFT"
+                        ? "border-amber-500 bg-amber-50/50 shadow-sm ring-2 ring-amber-500/20"
+                        : "border-line bg-white hover:border-navy-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="flex h-3 w-3 rounded-full bg-amber-500" />
+                      <span className="font-bold text-sm text-ink">🔒 Private (Draft)</span>
+                    </div>
+                    <p className="text-xs text-navy-600">
+                      Saved in your private seller catalog. Fully hidden and visible only to you.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-card bg-navy-50/60 border border-line p-4 text-xs text-navy-800 space-y-1">
+                <p className="font-semibold text-navy-900">💡 Instant Status Control:</p>
+                <p>
+                  You can change this item anytime between <strong>Live (ON)</strong>, <strong>Hidden (OFF)</strong>, and <strong>Private</strong> directly from your Products dashboard.
+                </p>
               </div>
             </CardContent>
           )}
@@ -499,6 +719,10 @@ export default function NewProductWizardPage() {
                       setError("Please provide a product title and description.");
                       return;
                     }
+                    if (step === 3 && !imageUrl) {
+                      setError("Please upload a photo from gallery or provide an image link.");
+                      return;
+                    }
                     if (step === 4 && !sku) {
                       setError("Please enter a unique SKU code.");
                       return;
@@ -511,7 +735,11 @@ export default function NewProductWizardPage() {
                 </Button>
               ) : (
                 <Button type="submit" variant="primary" loading={loading} className="bg-amber-500 text-navy-900 font-bold hover:bg-amber-600 px-6">
-                  Submit Listing for Review
+                  {productVisibility === "APPROVED"
+                    ? "Publish Product Live (ON) →"
+                    : productVisibility === "UNPUBLISHED"
+                    ? "Save Product as Inactive (OFF) →"
+                    : "Save as Private (Draft) →"}
                 </Button>
               )}
             </div>

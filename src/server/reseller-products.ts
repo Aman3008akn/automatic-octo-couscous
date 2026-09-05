@@ -18,6 +18,7 @@ const productInputSchema = z.object({
   priceCents: z.number().int().positive("Price must be greater than zero."),
   compareAtCents: z.number().int().positive().optional(),
   inventoryCount: z.number().int().min(0, "Inventory must be zero or positive."),
+  status: z.enum(["APPROVED", "UNPUBLISHED", "DRAFT"]).optional(),
 });
 
 export type ProductInput = z.infer<typeof productInputSchema>;
@@ -252,6 +253,8 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
   const baseSlug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   const slug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
 
+  const targetStatus: ProductStatus = data.status || "APPROVED";
+
   try {
     const product = await prisma.$transaction(async (tx) => {
       let prod;
@@ -277,7 +280,7 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
             description: data.description,
             brand: data.brand ?? null,
             condition: data.condition ?? "New",
-            status: "PENDING_REVIEW",
+            status: targetStatus,
           },
         });
       } else {
@@ -290,7 +293,7 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
             description: data.description,
             brand: data.brand ?? null,
             condition: data.condition ?? "New",
-            status: "PENDING_REVIEW",
+            status: targetStatus,
           },
         });
       }
@@ -357,3 +360,47 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
     return { ok: false, error: (error as Error).message };
   }
 }
+
+/**
+ * Toggle product status for retailer:
+ * - APPROVED: ON / Live on storefront
+ * - UNPUBLISHED: OFF / Inactive (hidden from storefront)
+ * - DRAFT: Private (internal draft)
+ */
+export async function toggleProductVisibility(
+  productId: string,
+  newStatus: "APPROVED" | "UNPUBLISHED" | "DRAFT"
+): Promise<{ ok: true; status: ProductStatus } | { ok: false; error: string }> {
+  try {
+    const session = await requireRole(["APPROVED_RESELLER", "SUPER_ADMIN", "ADMIN"]);
+    const userId = session.user.id;
+    const isReseller = session.user.role === "APPROVED_RESELLER";
+
+    const profile = await prisma.resellerProfile.findUnique({
+      where: { userId },
+    });
+
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      return { ok: false, error: "Product not found." };
+    }
+
+    if (isReseller && product.resellerProfileId !== profile?.id) {
+      return { ok: false, error: "Unauthorized: You do not own this product." };
+    }
+
+    const updated = await prisma.product.update({
+      where: { id: productId },
+      data: { status: newStatus },
+    });
+
+    return { ok: true, status: updated.status };
+  } catch (err: any) {
+    console.error("toggleProductVisibility error:", err);
+    return { ok: false, error: err?.message || "Failed to update product status." };
+  }
+}
+
