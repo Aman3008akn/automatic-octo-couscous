@@ -186,6 +186,11 @@ export async function saveResellerApplicationDraft(input: Partial<ResellerApplic
     const session = await requireSession();
     const userId = session.user.id;
 
+    const existingProfile = await prisma.resellerProfile.findUnique({ where: { userId } });
+    if (existingProfile?.status === "APPROVED" || session.user.role === "APPROVED_RESELLER") {
+      return { ok: false, error: "Your reseller account is already verified and approved." };
+    }
+
     const result = await prisma.$transaction(async (tx) => {
       // 1. Create or update profile
       const profile = await tx.resellerProfile.upsert({
@@ -279,6 +284,11 @@ export async function submitResellerApplication(input: ResellerApplicationInput)
     }
 
     const data = parsed.data;
+
+    const existing = await prisma.resellerProfile.findUnique({ where: { userId } });
+    if (existing?.status === "APPROVED" || session.user.role === "APPROVED_RESELLER") {
+      return { ok: false, error: "Your reseller account is already verified and approved. You can access your seller dashboard directly." };
+    }
 
     const result = await prisma.$transaction(async (tx) => {
       // 0. Detect existing status before upsert to avoid hardcoded DRAFT

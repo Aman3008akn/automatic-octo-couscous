@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/supabase/hooks";
-import { submitResellerApplication, saveResellerApplicationDraft } from "@/server/reseller-onboarding";
+import { submitResellerApplication, saveResellerApplicationDraft, getMyResellerStatus } from "@/server/reseller-onboarding";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 
@@ -44,10 +44,35 @@ export default function ResellerApplicationPage() {
   const [error, setError] = useState<string | null>(null);
   const [draftSavedMessage, setDraftSavedMessage] = useState<string | null>(null);
 
-  if (sessionStatus === "loading") {
+  const [checkingExisting, setCheckingExisting] = useState(true);
+  const [existingStatus, setExistingStatus] = useState<Awaited<ReturnType<typeof getMyResellerStatus>> | null>(null);
+
+  useEffect(() => {
+    if (session) {
+      getMyResellerStatus()
+        .then((res) => {
+          setExistingStatus(res);
+          if (res?.hasProfile) {
+            if (res.legalName) setLegalName(res.legalName);
+            if (res.contactPerson) setContactPerson(res.contactPerson);
+            if (res.contactEmail) setContactEmail(res.contactEmail);
+            if (res.categories && res.categories.length > 0) setCategories(res.categories);
+            if (res.fulfillmentMode) setFulfillmentMode(res.fulfillmentMode as "reseller" | "cartigo");
+          }
+        })
+        .finally(() => setCheckingExisting(false));
+    } else if (sessionStatus !== "loading") {
+      setCheckingExisting(false);
+    }
+  }, [session, sessionStatus]);
+
+  if (sessionStatus === "loading" || checkingExisting) {
     return (
       <main className="mx-auto flex min-h-[50vh] max-w-2xl items-center justify-center p-6">
-        <p className="text-sm font-medium text-navy-600 animate-pulse">Loading session status...</p>
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-navy-900 border-t-transparent" />
+          <p className="text-sm font-medium text-navy-600">Verifying reseller eligibility...</p>
+        </div>
       </main>
     );
   }
@@ -70,6 +95,64 @@ export default function ResellerApplicationPage() {
               Sign In to Continue
             </Button>
           </CardFooter>
+        </Card>
+      </main>
+    );
+  }
+
+  // If user is ALREADY approved, prevent re-filling blank application form!
+  if (existingStatus?.hasProfile && existingStatus.status === "APPROVED") {
+    return (
+      <main className="mx-auto max-w-xl px-4 py-16 text-center">
+        <Card className="border-emerald-500/40 bg-emerald-50/20 shadow-lg p-8">
+          <div className="mx-auto w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-bold mb-4">
+            ✓
+          </div>
+          <CardTitle className="text-2xl font-display font-bold text-navy-900">
+            Reseller Account Already Approved
+          </CardTitle>
+          <CardDescription className="max-w-md mx-auto mt-2 text-sm text-navy-600">
+            Your partner business account for <strong>{existingStatus.legalName}</strong> is verified and active. You already have full seller privileges on Cartigo!
+          </CardDescription>
+          <div className="mt-8 flex justify-center gap-3">
+            <Button
+              variant="primary"
+              onClick={() => router.push("/reseller/dashboard")}
+              className="bg-navy-900 text-amber-400 hover:bg-navy-800 font-bold px-6 py-3"
+            >
+              Go to Seller Dashboard →
+            </Button>
+          </div>
+        </Card>
+      </main>
+    );
+  }
+
+  // If user ALREADY submitted an application that is pending review, show status link!
+  if (existingStatus?.hasProfile && existingStatus.status === "PENDING_REVIEW") {
+    return (
+      <main className="mx-auto max-w-xl px-4 py-16 text-center">
+        <Card className="border-amber-400/40 bg-amber-50/20 shadow-lg p-8">
+          <div className="mx-auto w-14 h-14 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-2xl mb-4">
+            ⏳
+          </div>
+          <CardTitle className="text-2xl font-display font-bold text-navy-900">
+            Application Already Under Review
+          </CardTitle>
+          <CardDescription className="max-w-md mx-auto mt-2 text-sm text-navy-600">
+            Your partner application for <strong>{existingStatus.legalName}</strong> was already submitted on{" "}
+            {existingStatus.submittedAt ? new Date(existingStatus.submittedAt).toLocaleDateString() : "recently"}.
+            Our compliance officers verify documents within 24–48 hours.
+          </CardDescription>
+          <div className="mt-8 flex justify-center gap-3">
+            <Button
+              variant="primary"
+              onClick={() => router.push("/reseller/status")}
+              className="bg-navy-900 text-paper hover:bg-navy-800 font-bold px-6 py-3"
+            >
+              Check Application Status →
+            </Button>
+          </div>
         </Card>
       </main>
     );

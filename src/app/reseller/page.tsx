@@ -1,8 +1,19 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { getMyResellerStatus } from "@/server/reseller-onboarding";
 
-export default function ResellerProgramPage() {
+export default async function ResellerProgramPage() {
+  let resellerStatus: Awaited<ReturnType<typeof getMyResellerStatus>> | null = null;
+  try {
+    resellerStatus = await getMyResellerStatus();
+  } catch {
+    // not signed in
+  }
+
+  const isApproved = resellerStatus?.hasProfile && resellerStatus.status === "APPROVED";
+  const isPending = resellerStatus?.hasProfile && resellerStatus.status === "PENDING_REVIEW";
+
   return (
     <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       {/* Hero Section */}
@@ -18,16 +29,33 @@ export default function ResellerProgramPage() {
             Cartigo is an exclusive reseller-only marketplace. Unlike open platforms, every seller is vetted, verified, and backed by Cartigo&apos;s authenticity and fulfillment standard.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Link href="/reseller/apply">
-              <Button variant="primary" className="bg-amber-400 text-navy-900 hover:bg-amber-500 text-base px-6 py-3 font-semibold">
-                Apply for Reseller Account →
-              </Button>
-            </Link>
-            <Link href="/reseller/status">
-              <Button variant="tertiary" className="text-white hover:bg-white/10 text-base px-6 py-3 border border-white/20">
-                Check Application Status
-              </Button>
-            </Link>
+            {isApproved ? (
+              <Link href="/reseller/dashboard">
+                <Button variant="primary" className="bg-amber-400 text-navy-900 hover:bg-amber-500 text-base px-6 py-3 font-semibold">
+                  Go to Seller Dashboard →
+                </Button>
+              </Link>
+            ) : isPending ? (
+              <Link href="/reseller/status">
+                <Button variant="primary" className="bg-amber-400 text-navy-900 hover:bg-amber-500 text-base px-6 py-3 font-semibold">
+                  Check Application Status →
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/reseller/apply">
+                <Button variant="primary" className="bg-amber-400 text-navy-900 hover:bg-amber-500 text-base px-6 py-3 font-semibold">
+                  Apply for Reseller Account →
+                </Button>
+              </Link>
+            )}
+
+            {!isApproved && (
+              <Link href="/reseller/status">
+                <Button variant="tertiary" className="text-white hover:bg-white/10 text-base px-6 py-3 border border-white/20">
+                  Check Application Status
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
         {/* Subtle grid accent background */}
@@ -182,12 +210,22 @@ export default function ResellerProgramPage() {
 
       {/* Call to Action Footer */}
       <section className="text-center py-8">
-        <h3 className="text-2xl font-display font-bold text-ink mb-4">Ready to expand your distribution?</h3>
-        <Link href="/reseller/apply">
-          <Button variant="primary" className="py-3 px-8 text-base">
-            Start Reseller Application Now
-          </Button>
-        </Link>
+        <h3 className="text-2xl font-display font-bold text-ink mb-4">
+          {isApproved ? "Manage your seller catalog" : "Ready to expand your distribution?"}
+        </h3>
+        {isApproved ? (
+          <Link href="/reseller/dashboard">
+            <Button variant="primary" className="py-3 px-8 text-base bg-amber-500 text-navy-900 font-bold hover:bg-amber-600">
+              Open Seller Dashboard →
+            </Button>
+          </Link>
+        ) : (
+          <Link href="/reseller/apply">
+            <Button variant="primary" className="py-3 px-8 text-base">
+              Start Reseller Application Now
+            </Button>
+          </Link>
+        )}
       </section>
     </main>
   );

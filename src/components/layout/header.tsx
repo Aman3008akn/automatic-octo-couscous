@@ -6,6 +6,7 @@ import { useSession, signOut } from "@/lib/supabase/hooks";
 import { useEffect, useState, useRef } from "react";
 import { getCart } from "@/server/cart";
 import { getSearchSuggestions } from "@/server/search";
+import { getMyResellerStatus } from "@/server/reseller-onboarding";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { CartigoLogoIcon } from "@/components/ui/cartigo-logo";
 
@@ -39,6 +40,7 @@ export function Header() {
   const { data: session } = useSession();
 
   const [cartCount, setCartCount] = useState<number>(0);
+  const [isResellerVerified, setIsResellerVerified] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [suggestions, setSuggestions] = useState<{ title: string; slug: string; categoryName: string }[]>([]);
@@ -52,6 +54,14 @@ export function Header() {
       getCart()
         .then((res) => setCartCount(res.items.reduce((sum, i) => sum + i.quantity, 0)))
         .catch(() => setCartCount(0));
+
+      getMyResellerStatus()
+        .then((res) => {
+          if (res?.hasProfile && res.status === "APPROVED") {
+            setIsResellerVerified(true);
+          }
+        })
+        .catch(() => {});
     }
   }, [session, pathname]);
 
@@ -90,6 +100,7 @@ export function Header() {
 
   const role = (session?.user as { role?: string })?.role;
   const isAdmin = ["MODERATOR", "SUPPORT", "FINANCE", "ADMIN", "SUPER_ADMIN"].includes(role ?? "");
+  const isReseller = role === "APPROVED_RESELLER" || isAdmin || isResellerVerified;
 
   return (
     <header className="sticky top-0 z-50 shadow-sm flex flex-col bg-white">
@@ -105,8 +116,8 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-4 text-navy-100">
-          <Link href="/reseller" className="hover:text-amber-400 transition-colors">
-            Sell on Cartigo
+          <Link href={isReseller ? "/reseller/dashboard" : "/reseller"} className="hover:text-amber-400 transition-colors font-medium">
+            {isReseller ? "🏪 Seller Dashboard" : "Sell on Cartigo"}
           </Link>
           <span>•</span>
           <Link href="/orders" className="hover:text-amber-400 transition-colors">
@@ -216,8 +227,24 @@ export function Header() {
                     </div>
                     <div className="py-1">
                       <Link href="/orders" onClick={() => setAccountMenuOpen(false)} className="block px-3 py-1.5 hover:bg-navy-50 font-medium text-ink">📦 My Orders</Link>
+                      {/* ONLY for retailers: My Dashboard */}
+                      {isReseller && (
+                        <Link
+                          href="/reseller/dashboard"
+                          onClick={() => setAccountMenuOpen(false)}
+                          className="flex items-center justify-between px-3 py-2 my-1 bg-amber-500/10 hover:bg-amber-500/20 text-navy-900 rounded font-bold transition-colors border border-amber-500/30"
+                        >
+                          <span className="flex items-center gap-1.5">
+                            <span>🏪</span>
+                            <span>Seller Dashboard</span>
+                          </span>
+                          <span className="rounded-full bg-amber-500 text-navy-900 text-[9px] font-extrabold px-2 py-0.5 uppercase tracking-wider">
+                            Retailer
+                          </span>
+                        </Link>
+                      )}
                       {isAdmin && (
-                        <Link href="/admin" onClick={() => setAccountMenuOpen(false)} className="block px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 rounded font-bold text-navy-900 border border-amber-400/50 my-1">⚙️ Admin Console →</Link>
+                        <Link href="/admin" onClick={() => setAccountMenuOpen(false)} className="block px-3 py-2 bg-navy-900 text-amber-400 hover:bg-navy-800 rounded font-bold border border-navy-700 my-1">⚙️ Admin Console →</Link>
                       )}
                     </div>
                     <div className="pt-1">
