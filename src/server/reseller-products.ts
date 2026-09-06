@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/authz";
 import type { ProductStatus } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 const productInputSchema = z.object({
   productId: z.string().optional(),
@@ -105,11 +106,37 @@ export async function saveProductDraft(input: Partial<ProductInput>): Promise<Pr
   const session = await requireRole(["APPROVED_RESELLER", "SUPER_ADMIN", "ADMIN"]);
   const userId = session.user.id;
   const isReseller = session.user.role === "APPROVED_RESELLER";
+  const isAdminOrSuper = session.user.role === "SUPER_ADMIN" || session.user.role === "ADMIN";
 
-  const profile = await prisma.resellerProfile.findUnique({
+  let profile = await prisma.resellerProfile.findUnique({
     where: { userId },
   });
-  if (!profile && isReseller) {
+
+  if (isAdminOrSuper) {
+    if (!profile) {
+      profile = await prisma.resellerProfile.create({
+        data: {
+          userId,
+          legalName: session.user.name || "Cartigo Official",
+          contactPerson: session.user.name || "Admin",
+          contactEmail: session.user.email,
+          contactPhone: "000-000-0000",
+          country: "US",
+          businessType: "Company",
+          fulfillmentMode: "cartigo",
+          status: "APPROVED",
+        },
+      });
+    } else if (profile.status !== "APPROVED" || !profile.legalName?.trim()) {
+      profile = await prisma.resellerProfile.update({
+        where: { id: profile.id },
+        data: {
+          status: "APPROVED",
+          legalName: profile.legalName?.trim() || session.user.name || "Cartigo Official",
+        },
+      });
+    }
+  } else if (!profile && isReseller) {
     return { ok: false, error: "Approved reseller profile required." };
   }
 
@@ -226,6 +253,7 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
   const session = await requireRole(["APPROVED_RESELLER", "SUPER_ADMIN", "ADMIN"]);
   const userId = session.user.id;
   const isReseller = session.user.role === "APPROVED_RESELLER";
+  const isAdminOrSuper = session.user.role === "SUPER_ADMIN" || session.user.role === "ADMIN";
 
   const parsed = productInputSchema.safeParse(input);
   if (!parsed.success) {
@@ -234,11 +262,35 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
 
   const data = parsed.data;
 
-  const profile = await prisma.resellerProfile.findUnique({
+  let profile = await prisma.resellerProfile.findUnique({
     where: { userId },
   });
 
-  if (isReseller && !profile) {
+  if (isAdminOrSuper) {
+    if (!profile) {
+      profile = await prisma.resellerProfile.create({
+        data: {
+          userId,
+          legalName: session.user.name || "Cartigo Official",
+          contactPerson: session.user.name || "Admin",
+          contactEmail: session.user.email,
+          contactPhone: "000-000-0000",
+          country: "US",
+          businessType: "Company",
+          fulfillmentMode: "cartigo",
+          status: "APPROVED",
+        },
+      });
+    } else if (profile.status !== "APPROVED" || !profile.legalName?.trim()) {
+      profile = await prisma.resellerProfile.update({
+        where: { id: profile.id },
+        data: {
+          status: "APPROVED",
+          legalName: profile.legalName?.trim() || session.user.name || "Cartigo Official",
+        },
+      });
+    }
+  } else if (isReseller && !profile) {
     return { ok: false, error: "Approved reseller profile required to submit products." };
   }
 
@@ -253,7 +305,7 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
   const baseSlug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   const slug = `${baseSlug}-${Date.now().toString().slice(-6)}`;
 
-  const targetStatus: ProductStatus = data.status || "APPROVED";
+  const targetStatus: ProductStatus = isAdminOrSuper ? (data.status || "APPROVED") : (data.status || "APPROVED");
 
   try {
     const product = await prisma.$transaction(async (tx) => {
@@ -355,6 +407,11 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
       return prod;
     });
 
+    revalidatePath("/");
+    revalidatePath("/search");
+    revalidatePath("/admin/catalog");
+    revalidatePath("/reseller/products");
+
     return { ok: true, productId: product.id, status: product.status };
   } catch (error) {
     return { ok: false, error: (error as Error).message };
@@ -396,6 +453,11 @@ export async function toggleProductVisibility(
       where: { id: productId },
       data: { status: newStatus },
     });
+
+    revalidatePath("/");
+    revalidatePath("/search");
+    revalidatePath("/admin/catalog");
+    revalidatePath("/reseller/products");
 
     return { ok: true, status: updated.status };
   } catch (err: any) {

@@ -5,9 +5,24 @@
 @layer base {
   html {
     @apply bg-paper text-ink;
+    touch-action: pan-x pan-y;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior-y: none;
   }
   body {
     @apply font-body antialiased;
+    touch-action: pan-x pan-y;
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button, a, input, select, textarea {
+    touch-action: manipulation;
+  }
+  /* Prevent iOS Safari from auto-zooming on input focus by guaranteeing 16px minimum on mobile */
+  @media screen and (max-width: 768px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
   }
   h1, h2, h3 {
     @apply font-display;
@@ -15,4 +30,8 @@
   :focus-visible {
     @apply outline-none ring-2 ring-navy-400 ring-offset-2 ring-offset-paper;
   }
+  body.has-pwa-bottom-nav {
+    padding-bottom: calc(56px + max(env(safe-area-inset-bottom, 0px), 12px));
+  }
 }
+

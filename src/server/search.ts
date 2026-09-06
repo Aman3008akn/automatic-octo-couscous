@@ -20,37 +20,48 @@ export async function searchCatalog(params: SearchParams = {}) {
   try {
     const { q, categorySlug, minPriceCents, maxPriceCents, sortBy = "newest", take = 24, skip = 0 } = params;
 
-    const whereClause: Record<string, unknown> = {
-      status: "APPROVED",
-      resellerProfile: {
-        status: "APPROVED",
+    const andConditions: any[] = [
+      { status: "APPROVED" },
+      {
+        OR: [
+          { resellerProfile: { status: "APPROVED" } },
+          { resellerProfile: { user: { role: { in: ["SUPER_ADMIN", "ADMIN"] } } } },
+        ],
       },
-    };
+    ];
 
     if (categorySlug && categorySlug !== "all") {
-      whereClause.category = { slug: categorySlug };
+      andConditions.push({ category: { slug: categorySlug } });
     }
 
     if (q && q.trim().length > 0) {
       const queryStr = q.trim();
-      whereClause.OR = [
-        { title: { contains: queryStr, mode: "insensitive" } },
-        { description: { contains: queryStr, mode: "insensitive" } },
-        { brand: { contains: queryStr, mode: "insensitive" } },
-        { category: { name: { contains: queryStr, mode: "insensitive" } } },
-      ];
+      andConditions.push({
+        OR: [
+          { title: { contains: queryStr, mode: "insensitive" } },
+          { description: { contains: queryStr, mode: "insensitive" } },
+          { brand: { contains: queryStr, mode: "insensitive" } },
+          { category: { name: { contains: queryStr, mode: "insensitive" } } },
+        ],
+      });
     }
 
     if (minPriceCents !== undefined || maxPriceCents !== undefined) {
-      whereClause.variants = {
-        some: {
-          priceCents: {
-            gte: minPriceCents ?? 0,
-            lte: maxPriceCents ?? 99999999,
+      andConditions.push({
+        variants: {
+          some: {
+            priceCents: {
+              gte: minPriceCents ?? 0,
+              lte: maxPriceCents ?? 99999999,
+            },
           },
         },
-      };
+      });
     }
+
+    const whereClause: Record<string, unknown> = {
+      AND: andConditions,
+    };
 
     const isPriceSort = sortBy === "price_asc" || sortBy === "price_desc";
 
@@ -65,7 +76,10 @@ export async function searchCatalog(params: SearchParams = {}) {
             take: 1,
           },
           resellerProfile: {
-            select: { legalName: true },
+            select: {
+              legalName: true,
+              user: { select: { name: true, role: true } },
+            },
           },
         },
         orderBy: { createdAt: "desc" },
@@ -82,6 +96,11 @@ export async function searchCatalog(params: SearchParams = {}) {
       const discountPercent =
         compareAtCents > priceCents ? Math.round(((compareAtCents - priceCents) / compareAtCents) * 100) : 0;
 
+      const sellerName =
+        p.resellerProfile?.legalName?.trim() ||
+        p.resellerProfile?.user?.name?.trim() ||
+        "Cartigo Official";
+
       return {
         id: p.id,
         slug: p.slug,
@@ -96,7 +115,7 @@ export async function searchCatalog(params: SearchParams = {}) {
         priceCents,
         compareAtCents,
         discountPercent,
-        sellerName: p.resellerProfile.legalName,
+        sellerName,
         availableStock: variant?.inventory?.available ?? 0,
         rating: 4.8,
         reviewCount: 42 + (p.title.length % 50),
@@ -137,10 +156,17 @@ export async function getSearchSuggestions(query: string) {
     const products = await prisma.product.findMany({
       where: {
         status: "APPROVED",
-        resellerProfile: { status: "APPROVED" },
         OR: [
-          { title: { contains: q, mode: "insensitive" } },
-          { brand: { contains: q, mode: "insensitive" } },
+          { resellerProfile: { status: "APPROVED" } },
+          { resellerProfile: { user: { role: { in: ["SUPER_ADMIN", "ADMIN"] } } } },
+        ],
+        AND: [
+          {
+            OR: [
+              { title: { contains: q, mode: "insensitive" } },
+              { brand: { contains: q, mode: "insensitive" } },
+            ],
+          },
         ],
       },
       select: { title: true, slug: true, category: { select: { name: true } } },
@@ -166,7 +192,17 @@ export async function getStorefrontCategories() {
     const categories = await prisma.category.findMany({
       include: {
         _count: {
-          select: { products: { where: { status: "APPROVED", resellerProfile: { status: "APPROVED" } } } },
+          select: {
+            products: {
+              where: {
+                status: "APPROVED",
+                OR: [
+                  { resellerProfile: { status: "APPROVED" } },
+                  { resellerProfile: { user: { role: { in: ["SUPER_ADMIN", "ADMIN"] } } } },
+                ],
+              },
+            },
+          },
         },
       },
       orderBy: { name: "asc" },

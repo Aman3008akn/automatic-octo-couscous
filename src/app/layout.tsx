@@ -1,20 +1,34 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { PwaLaunchAnimation } from "@/components/pwa/pwa-launch-animation";
+import { PwaZoomLock } from "@/components/pwa/pwa-zoom-lock";
+import { PwaBottomNav } from "@/components/pwa/pwa-bottom-nav";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: "#0f172a",
+};
 
 export const metadata: Metadata = {
   title: "Cartigo — Verified Reseller Marketplace",
   description: "The trusted reseller-only marketplace for verified products.",
   manifest: "/manifest.json",
-  themeColor: "#0f172a",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -24,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen bg-paper text-ink font-body flex flex-col antialiased">
         <SessionProvider>
+          <PwaZoomLock />
           <PwaLaunchAnimation />
           <Header />
           <div className="flex-1">{children}</div>
@@ -37,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </div>
           </footer>
+          <PwaBottomNav />
         </SessionProvider>
       </body>
     </html>

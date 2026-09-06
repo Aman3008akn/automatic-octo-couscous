@@ -39,3 +39,7 @@ next-env.d.ts
 *.pem
 .vscode/
 .idea/
+
+# PWA service worker build files
+public/sw.js
+public/workbox-*.js

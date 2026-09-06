@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/authz";
 import type { ProductStatus } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 const moderationSchema = z.object({
   productId: z.string().length(24, "Must be a valid MongoDB ObjectId"),
@@ -140,6 +141,11 @@ export async function moderateProduct(input: ModerationInput): Promise<Moderatio
         },
       });
     });
+
+    revalidatePath("/");
+    revalidatePath("/search");
+    revalidatePath("/admin/products");
+    revalidatePath("/admin/catalog");
 
     return { ok: true };
   } catch (error) {

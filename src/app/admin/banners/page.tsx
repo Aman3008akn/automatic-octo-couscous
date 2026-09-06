@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getBanners, getAllBannersAdmin, createBanner, toggleBannerActive, deleteBanner } from "@/server/banners";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,9 @@ export default function AdminBannersPage() {
 
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadBanners();
@@ -28,6 +31,36 @@ export default function AdminBannersPage() {
     const data = await getAllBannersAdmin();
     setBanners(data);
     setLoading(false);
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setError(null);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/v1/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setImageUrl(data.url);
+      } else {
+        setError(data.error || "Failed to upload image");
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to upload image");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -110,15 +143,32 @@ export default function AdminBannersPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-navy-600 mb-1">Image URL</label>
-                  <input
-                    required
-                    type="url"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="https://example.com/banner.jpg"
-                    className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none transition focus:border-navy-400"
-                  />
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-navy-600 mb-1">Image URL or Upload</label>
+                  <div className="flex gap-2">
+                    <input
+                      required
+                      type="text"
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                      placeholder="https://example.com/banner.jpg or Upload"
+                      className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none transition focus:border-navy-400"
+                    />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      className="hidden"
+                      onChange={handleFileUpload}
+                    />
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                    >
+                      {uploading ? "Uploading..." : "Upload"}
+                    </Button>
+                  </div>
                   {imageUrl && (
                     <div className="mt-2 rounded border border-line overflow-hidden max-h-32">
                       <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />

@@ -194,6 +194,7 @@ export async function createAdminProduct(data: {
 
     revalidatePath("/admin/catalog");
     revalidatePath("/");
+    revalidatePath("/search");
     return { ok: true, productId: product.id };
   } catch (err: any) {
     console.error("Error creating product:", err);
@@ -287,6 +288,7 @@ export async function updateAdminProduct(
 
     revalidatePath("/admin/catalog");
     revalidatePath("/");
+    revalidatePath("/search");
     return { ok: true };
   } catch (err: any) {
     console.error("Error updating product:", err);
@@ -307,6 +309,7 @@ export async function deleteAdminProduct(productId: string) {
 
     revalidatePath("/admin/catalog");
     revalidatePath("/");
+    revalidatePath("/search");
     return { ok: true };
   } catch (err: any) {
     console.error("Error deleting product:", err);
