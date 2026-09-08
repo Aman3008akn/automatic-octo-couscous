@@ -115,7 +115,7 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
             {/* Price Filter */}
             <div className="rounded-card border border-line bg-white p-4 space-y-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-navy-900 border-b border-line pb-2">
-                Price Filter ($ USD)
+                Price Filter (₹ INR)
               </h3>
               <form method="GET" action="/search" className="space-y-2 text-xs">
                 {q && <input type="hidden" name="q" value={q} />}
@@ -124,20 +124,20 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
                   <input
                     type="number"
                     name="minPrice"
-                    placeholder="Min $"
-                    className="w-full rounded border border-line px-2 py-1 outline-none"
+                    placeholder="Min ₹"
+                    className="w-full rounded border border-line px-2 py-1 outline-none text-ink"
                   />
-                  <span>-</span>
+                  <span className="text-navy-400">-</span>
                   <input
                     type="number"
                     name="maxPrice"
-                    placeholder="Max $"
-                    className="w-full rounded border border-line px-2 py-1 outline-none"
+                    placeholder="Max ₹"
+                    className="w-full rounded border border-line px-2 py-1 outline-none text-ink"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full rounded bg-navy-900 py-1.5 text-xs font-bold text-amber-400 hover:bg-navy-600 transition-colors"
+                  className="w-full rounded bg-navy-900 py-1.5 text-xs font-bold text-amber-400 hover:bg-navy-800 transition-colors"
                 >
                   Apply Price Filter
                 </button>

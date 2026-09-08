@@ -40,9 +40,15 @@
     .pwa-only-bottom-nav {
       display: block !important;
     }
+    #cartigo-app-download {
+      display: none !important;
+    }
   }
   [data-pwa="true"] .pwa-only-bottom-nav {
     display: block !important;
+  }
+  [data-pwa="true"] #cartigo-app-download {
+    display: none !important;
   }
 }
 

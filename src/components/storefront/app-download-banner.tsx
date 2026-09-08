@@ -8,8 +8,40 @@ export function AppDownloadBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [isPwa, setIsPwa] = useState(false);
 
   useEffect(() => {
+    const checkIsPwa = (): boolean => {
+      if (typeof window === "undefined") return false;
+      if ((window.navigator as any).standalone === true) return true;
+      if (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.matchMedia("(display-mode: fullscreen)").matches ||
+        window.matchMedia("(display-mode: minimal-ui)").matches ||
+        window.matchMedia("(display-mode: window-controls-overlay)").matches
+      ) {
+        return true;
+      }
+      if (document.referrer && document.referrer.includes("android-app://")) return true;
+      const search = window.location.search;
+      if (
+        search.includes("mode=pwa") ||
+        search.includes("source=pwa") ||
+        search.includes("pwa=true") ||
+        search.includes("pwa=1")
+      ) {
+        return true;
+      }
+      try {
+        if (sessionStorage.getItem("cartigo_app_pwa") === "true") return true;
+      } catch {}
+      return false;
+    };
+
+    if (checkIsPwa()) {
+      setIsPwa(true);
+    }
+
     const handleBeforeInstallPrompt = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -22,6 +54,10 @@ export function AppDownloadBanner() {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     };
   }, []);
+
+  if (isPwa) {
+    return null;
+  }
 
   const handleInstallClick = async () => {
     if ("vibrate" in navigator) {
