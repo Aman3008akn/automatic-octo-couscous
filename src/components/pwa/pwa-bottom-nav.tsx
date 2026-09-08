@@ -9,15 +9,85 @@ import { getCart } from "@/server/cart";
 export function PwaBottomNav() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const [mounted, setMounted] = useState(false);
+  const [isPwa, setIsPwa] = useState(false);
   const [cartCount, setCartCount] = useState<number>(0);
 
   useEffect(() => {
-    setMounted(true);
-    document.body.classList.add("has-pwa-bottom-nav");
-    return () => {
-      document.body.classList.remove("has-pwa-bottom-nav");
+    // Strictly detect if running inside the installed PWA app (never inside a standard website browser)
+    const checkIsPwa = (): boolean => {
+      if (typeof window === "undefined") return false;
+
+      // 1. iOS Safari standalone (Add to Home Screen app)
+      if ((window.navigator as any).standalone === true) {
+        return true;
+      }
+
+      // 2. Android Chrome / WebAPK / Windows standalone display modes
+      if (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.matchMedia("(display-mode: fullscreen)").matches ||
+        window.matchMedia("(display-mode: minimal-ui)").matches ||
+        window.matchMedia("(display-mode: window-controls-overlay)").matches
+      ) {
+        return true;
+      }
+
+      // 3. Android TWA / APK wrapper
+      if (document.referrer && document.referrer.includes("android-app://")) {
+        return true;
+      }
+
+      // 4. Manifest start_url query parameter or preview parameter (?mode=pwa, ?source=pwa, ?pwa=1)
+      const search = window.location.search;
+      if (
+        search.includes("mode=pwa") ||
+        search.includes("source=pwa") ||
+        search.includes("pwa=true") ||
+        search.includes("pwa=1")
+      ) {
+        try {
+          sessionStorage.setItem("cartigo_app_pwa", "true");
+        } catch {}
+        return true;
+      }
+
+      // 5. Persisted PWA session across route changes inside the PWA app
+      try {
+        if (sessionStorage.getItem("cartigo_app_pwa") === "true") {
+          return true;
+        }
+      } catch {}
+
+      return false;
     };
+
+    const inPwa = checkIsPwa();
+    setIsPwa(inPwa);
+
+    if (inPwa) {
+      document.documentElement.setAttribute("data-pwa", "true");
+      document.body.classList.add("has-pwa-bottom-nav");
+    } else {
+      document.documentElement.removeAttribute("data-pwa");
+      document.body.classList.remove("has-pwa-bottom-nav");
+    }
+
+    // Listen for display mode changes (e.g. app installed and launched)
+    if (typeof window !== "undefined") {
+      const mql = window.matchMedia("(display-mode: standalone)");
+      const handleMediaChange = (e: MediaQueryListEvent) => {
+        if (e.matches) {
+          setIsPwa(true);
+          document.documentElement.setAttribute("data-pwa", "true");
+          document.body.classList.add("has-pwa-bottom-nav");
+        }
+      };
+
+      if (mql.addEventListener) {
+        mql.addEventListener("change", handleMediaChange);
+        return () => mql.removeEventListener("change", handleMediaChange);
+      }
+    }
   }, []);
 
   // Fetch cart count for the badge
@@ -34,8 +104,8 @@ export function PwaBottomNav() {
     }
   }, [session, pathname]);
 
-  // Wait for client mount to avoid hydration mismatch
-  if (!mounted) {
+  // STRICT REQUIREMENT: If opened on website in a browser, DO NOT render!
+  if (!isPwa) {
     return null;
   }
 
@@ -59,8 +129,8 @@ export function PwaBottomNav() {
 
   return (
     <nav
-      aria-label="Mobile PWA Bottom Navigation"
-      className="fixed bottom-0 left-0 right-0 z-[100] md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-2px_12px_rgba(0,0,0,0.08)] select-none"
+      aria-label="PWA App Mobile Bottom Navigation"
+      className="pwa-only-bottom-nav fixed bottom-0 left-0 right-0 z-[100] md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-2px_12px_rgba(0,0,0,0.08)] select-none"
       style={{
         paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)",
       }}

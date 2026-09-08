@@ -2,7 +2,7 @@
   "name": "Cartigo Marketplace",
   "short_name": "Cartigo",
   "description": "Your verified premium marketplace.",
-  "start_url": "/",
+  "start_url": "/?mode=pwa",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0f172a",

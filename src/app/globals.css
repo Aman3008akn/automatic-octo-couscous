@@ -30,10 +30,19 @@
   :focus-visible {
     @apply outline-none ring-2 ring-navy-400 ring-offset-2 ring-offset-paper;
   }
-  @media screen and (max-width: 767px) {
-    body {
-      padding-bottom: calc(56px + max(env(safe-area-inset-bottom, 0px), 12px)) !important;
+  body.has-pwa-bottom-nav {
+    padding-bottom: calc(56px + max(env(safe-area-inset-bottom, 0px), 12px)) !important;
+  }
+  .pwa-only-bottom-nav {
+    display: none !important;
+  }
+  @media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+    .pwa-only-bottom-nav {
+      display: block !important;
     }
+  }
+  [data-pwa="true"] .pwa-only-bottom-nav {
+    display: block !important;
   }
 }
 
