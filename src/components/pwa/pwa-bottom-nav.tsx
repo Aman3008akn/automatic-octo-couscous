@@ -9,48 +9,15 @@ import { getCart } from "@/server/cart";
 export function PwaBottomNav() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const [isPwa, setIsPwa] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [cartCount, setCartCount] = useState<number>(0);
 
   useEffect(() => {
-    // Check if running in PWA Standalone mode, or test preview (?pwa=1 / ?pwa=true)
-    const checkPwa = () => {
-      const isStandalone =
-        typeof window !== "undefined" &&
-        (window.matchMedia("(display-mode: standalone)").matches ||
-          (window.navigator as any).standalone === true ||
-          document.referrer.includes("android-app://") ||
-          new URLSearchParams(window.location.search).has("pwa") ||
-          window.location.search.includes("pwa=1") ||
-          window.location.search.includes("pwa=true"));
-
-      setIsPwa(!!isStandalone);
-
-      if (isStandalone) {
-        document.body.classList.add("has-pwa-bottom-nav");
-      } else {
-        document.body.classList.remove("has-pwa-bottom-nav");
-      }
+    setMounted(true);
+    document.body.classList.add("has-pwa-bottom-nav");
+    return () => {
+      document.body.classList.remove("has-pwa-bottom-nav");
     };
-
-    checkPwa();
-
-    if (typeof window !== "undefined") {
-      const mql = window.matchMedia("(display-mode: standalone)");
-      const handleMediaChange = (e: MediaQueryListEvent) => {
-        setIsPwa(e.matches);
-        if (e.matches) {
-          document.body.classList.add("has-pwa-bottom-nav");
-        } else {
-          document.body.classList.remove("has-pwa-bottom-nav");
-        }
-      };
-
-      if (mql.addEventListener) {
-        mql.addEventListener("change", handleMediaChange);
-        return () => mql.removeEventListener("change", handleMediaChange);
-      }
-    }
   }, []);
 
   // Fetch cart count for the badge
@@ -67,8 +34,8 @@ export function PwaBottomNav() {
     }
   }, [session, pathname]);
 
-  // If not running in PWA mode, DO NOT render on web
-  if (!isPwa) {
+  // Wait for client mount to avoid hydration mismatch
+  if (!mounted) {
     return null;
   }
 
@@ -92,22 +59,22 @@ export function PwaBottomNav() {
 
   return (
     <nav
-      aria-label="PWA Mobile Bottom Navigation"
-      className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-slate-200 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] select-none"
+      aria-label="Mobile PWA Bottom Navigation"
+      className="fixed bottom-0 left-0 right-0 z-[100] md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-2px_12px_rgba(0,0,0,0.08)] select-none"
       style={{
         paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)",
       }}
     >
-      <div className="grid grid-cols-4 items-center h-14 max-w-lg mx-auto px-2">
+      <div className="grid grid-cols-4 items-center h-14 max-w-md mx-auto px-2">
         {/* 1. Home */}
         <Link
           href="/"
-          className={`flex flex-col items-center justify-center gap-0.5 transition-colors ${
+          className={`flex flex-col items-center justify-center gap-0.5 transition-colors active:scale-95 ${
             isHomeActive ? "text-[#0066ff]" : "text-slate-500 hover:text-slate-800"
           }`}
         >
           {isHomeActive ? (
-            // Solid / filled home icon matching screenshot
+            // Solid filled home icon matching screenshot
             <svg
               viewBox="0 0 24 24"
               className="w-6 h-6 fill-current"
@@ -130,19 +97,21 @@ export function PwaBottomNav() {
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
           )}
-          <span className="text-[11px] font-medium tracking-tight">Home</span>
+          <span className={`text-[11px] tracking-tight ${isHomeActive ? "font-semibold" : "font-medium"}`}>
+            Home
+          </span>
         </Link>
 
         {/* 2. Categories (4 rounded squares in 2x2 grid matching screenshot) */}
         <Link
           href="/search"
-          className={`flex flex-col items-center justify-center gap-0.5 transition-colors ${
+          className={`flex flex-col items-center justify-center gap-0.5 transition-colors active:scale-95 ${
             isCategoriesActive ? "text-[#0066ff]" : "text-slate-500 hover:text-slate-800"
           }`}
         >
           <svg
             viewBox="0 0 24 24"
-            fill="none"
+            fill={isCategoriesActive ? "currentColor" : "none"}
             stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
@@ -154,13 +123,15 @@ export function PwaBottomNav() {
             <rect x="14" y="14" width="7" height="7" rx="1.8" />
             <rect x="3" y="14" width="7" height="7" rx="1.8" />
           </svg>
-          <span className="text-[11px] font-medium tracking-tight">Categories</span>
+          <span className={`text-[11px] tracking-tight ${isCategoriesActive ? "font-semibold" : "font-medium"}`}>
+            Categories
+          </span>
         </Link>
 
         {/* 3. Account (Person outline icon matching screenshot) */}
         <Link
           href={accountHref}
-          className={`flex flex-col items-center justify-center gap-0.5 transition-colors ${
+          className={`flex flex-col items-center justify-center gap-0.5 transition-colors active:scale-95 ${
             isAccountActive ? "text-[#0066ff]" : "text-slate-500 hover:text-slate-800"
           }`}
         >
@@ -176,13 +147,15 @@ export function PwaBottomNav() {
             <circle cx="12" cy="7.5" r="4" />
             <path d="M5.5 20.5a6.5 6.5 0 0 1 13 0" />
           </svg>
-          <span className="text-[11px] font-medium tracking-tight">Account</span>
+          <span className={`text-[11px] tracking-tight ${isAccountActive ? "font-semibold" : "font-medium"}`}>
+            Account
+          </span>
         </Link>
 
         {/* 4. Cart (Shopping cart outline icon matching screenshot) */}
         <Link
           href="/cart"
-          className={`relative flex flex-col items-center justify-center gap-0.5 transition-colors ${
+          className={`relative flex flex-col items-center justify-center gap-0.5 transition-colors active:scale-95 ${
             isCartActive ? "text-[#0066ff]" : "text-slate-500 hover:text-slate-800"
           }`}
         >
@@ -206,7 +179,9 @@ export function PwaBottomNav() {
               </span>
             )}
           </div>
-          <span className="text-[11px] font-medium tracking-tight">Cart</span>
+          <span className={`text-[11px] tracking-tight ${isCartActive ? "font-semibold" : "font-medium"}`}>
+            Cart
+          </span>
         </Link>
       </div>
     </nav>

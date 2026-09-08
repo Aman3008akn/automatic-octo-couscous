@@ -38,7 +38,7 @@ export function TeamScrollPopup() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-500">
+    <div className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40 animate-in slide-in-from-bottom-5 fade-in duration-500">
       <div className="relative group">
         {/* Pulse effect behind button */}
         <div className="absolute -inset-1 bg-amber-500 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-500 animate-pulse"></div>
