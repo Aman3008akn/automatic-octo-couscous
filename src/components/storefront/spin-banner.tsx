@@ -28,7 +28,7 @@ export function SpinBanner() {
               Spin to Win <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500">Amazing Prizes</span>
             </h2>
             <p className="text-indigo-100 font-medium sm:text-lg mb-6">
-              Every spin is a chance to win flat discounts, free shipping, and exclusive offers on Cartigo!
+              Every spin is a chance to win flat discounts, free shipping, and exclusive offers on Cartygo!
             </p>
             <button className="bg-gradient-to-r from-amber-400 to-orange-500 text-navy-900 font-black uppercase tracking-widest px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:scale-105 active:scale-95 transition-all w-full sm:w-auto">
               Tap to Spin

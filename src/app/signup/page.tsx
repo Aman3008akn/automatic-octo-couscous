@@ -60,7 +60,7 @@ function SignupForm() {
         </div>
         <CardTitle className="text-2xl font-display">Create an Account</CardTitle>
         <CardDescription>
-          Join Cartigo to track your orders and checkout faster.
+          Join Cartygo to track your orders and checkout faster.
         </CardDescription>
       </CardHeader>
 

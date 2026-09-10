@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-// Cartigo brand tokens. "Ledger navy" + "signal amber" — a marketplace that
+// Cartygo brand tokens. "Ledger navy" + "signal amber" — a marketplace that
 // reads as a trust/logistics operation (think shipping manifests, invoice
 // stamps) rather than a generic storefront template.
 export default {

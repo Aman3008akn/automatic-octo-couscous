@@ -19,7 +19,7 @@ export function RetailPoster() {
             Join Our Retail Team Today
           </h2>
           <p className="mt-2 text-lg sm:text-xl font-bold text-navy-800">
-            Start selling on Cartigo and get a joining bonus up to <span className="text-white bg-navy-900 px-2 py-0.5 rounded shadow-sm">₹5,999</span>
+            Start selling on Cartygo and get a joining bonus up to <span className="text-white bg-navy-900 px-2 py-0.5 rounded shadow-sm">₹5,999</span>
           </p>
         </div>
 

@@ -4,20 +4,20 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding Cartigo database...");
+  console.log("Seeding Cartygo database...");
 
   // 1. Super Admins
   // 1a. Aman Shukla (Full Super Admin + Admin Surveillance Access over Sumit Gautam)
   const amanPasswordHash = await bcrypt.hash("Aman@2008", 12);
   await prisma.user.upsert({
-    where: { email: "amanshukla@cartigo.admin" },
+    where: { email: "amanshukla@cartygo.admin" },
     update: {
       passwordHash: amanPasswordHash,
       role: "SUPER_ADMIN",
       name: "Aman Shukla",
     },
     create: {
-      email: "amanshukla@cartigo.admin",
+      email: "amanshukla@cartygo.admin",
       name: "Aman Shukla",
       passwordHash: amanPasswordHash,
       role: "SUPER_ADMIN",
@@ -27,14 +27,14 @@ async function main() {
   // 1b. Sumit Gautam (Full Super Admin)
   const sumitPasswordHash = await bcrypt.hash("Sumit@2008", 12);
   await prisma.user.upsert({
-    where: { email: "sumitgautam@cartigo.admin" },
+    where: { email: "sumitgautam@cartygo.admin" },
     update: {
       passwordHash: sumitPasswordHash,
       role: "SUPER_ADMIN",
       name: "Sumit Gautam",
     },
     create: {
-      email: "sumitgautam@cartigo.admin",
+      email: "sumitgautam@cartygo.admin",
       name: "Sumit Gautam",
       passwordHash: sumitPasswordHash,
       role: "SUPER_ADMIN",
@@ -42,7 +42,7 @@ async function main() {
   });
 
   // Legacy Default Super Admin
-  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@cartigo.local";
+  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@cartygo.local";
   const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "change-me-now";
 
   await prisma.user.upsert({
@@ -50,7 +50,7 @@ async function main() {
     update: {},
     create: {
       email: adminEmail,
-      name: "Cartigo Super Admin",
+      name: "Cartygo Super Admin",
       passwordHash: await bcrypt.hash(adminPassword, 12),
       role: "SUPER_ADMIN",
     },
@@ -58,10 +58,10 @@ async function main() {
 
   // 2. Demo Pending Resellers
   const demoResellerUser = await prisma.user.upsert({
-    where: { email: "reseller-demo@cartigo.local" },
+    where: { email: "reseller-demo@cartygo.local" },
     update: { role: "RESELLER_APPLICANT" },
     create: {
-      email: "reseller-demo@cartigo.local",
+      email: "reseller-demo@cartygo.local",
       name: "Northwind Supply Co.",
       passwordHash: await bcrypt.hash("demo-password", 12),
       role: "RESELLER_APPLICANT",
@@ -75,7 +75,7 @@ async function main() {
       userId: demoResellerUser.id,
       legalName: "Northwind Supply Co.",
       contactPerson: "Jamie Rivera",
-      contactEmail: "reseller-demo@cartigo.local",
+      contactEmail: "reseller-demo@cartygo.local",
       contactPhone: "+1-555-0100",
       country: "US",
       businessType: "LLC",
@@ -99,10 +99,10 @@ async function main() {
   });
 
   const secondResellerUser = await prisma.user.upsert({
-    where: { email: "apex-trading@cartigo.local" },
+    where: { email: "apex-trading@cartygo.local" },
     update: { role: "RESELLER_APPLICANT" },
     create: {
-      email: "apex-trading@cartigo.local",
+      email: "apex-trading@cartygo.local",
       name: "Apex Global Trading",
       passwordHash: await bcrypt.hash("demo-password", 12),
       role: "RESELLER_APPLICANT",
@@ -116,11 +116,11 @@ async function main() {
       userId: secondResellerUser.id,
       legalName: "Apex Global Trading",
       contactPerson: "Marcus Vance",
-      contactEmail: "apex-trading@cartigo.local",
+      contactEmail: "apex-trading@cartygo.local",
       contactPhone: "+1-555-0299",
       country: "US",
       businessType: "Corporation",
-      fulfillmentMode: "cartigo",
+      fulfillmentMode: "cartygo",
       status: "PENDING_REVIEW",
     },
   });

@@ -10,7 +10,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../theme";
 import { useCartStore } from "../../store/useCartStore";
-import { CartigoLogo } from "./CartigoLogo";
+import { CartygoLogo } from "./CartygoLogo";
 
 interface HeaderProps {
   title?: string;
@@ -64,8 +64,8 @@ export const Header: React.FC<HeaderProps> = ({
             onPress={() => router.push("/(tabs)" as any)}
             activeOpacity={0.8}
           >
-            <CartigoLogo size={26} color={colors.navy[900]} accentColor={colors.amber[500]} />
-            <Text style={styles.brandTitle}>CARTIGO</Text>
+            <CartygoLogo size={26} color={colors.navy[900]} accentColor={colors.amber[500]} />
+            <Text style={styles.brandTitle}>CARTYGO</Text>
             <View style={styles.brandDot} />
           </TouchableOpacity>
         )}

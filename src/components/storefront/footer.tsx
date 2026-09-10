@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CartigoLogoIcon } from "@/components/ui/cartigo-logo";
+import { CartygoLogoIcon } from "@/components/ui/cartygo-logo";
 
 export function Footer() {
   return (
@@ -8,7 +8,7 @@ export function Footer() {
       <div className="bg-navy-800 border-b border-navy-700 py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center md:text-left">
-            <h3 className="text-lg font-bold text-white">Subscribe to Cartigo Insider</h3>
+            <h3 className="text-lg font-bold text-white">Subscribe to Cartygo Insider</h3>
             <p className="text-sm text-navy-300">Get early access to drops, exclusive discounts, and partner offers.</p>
           </div>
           <div className="flex w-full md:w-auto max-w-md">
@@ -29,8 +29,8 @@ export function Footer() {
           {/* Col 1: Brand Info */}
           <div className="col-span-2 lg:col-span-1 space-y-4">
             <div className="flex items-center gap-2">
-              <CartigoLogoIcon className="h-8 w-8 text-amber-500" />
-              <span className="font-display font-bold text-xl text-white">Cartigo</span>
+              <CartygoLogoIcon className="h-8 w-8 text-amber-500" />
+              <span className="font-display font-bold text-xl text-white">Cartygo</span>
             </div>
             <p className="text-xs text-navy-300 leading-relaxed">
               The premier marketplace for verified sellers and authentic products. Shop confidently with our buyer protection guarantee.
@@ -41,7 +41,7 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-bold text-white text-sm uppercase tracking-wider">Get to Know Us</h3>
             <ul className="space-y-2.5 text-xs text-navy-300 font-medium">
-              <li><Link href="#" className="hover:text-amber-400 transition-colors">About Cartigo</Link></li>
+              <li><Link href="#" className="hover:text-amber-400 transition-colors">About Cartygo</Link></li>
               <li><Link href="#" className="hover:text-amber-400 transition-colors">Marketplace Standards</Link></li>
               <li><Link href="#" className="hover:text-amber-400 transition-colors">Careers & Culture</Link></li>
               <li><Link href="#" className="hover:text-amber-400 transition-colors">Press Releases</Link></li>
@@ -52,9 +52,9 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-bold text-white text-sm uppercase tracking-wider">Make Money with Us</h3>
             <ul className="space-y-2.5 text-xs text-navy-300 font-medium">
-              <li><Link href="/reseller" className="hover:text-amber-400 transition-colors">Sell on Cartigo</Link></li>
+              <li><Link href="/reseller" className="hover:text-amber-400 transition-colors">Sell on Cartygo</Link></li>
               <li><Link href="/reseller/apply" className="hover:text-amber-400 transition-colors">Become an Affiliate</Link></li>
-              <li><Link href="#" className="hover:text-amber-400 transition-colors">Fulfillment by Cartigo</Link></li>
+              <li><Link href="#" className="hover:text-amber-400 transition-colors">Fulfillment by Cartygo</Link></li>
               <li><Link href="#" className="hover:text-amber-400 transition-colors">Advertise Your Products</Link></li>
             </ul>
           </div>
@@ -67,7 +67,7 @@ export function Footer() {
               <li><Link href="/orders" className="hover:text-amber-400 transition-colors">Returns Center</Link></li>
               <li><Link href="#" className="hover:text-amber-400 transition-colors">100% Purchase Protection</Link></li>
               <li><Link href="#" className="hover:text-amber-400 transition-colors">Help & Support</Link></li>
-              <li><a href="#cartigo-app-download" className="text-amber-400 font-bold hover:underline flex items-center gap-1"><span>📱</span> Download Mobile App</a></li>
+              <li><a href="#cartygo-app-download" className="text-amber-400 font-bold hover:underline flex items-center gap-1"><span>📱</span> Download Mobile App</a></li>
             </ul>
           </div>
 
@@ -77,8 +77,8 @@ export function Footer() {
             <ul className="space-y-2.5 text-xs text-navy-300 font-medium">
               <li className="flex items-center gap-2">
                 <span className="text-amber-500">✉</span>
-                <a href="mailto:admindesk@cartigo.com" className="hover:text-white transition-colors">
-                  admindesk@cartigo.com
+                <a href="mailto:admindesk@cartygo.com" className="hover:text-white transition-colors">
+                  admindesk@cartygo.com
                 </a>
               </li>
               <li className="flex items-center gap-2">
@@ -99,7 +99,7 @@ export function Footer() {
 
         {/* Bottom copyright row */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-navy-400">
-          <p>© {new Date().getFullYear()} Cartigo Marketplace Inc. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Cartygo Marketplace Inc. All rights reserved.</p>
 
           <div className="flex items-center gap-4">
             <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>

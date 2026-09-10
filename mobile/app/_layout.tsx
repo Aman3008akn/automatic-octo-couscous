@@ -7,7 +7,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../src/api/queryClient";
 import { useAuthStore } from "../src/store/useAuthStore";
 import { colors } from "../src/theme";
-import { CartigoLaunchAnimation } from "../src/components/common/CartigoLaunchAnimation";
+import { CartygoLaunchAnimation } from "../src/components/common/CartygoLaunchAnimation";
 
 let hasSeenLaunchAnimation = false;
 
@@ -49,7 +49,7 @@ export default function RootLayout() {
           <Stack.Screen name="notifications" options={{ headerShown: false }} />
           <Stack.Screen name="help" options={{ headerShown: false }} />
         </Stack>
-        {showSplash && <CartigoLaunchAnimation onFinish={handleSplashFinish} />}
+        {showSplash && <CartygoLaunchAnimation onFinish={handleSplashFinish} />}
       </QueryClientProvider>
     </SafeAreaProvider>
   );

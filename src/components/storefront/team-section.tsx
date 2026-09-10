@@ -6,14 +6,14 @@ export function TeamSection() {
       name: "Aman Shukla",
       role: "Lead Full-Stack Developer",
       image: "/images/team/aman-shukla.jpg",
-      bio: "Aman single-handedly built the entire Cartigo codebase from scratch, implementing both the complex backend architecture and the premium frontend design.",
+      bio: "Aman single-handedly built the entire Cartygo codebase from scratch, implementing both the complex backend architecture and the premium frontend design.",
       goal: "To revolutionize e-commerce by building a highly secure, lightning-fast, and scalable marketplace that seamlessly connects verified partner resellers with buyers.",
     },
     {
       name: "Sumit Gautam",
       role: "Lead UI/UX Designer",
       image: "/images/team/sumit-gautam.png",
-      bio: "Sumit crafted the stunning and intuitive user interface of Cartigo, ensuring every interaction feels premium and effortless for both buyers and resellers.",
+      bio: "Sumit crafted the stunning and intuitive user interface of Cartygo, ensuring every interaction feels premium and effortless for both buyers and resellers.",
       goal: "To bridge the gap between complex functionality and beautiful design, creating an e-commerce platform that users genuinely love to navigate.",
     },
     {
@@ -27,15 +27,15 @@ export function TeamSection() {
       name: "Pratigya Verma",
       role: "Head of Product & Growth",
       image: "/images/team/pratigya-verma.jpg",
-      bio: "Pratigya spearheads product strategy and marketplace growth, ensuring Cartigo delivers exactly what verified sellers and modern buyers need to succeed.",
-      goal: "To scale Cartigo's ecosystem globally by driving user acquisition, fostering a vibrant community, and continually innovating the core shopping experience.",
+      bio: "Pratigya spearheads product strategy and marketplace growth, ensuring Cartygo delivers exactly what verified sellers and modern buyers need to succeed.",
+      goal: "To scale Cartygo's ecosystem globally by driving user acquisition, fostering a vibrant community, and continually innovating the core shopping experience.",
     },
     {
       name: "Roshini Chaudhary",
       role: "Head of Marketing & Customer Success",
       image: "/images/team/roshini-chaudhary.jpg",
-      bio: "Roshini drives Cartigo's brand vision and user engagement, ensuring that every buyer and seller receives unparalleled support and a truly personalized shopping experience.",
-      goal: "To build unshakeable trust and loyalty within the Cartigo community by delivering transparent communication and world-class customer service.",
+      bio: "Roshini drives Cartygo's brand vision and user engagement, ensuring that every buyer and seller receives unparalleled support and a truly personalized shopping experience.",
+      goal: "To build unshakeable trust and loyalty within the Cartygo community by delivering transparent communication and world-class customer service.",
     },
   ];
 
@@ -54,10 +54,10 @@ export function TeamSection() {
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white mb-3 tracking-tight">
-            The Minds Behind Cartigo
+            The Minds Behind Cartygo
           </h2>
           <p className="text-navy-200 text-xs sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Cartigo is proudly engineered by a dedicated team of builders committed to creating India's most secure, reliable, and premium marketplace experience.
+            Cartygo is proudly engineered by a dedicated team of builders committed to creating India's most secure, reliable, and premium marketplace experience.
           </p>
         </div>
 

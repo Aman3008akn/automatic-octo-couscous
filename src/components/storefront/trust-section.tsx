@@ -49,14 +49,14 @@ export function TrustSection() {
             <div className="flex items-center gap-2 mb-3">
               <span className="h-2 w-2 rounded-full bg-amber-400" />
               <span className="text-xs font-mono font-bold uppercase tracking-widest text-amber-400">
-                WHY CARTIGO
+                WHY CARTYGO
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold tracking-tight text-white leading-tight">
               BUY WITH CONFIDENCE.
             </h2>
             <p className="mt-3 text-sm sm:text-base text-navy-300 max-w-xl font-medium leading-relaxed">
-              We eliminated the chaos of open marketplaces. Cartigo operates on verified authenticity,
+              We eliminated the chaos of open marketplaces. Cartygo operates on verified authenticity,
               transparent math, and uncompromising customer protection.
             </p>
           </div>

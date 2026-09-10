@@ -21,7 +21,7 @@ export default function ProfileScreen() {
   const { user, isAuthenticated, logout } = useAuthStore();
 
   const handleLogout = () => {
-    Alert.alert("Log Out", "Are you sure you want to log out of Cartigo?", [
+    Alert.alert("Log Out", "Are you sure you want to log out of Cartygo?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Log Out",
@@ -57,7 +57,7 @@ export default function ProfileScreen() {
               {user?.name || "Aman Shukla"}
             </Text>
             <Text style={styles.profileEmail}>
-              {user?.email || "aman@cartigo.in"}
+              {user?.email || "aman@cartygo.in"}
             </Text>
             <View style={styles.roleRow}>
               <Badge
@@ -181,7 +181,7 @@ export default function ProfileScreen() {
             icon={<Ionicons name="log-out-outline" size={18} color={colors.navy[900]} />}
             onPress={handleLogout}
           />
-          <Text style={styles.versionText}>Cartigo Native Mobile • v1.0.0 (Production Build)</Text>
+          <Text style={styles.versionText}>Cartygo Native Mobile • v1.0.0 (Production Build)</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

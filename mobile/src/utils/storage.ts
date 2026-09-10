@@ -1,8 +1,8 @@
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
-const TOKEN_KEY = "cartigo_auth_token";
-const USER_KEY = "cartigo_user_data";
+const TOKEN_KEY = "cartygo_auth_token";
+const USER_KEY = "cartygo_user_data";
 
 // Fallback in-memory store for web/unsupported environments
 const memoryStorage: Record<string, string> = {};

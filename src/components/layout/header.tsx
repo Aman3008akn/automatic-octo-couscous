@@ -8,7 +8,7 @@ import { getCart } from "@/server/cart";
 import { getSearchSuggestions } from "@/server/search";
 import { getMyResellerStatus } from "@/server/reseller-onboarding";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { CartigoLogoIcon } from "@/components/ui/cartigo-logo";
+import { CartygoLogoIcon } from "@/components/ui/cartygo-logo";
 
 import { 
   Tv, 
@@ -117,7 +117,7 @@ export function Header() {
 
         <div className="flex items-center gap-4 text-navy-100">
           <Link href={isReseller ? "/reseller/dashboard" : "/reseller"} className="hover:text-amber-400 transition-colors font-medium">
-            {isReseller ? "🏪 Seller Dashboard" : "Sell on Cartigo"}
+            {isReseller ? "🏪 Seller Dashboard" : "Sell on Cartygo"}
           </Link>
           <span>•</span>
           <Link href="/orders" className="hover:text-amber-400 transition-colors">
@@ -131,10 +131,10 @@ export function Header() {
         <div className="mx-auto flex h-16 sm:h-18 max-w-7xl items-center justify-between gap-2 sm:gap-4 px-4 sm:px-6 lg:px-8 py-2.5">
           {/* Brand Logo */}
           <Link href="/" className="group flex items-center gap-2 shrink-0">
-            <CartigoLogoIcon className="h-8 w-8 sm:h-10 sm:w-10 text-amber-500 sm:text-navy-900 transition-transform group-hover:scale-105" />
+            <CartygoLogoIcon className="h-8 w-8 sm:h-10 sm:w-10 text-amber-500 sm:text-navy-900 transition-transform group-hover:scale-105" />
             <div className="flex flex-col">
               <span className="font-display text-xl sm:text-2xl font-bold tracking-tight text-white sm:text-ink leading-none">
-                CARTIGO
+                CARTYGO
               </span>
               <span className="text-[8px] sm:text-[10px] font-mono font-medium text-amber-500 sm:text-navy-600 tracking-widest uppercase">
                 Verified Marketplace

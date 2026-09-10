@@ -167,11 +167,11 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
 
-        {/* Cartigo Limited Drop Showcase Banner */}
+        {/* Cartygo Limited Drop Showcase Banner */}
         <View style={styles.dropBanner}>
           <View style={styles.dropHeader}>
             <View style={styles.dropTag}>
-              <Text style={styles.dropTagText}>CARTIGO DROP #04</Text>
+              <Text style={styles.dropTagText}>CARTYGO DROP #04</Text>
             </View>
             <Text style={styles.dropStockText}>⚡ Only 14 Units Left</Text>
           </View>
@@ -185,7 +185,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Popular on Cartigo Grid */}
+        {/* Popular on Cartygo Grid */}
         <View style={styles.sectionHeader}>
           <View>
             <Text style={styles.sectionTitle}>TRENDING PRODUCTS</Text>
@@ -209,7 +209,7 @@ export default function HomeScreen() {
           <View style={styles.buildersBadge}>
             <Text style={styles.buildersBadgeText}>ENGINEERED WITH PASSION</Text>
           </View>
-          <Text style={styles.buildersTitle}>Meet the Builders Behind Cartigo</Text>
+          <Text style={styles.buildersTitle}>Meet the Builders Behind Cartygo</Text>
           <Text style={styles.buildersBio}>
             Proudly designed and engineered by Aman Shukla (Lead Full-Stack Developer) and Sumit Gautam (Lead UI/UX Designer) to revolutionize Indian verified marketplace shopping.
           </Text>
@@ -222,7 +222,7 @@ export default function HomeScreen() {
               source={{ uri: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200" }}
               style={[styles.avatar, { marginLeft: -12 }]}
             />
-            <Text style={styles.builderTeamText}>Cartigo Core Engineering Team</Text>
+            <Text style={styles.builderTeamText}>Cartygo Core Engineering Team</Text>
           </View>
         </View>
       </ScrollView>

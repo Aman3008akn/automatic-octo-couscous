@@ -46,7 +46,7 @@ export default function ResellerPayoutsPage() {
     if (!res.ok) {
       setError(res.error);
     } else {
-      setSuccessMsg("Disbursement request submitted to Cartigo Finance!");
+      setSuccessMsg("Disbursement request submitted to Cartygo Finance!");
       setRequestAmount("");
       loadOverview();
     }
@@ -89,7 +89,7 @@ export default function ResellerPayoutsPage() {
               -${((data?.platformFeeCents ?? 0) / 100).toFixed(2)}
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-xs text-navy-400">Cartigo operational tier fee</CardContent>
+          <CardContent className="text-xs text-navy-400">Cartygo operational tier fee</CardContent>
         </Card>
 
         <Card>

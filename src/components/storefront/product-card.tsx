@@ -143,7 +143,7 @@ export function ProductCard({
         <div className="p-4 space-y-2">
           {/* Brand & Seller Meta */}
           <div className="flex items-center justify-between text-[10px] text-navy-400 font-medium uppercase tracking-wider">
-            <span className="truncate max-w-[120px] font-bold text-navy-600">{brand || "Cartigo Verified"}</span>
+            <span className="truncate max-w-[120px] font-bold text-navy-600">{brand || "Cartygo Verified"}</span>
             <span className="truncate max-w-[90px]">{sellerName}</span>
           </div>
 

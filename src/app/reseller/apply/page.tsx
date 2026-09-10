@@ -30,7 +30,7 @@ export default function ResellerApplicationPage() {
   const [country, setCountry] = useState("IN");
   const [businessType, setBusinessType] = useState("LLC");
 
-  const [fulfillmentMode, setFulfillmentMode] = useState<"reseller" | "cartigo">("reseller");
+  const [fulfillmentMode, setFulfillmentMode] = useState<"reseller" | "cartygo">("reseller");
   const [categories, setCategories] = useState<string[]>(["Electronics"]);
   const [monthlyVolumeEst, setMonthlyVolumeEst] = useState<number>(50);
   const [returnPolicyNote, setReturnPolicyNote] = useState("Standard 14-day return acceptance for undamaged items.");
@@ -57,7 +57,7 @@ export default function ResellerApplicationPage() {
             if (res.contactPerson) setContactPerson(res.contactPerson);
             if (res.contactEmail) setContactEmail(res.contactEmail);
             if (res.categories && res.categories.length > 0) setCategories(res.categories);
-            if (res.fulfillmentMode) setFulfillmentMode(res.fulfillmentMode as "reseller" | "cartigo");
+            if (res.fulfillmentMode) setFulfillmentMode(res.fulfillmentMode as "reseller" | "cartygo");
           }
         })
         .finally(() => setCheckingExisting(false));
@@ -84,7 +84,7 @@ export default function ResellerApplicationPage() {
           <CardHeader>
             <CardTitle>Sign In Required</CardTitle>
             <CardDescription>
-              You must be logged in to submit a reseller application for Cartigo marketplace.
+              You must be logged in to submit a reseller application for Cartygo marketplace.
             </CardDescription>
           </CardHeader>
           <CardFooter className="justify-center">
@@ -112,7 +112,7 @@ export default function ResellerApplicationPage() {
             Reseller Account Already Approved
           </CardTitle>
           <CardDescription className="max-w-md mx-auto mt-2 text-sm text-navy-600">
-            Your partner business account for <strong>{existingStatus.legalName}</strong> is verified and active. You already have full seller privileges on Cartigo!
+            Your partner business account for <strong>{existingStatus.legalName}</strong> is verified and active. You already have full seller privileges on Cartygo!
           </CardDescription>
           <div className="mt-8 flex justify-center gap-3">
             <Button
@@ -207,7 +207,7 @@ export default function ResellerApplicationPage() {
     setError(null);
 
     if (!agreedToTerms) {
-      setError("You must accept the Cartigo Reseller Agreement terms to submit.");
+      setError("You must accept the Cartygo Reseller Agreement terms to submit.");
       return;
     }
 
@@ -449,13 +449,13 @@ export default function ResellerApplicationPage() {
                       <input
                         type="radio"
                         name="fulfillment"
-                        value="cartigo"
-                        checked={fulfillmentMode === "cartigo"}
-                        onChange={() => setFulfillmentMode("cartigo")}
+                        value="cartygo"
+                        checked={fulfillmentMode === "cartygo"}
+                        onChange={() => setFulfillmentMode("cartygo")}
                       />
                       <div>
-                        <p className="font-semibold text-ink">Cartigo Express</p>
-                        <p className="text-navy-600 text-[10px]">Cartigo warehouse logistics</p>
+                        <p className="font-semibold text-ink">Cartygo Express</p>
+                        <p className="text-navy-600 text-[10px]">Cartygo warehouse logistics</p>
                       </div>
                     </label>
                   </div>
@@ -541,7 +541,7 @@ export default function ResellerApplicationPage() {
                   className="mt-0.5 rounded border-line text-navy-900 focus:ring-navy-400"
                 />
                 <span className="text-xs font-medium text-ink">
-                  I certify that I am authorized to bind the business legal entity specified, and I agree to Cartigo Marketplace Reseller Terms of Service and Prohibited Product Policy.
+                  I certify that I am authorized to bind the business legal entity specified, and I agree to Cartygo Marketplace Reseller Terms of Service and Prohibited Product Policy.
                 </span>
               </label>
             </CardContent>

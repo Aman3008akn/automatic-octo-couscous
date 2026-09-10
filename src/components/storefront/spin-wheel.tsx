@@ -4,12 +4,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 const PRIZES = [
-  { label: "10% OFF", code: "CARTIGO10", color: "#FF5733" },
+  { label: "10% OFF", code: "CARTYGO10", color: "#FF5733" },
   { label: "₹500 OFF", code: "FLAT500", color: "#FFC300" },
   { label: "FREE SHIP", code: "FREEDEL", color: "#33FF57" },
-  { label: "15% OFF", code: "CARTIGO15", color: "#33C3FF" },
+  { label: "15% OFF", code: "CARTYGO15", color: "#33C3FF" },
   { label: "OOPS!", code: null, color: "#8333FF" },
-  { label: "20% OFF", code: "CARTIGO20", color: "#FF33F5" },
+  { label: "20% OFF", code: "CARTYGO20", color: "#FF33F5" },
 ];
 
 export function SpinWheel({ onClose }: { onClose: () => void }) {

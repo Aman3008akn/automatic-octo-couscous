@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 async function run() {
   await prisma.user.update({
-    where: { email: 'amanshukla@cartigo.admin' },
+    where: { email: 'amanshukla@cartygo.admin' },
     data: { role: 'SUPER_ADMIN' }
   });
   console.log('User role updated to SUPER_ADMIN');

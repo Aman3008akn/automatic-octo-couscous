@@ -75,7 +75,7 @@ export default function OrderConfirmationScreen() {
         <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.headerBlock}>
           <Text style={styles.title}>Order Confirmed!</Text>
           <Text style={styles.subtitle}>
-            Thank you for shopping on Cartigo. Your order has been placed into our verified dispatch queue.
+            Thank you for shopping on Cartygo. Your order has been placed into our verified dispatch queue.
           </Text>
         </Animated.View>
 

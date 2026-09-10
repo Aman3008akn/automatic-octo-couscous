@@ -117,13 +117,13 @@ export async function saveProductDraft(input: Partial<ProductInput>): Promise<Pr
       profile = await prisma.resellerProfile.create({
         data: {
           userId,
-          legalName: session.user.name || "Cartigo Official",
+          legalName: session.user.name || "Cartygo Official",
           contactPerson: session.user.name || "Admin",
           contactEmail: session.user.email,
           contactPhone: "000-000-0000",
           country: "US",
           businessType: "Company",
-          fulfillmentMode: "cartigo",
+          fulfillmentMode: "cartygo",
           status: "APPROVED",
         },
       });
@@ -132,7 +132,7 @@ export async function saveProductDraft(input: Partial<ProductInput>): Promise<Pr
         where: { id: profile.id },
         data: {
           status: "APPROVED",
-          legalName: profile.legalName?.trim() || session.user.name || "Cartigo Official",
+          legalName: profile.legalName?.trim() || session.user.name || "Cartygo Official",
         },
       });
     }
@@ -271,13 +271,13 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
       profile = await prisma.resellerProfile.create({
         data: {
           userId,
-          legalName: session.user.name || "Cartigo Official",
+          legalName: session.user.name || "Cartygo Official",
           contactPerson: session.user.name || "Admin",
           contactEmail: session.user.email,
           contactPhone: "000-000-0000",
           country: "US",
           businessType: "Company",
-          fulfillmentMode: "cartigo",
+          fulfillmentMode: "cartygo",
           status: "APPROVED",
         },
       });
@@ -286,7 +286,7 @@ export async function submitProductForReview(input: ProductInput): Promise<Produ
         where: { id: profile.id },
         data: {
           status: "APPROVED",
-          legalName: profile.legalName?.trim() || session.user.name || "Cartigo Official",
+          legalName: profile.legalName?.trim() || session.user.name || "Cartygo Official",
         },
       });
     }

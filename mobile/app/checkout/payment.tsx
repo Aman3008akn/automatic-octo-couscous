@@ -143,7 +143,7 @@ export default function CheckoutPaymentScreen() {
         <View style={styles.escrowBox}>
           <Ionicons name="shield-checkmark" size={20} color={colors.status.success} />
           <View style={styles.escrowTextCol}>
-            <Text style={styles.escrowTitle}>Cartigo Buyer Escrow Protection</Text>
+            <Text style={styles.escrowTitle}>Cartygo Buyer Escrow Protection</Text>
             <Text style={styles.escrowSub}>
               Merchant is paid only after package is successfully delivered and verified by you.
             </Text>

@@ -40,7 +40,7 @@ export default function ResellerStatusPage() {
         <Card className="w-full">
           <CardHeader>
             <CardTitle>Sign In Required</CardTitle>
-            <CardDescription>Sign in to check your Cartigo reseller application status.</CardDescription>
+            <CardDescription>Sign in to check your Cartygo reseller application status.</CardDescription>
           </CardHeader>
           <CardFooter className="justify-center">
             <Link href="/login?callbackUrl=/reseller/status">
@@ -59,7 +59,7 @@ export default function ResellerStatusPage() {
           <CardHeader>
             <CardTitle className="text-2xl font-display">No Reseller Application Found</CardTitle>
             <CardDescription>
-              You haven&apos;t submitted a reseller onboarding application yet. Join Cartigo&apos;s verified seller program today.
+              You haven&apos;t submitted a reseller onboarding application yet. Join Cartygo&apos;s verified seller program today.
             </CardDescription>
           </CardHeader>
           <CardFooter className="justify-center pt-4">
@@ -80,7 +80,7 @@ export default function ResellerStatusPage() {
     <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <p className="text-xs font-mono font-medium tracking-widest text-navy-400 uppercase">Cartigo Onboarding</p>
+          <p className="text-xs font-mono font-medium tracking-widest text-navy-400 uppercase">Cartygo Onboarding</p>
           <h1 className="text-3xl font-display font-bold text-ink">Reseller Application Status</h1>
         </div>
         <div>
@@ -208,7 +208,7 @@ export default function ResellerStatusPage() {
               </div>
             ) : (
               <p className="text-xs text-navy-600">
-                Your application did not meet Cartigo qualification criteria for authorized distribution.
+                Your application did not meet Cartygo qualification criteria for authorized distribution.
               </p>
             )}
           </CardContent>
@@ -235,7 +235,7 @@ export default function ResellerStatusPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-xs text-navy-600">
-            If you believe this suspension is in error, please contact Cartigo Merchant Support with your seller ID.
+            If you believe this suspension is in error, please contact Cartygo Merchant Support with your seller ID.
           </CardContent>
         </Card>
       )}

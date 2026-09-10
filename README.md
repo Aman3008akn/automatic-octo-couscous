@@ -1,4 +1,4 @@
-# Cartigo — Slice 1: Foundation
+# Cartygo — Slice 1: Foundation
 
 This is the base of a reseller-only marketplace built in vertical slices (see
 project plan). This slice gives you a working project you can run locally,
@@ -6,7 +6,7 @@ not a finished app.
 
 ## What's here
 
-- **Next.js 14 (App Router) + TypeScript + Tailwind**, with Cartigo's own
+- **Next.js 14 (App Router) + TypeScript + Tailwind**, with Cartygo's own
   design tokens in `tailwind.config.ts` (navy/amber, Fraunces + Inter) —
   deliberately not the generic cream/terracotta AI-default palette.
 - **Prisma schema** (`prisma/schema.prisma`) covering: users & roles,

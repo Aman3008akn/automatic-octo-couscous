@@ -51,7 +51,7 @@ export default function NewProductWizardPage() {
   const [compareAtDollars, setCompareAtDollars] = useState<string>("69.99");
 
   const [shippingMode, setShippingMode] = useState("Merchant Shipping (2-Day Delivery)");
-  const [returnPolicy, setReturnPolicy] = useState("Cartigo Standard 14-Day Acceptance");
+  const [returnPolicy, setReturnPolicy] = useState("Cartygo Standard 14-Day Acceptance");
 
   const [loading, setLoading] = useState(false);
   const [savingDraft, setSavingDraft] = useState(false);
@@ -571,7 +571,7 @@ export default function NewProductWizardPage() {
                   className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none focus:border-navy-400"
                 >
                   <option value="Merchant Shipping (2-Day Delivery)">Merchant Direct (2-Day Tracked Shipping)</option>
-                  <option value="Cartigo Express Logistics">Cartigo Express Logistics Warehouse</option>
+                  <option value="Cartygo Express Logistics">Cartygo Express Logistics Warehouse</option>
                 </select>
               </div>
             </CardContent>
@@ -584,7 +584,7 @@ export default function NewProductWizardPage() {
               <CardDescription>Confirm customer return window acceptance.</CardDescription>
 
               <div className="rounded-card bg-navy-50 border border-line p-4 text-xs text-navy-600 space-y-2">
-                <p className="font-semibold text-navy-900">Cartigo Platform Return Standard:</p>
+                <p className="font-semibold text-navy-900">Cartygo Platform Return Standard:</p>
                 <p>Resellers agree to accept customer return requests for undamaged items within 14 days of delivery confirmation.</p>
               </div>
             </CardContent>
@@ -650,7 +650,7 @@ export default function NewProductWizardPage() {
                       <span className="font-bold text-sm text-ink">🟢 Live (ON)</span>
                     </div>
                     <p className="text-xs text-navy-600">
-                      Product goes Live on Cartigo storefront immediately. Buyers can search and purchase.
+                      Product goes Live on Cartygo storefront immediately. Buyers can search and purchase.
                     </p>
                   </div>
 

@@ -11,8 +11,13 @@ export async function getSumitGautamActivityLogs() {
   try {
     await requireRole(["SUPER_ADMIN", "ADMIN"]);
 
-    const sumitUser = await prisma.user.findUnique({
-      where: { email: "sumitgautam@cartigo.admin" },
+    const sumitUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: "sumitgautam@cartygo.admin" },
+          { email: "sumitgautam@cartigo.admin" },
+        ],
+      },
       select: { id: true, name: true, email: true, role: true, createdAt: true, updatedAt: true },
     });
 
@@ -61,7 +66,10 @@ export async function getFilteredAdminAuditLogs(adminEmailFilter?: string) {
     const whereClause: Record<string, unknown> = {};
 
     if (adminEmailFilter && adminEmailFilter !== "ALL") {
-      whereClause.actor = { email: adminEmailFilter };
+      const alternate = adminEmailFilter.includes("cartygo")
+        ? adminEmailFilter.replace("cartygo", "cartigo")
+        : adminEmailFilter.replace("cartigo", "cartygo");
+      whereClause.actor = { email: { in: [adminEmailFilter, alternate] } };
     }
 
     const logs = await prisma.auditLog.findMany({

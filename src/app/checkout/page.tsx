@@ -306,7 +306,7 @@ export default function CheckoutPage() {
                 </Button>
                 
                 <p className="text-center text-[11px] text-navy-400 mt-4 font-medium px-4">
-                  By placing your order, you agree to Cartigo's Terms of Service and Privacy Policy.
+                  By placing your order, you agree to Cartygo's Terms of Service and Privacy Policy.
                 </p>
               </div>
             </div>

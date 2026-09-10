@@ -19,7 +19,7 @@ import { api } from "../../src/api/client";
 import { formatRupees, formatDate } from "../../src/utils/format";
 
 const TRACKING_STEPS = [
-  { key: "confirmed", title: "Order Confirmed", subtitle: "Verified by Cartigo merchant network" },
+  { key: "confirmed", title: "Order Confirmed", subtitle: "Verified by Cartygo merchant network" },
   { key: "payment", title: "Payment Secured", subtitle: "Buyer escrow protection activated" },
   { key: "warehouse", title: "Warehouse Processing", subtitle: "Quality check and barcode scanning completed" },
   { key: "shipped", title: "In Transit with Express Courier", subtitle: "Air freight dispatch tracking active" },

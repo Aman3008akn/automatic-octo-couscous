@@ -39,7 +39,7 @@ export default function CustomerOrdersPage() {
         <Card className="w-full">
           <CardHeader>
             <CardTitle>Sign In Required</CardTitle>
-            <CardDescription>Sign in to view your Cartigo marketplace purchase history.</CardDescription>
+            <CardDescription>Sign in to view your Cartygo marketplace purchase history.</CardDescription>
           </CardHeader>
           <div className="p-6 pt-0">
             <Link href="/login?callbackUrl=/orders">
@@ -67,7 +67,7 @@ export default function CustomerOrdersPage() {
         <div className="flex flex-col items-center justify-center py-20 px-4 bg-white rounded-2xl shadow-sm border border-line text-center">
           <span className="text-6xl mb-4 opacity-50 grayscale">🛍️</span>
           <h2 className="text-xl font-bold text-navy-900 mb-2">No orders placed yet</h2>
-          <p className="text-sm text-navy-500 max-w-md mb-6">Looks like you haven't made your first purchase on Cartigo. Discover top products from verified resellers today!</p>
+          <p className="text-sm text-navy-500 max-w-md mb-6">Looks like you haven't made your first purchase on Cartygo. Discover top products from verified resellers today!</p>
           <Link href="/">
             <Button variant="primary" className="px-8 shadow-md hover:-translate-y-0.5 transition-all">Start Shopping</Button>
           </Link>

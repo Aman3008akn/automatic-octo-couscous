@@ -21,7 +21,7 @@ const SLIDES = [
     id: "s1",
     tag: "VERIFIED AUTHENTICITY",
     title: "Curated Items from Audited Resellers",
-    description: "Every merchant on Cartigo undergoes identity, tax, and inventory provenance checks before listing.",
+    description: "Every merchant on Cartygo undergoes identity, tax, and inventory provenance checks before listing.",
     image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800",
     icon: "shield-checkmark-outline",
   },
@@ -56,7 +56,7 @@ export default function OnboardingScreen() {
       {/* Top Bar with Skip */}
       <View style={styles.topBar}>
         <View style={styles.brandContainer}>
-          <Text style={styles.brandTitle}>CARTIGO</Text>
+          <Text style={styles.brandTitle}>CARTYGO</Text>
           <View style={styles.brandDot} />
         </View>
 

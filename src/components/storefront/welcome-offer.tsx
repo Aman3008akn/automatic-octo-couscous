@@ -9,7 +9,7 @@ export function WelcomeOffer() {
 
   useEffect(() => {
     // Check if the user has already seen the welcome offer
-    const hasSeenOffer = localStorage.getItem("cartigo_welcome_offer");
+    const hasSeenOffer = localStorage.getItem("cartygo_welcome_offer");
     if (!hasSeenOffer) {
       // Delay popup slightly for better UX
       const timer = setTimeout(() => {
@@ -21,7 +21,7 @@ export function WelcomeOffer() {
 
   const handleClose = () => {
     setIsOpen(false);
-    localStorage.setItem("cartigo_welcome_offer", "true");
+    localStorage.setItem("cartygo_welcome_offer", "true");
   };
 
   const handleScratch = () => {

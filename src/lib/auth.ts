@@ -25,9 +25,22 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase() },
+        const inputEmail = credentials.email.toLowerCase();
+        let user = await prisma.user.findUnique({
+          where: { email: inputEmail },
         });
+
+        // Backward compatibility fallback between cartygo and cartigo
+        if (!user && inputEmail.includes("@cartygo.admin")) {
+          user = await prisma.user.findUnique({
+            where: { email: inputEmail.replace("@cartygo.admin", "@cartigo.admin") },
+          });
+        }
+        if (!user && inputEmail.includes("@cartigo.admin")) {
+          user = await prisma.user.findUnique({
+            where: { email: inputEmail.replace("@cartigo.admin", "@cartygo.admin") },
+          });
+        }
         if (!user || !user.passwordHash || user.deletedAt) return null;
 
         const valid = await bcrypt.compare(credentials.password, user.passwordHash);

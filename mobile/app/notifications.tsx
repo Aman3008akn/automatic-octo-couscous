@@ -22,7 +22,7 @@ const NOTIFICATIONS = [
   },
   {
     id: "n2",
-    title: "Cartigo Drop #04 is Live! ⚡",
+    title: "Cartygo Drop #04 is Live! ⚡",
     message: "Vanguard Custom Mechanical Keyboards are now available for verified members with limited stock.",
     time: "2 hours ago",
     unread: true,

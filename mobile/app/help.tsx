@@ -14,16 +14,16 @@ import { Header } from "../src/components/common/Header";
 
 const FAQS = [
   {
-    q: "How does Cartigo Buyer Escrow protection work?",
+    q: "How does Cartygo Buyer Escrow protection work?",
     a: "When you place an order, your payment is securely retained in our buyer escrow account. The merchant is only credited after your item is delivered, inspected, and accepted at your doorstep.",
   },
   {
     q: "What is the return and replacement window?",
-    a: "Cartigo offers a standard 14-day hassle-free acceptance guarantee on all sealed and verified merchant products. If an item arrives damaged or misrepresented, reverse pickup is free.",
+    a: "Cartygo offers a standard 14-day hassle-free acceptance guarantee on all sealed and verified merchant products. If an item arrives damaged or misrepresented, reverse pickup is free.",
   },
   {
-    q: "How are Cartigo partner resellers verified?",
-    a: "Every merchant undergoes identity, business tax (GST), and warehouse inventory audits before their listings appear on the Cartigo marketplace.",
+    q: "How are Cartygo partner resellers verified?",
+    a: "Every merchant undergoes identity, business tax (GST), and warehouse inventory audits before their listings appear on the Cartygo marketplace.",
   },
   {
     q: "Can I pay with Cash on Delivery (COD)?",
@@ -43,7 +43,7 @@ export default function HelpScreen() {
   };
 
   const handleSupportEmail = () => {
-    Linking.openURL("mailto:support@cartigo.in?subject=Customer%20Support%20Inquiry");
+    Linking.openURL("mailto:support@cartygo.in?subject=Customer%20Support%20Inquiry");
   };
 
   return (

@@ -52,7 +52,7 @@ export function CartygoLaunchAnimation({
   const letter1 = useSharedValue(0); // A
   const letter2 = useSharedValue(0); // R
   const letter3 = useSharedValue(0); // T
-  const letter4 = useSharedValue(0); // I
+  const letter4 = useSharedValue(0); // Y
   const letter5 = useSharedValue(0); // G
   const letter6 = useSharedValue(0); // O
 
@@ -115,7 +115,7 @@ export function CartygoLaunchAnimation({
       triggerHaptic("light");
     }, 180);
 
-    // 2. Progressive Typing: C -> CA -> CAR -> CART -> CARTI -> CARTIG -> CARTYGO
+    // 2. Progressive Typing: C -> CA -> CAR -> CART -> CARTY -> CARTYG -> CARTYGO
     const letterStartDelay = 420;
     const letterInterval = 75; // 75ms between each letter = crisp & intentional
     letterAnimValues.forEach((val, idx) => {
@@ -282,7 +282,7 @@ export function CartygoLaunchAnimation({
             <Text style={[styles.letterText, styles.letterC]}>C</Text>
           </Animated.View>
 
-          {/* Sequential Letters: A R T I G O */}
+          {/* Sequential Letters: A R T Y G O */}
           {LETTERS.map((letter, index) => {
             const animVal = letterAnimValues[index];
             const rLetterStyle = useAnimatedStyle(() => {
@@ -421,4 +421,3 @@ const styles = StyleSheet.create({
 });
 
 export const CartigoLaunchAnimation = CartygoLaunchAnimation;
-

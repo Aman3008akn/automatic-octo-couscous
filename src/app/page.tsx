@@ -5,7 +5,7 @@ import { HeroCarousel } from "@/components/storefront/hero-carousel";
 import { MerchandisingGrid } from "@/components/storefront/merchandising-grid";
 import { CategoryGrid } from "@/components/storefront/category-grid";
 import { ProductCard } from "@/components/storefront/product-card";
-import { CartigoDrop } from "@/components/storefront/cartigo-drop";
+import { CartygoDrop } from "@/components/storefront/cartygo-drop";
 import { PriceDrops } from "@/components/storefront/price-drops";
 import { TeamSection } from "@/components/storefront/team-section";
 import { TeamScrollPopup } from "@/components/storefront/team-scroll-popup";
@@ -37,8 +37,8 @@ export default async function HomePage() {
         {/* Editorial Divider */}
         <div className="w-full h-px bg-line/80" />
 
-        {/* 3. Signature Culture & Discovery Rail: THE CARTIGO DROP */}
-        <CartigoDrop products={dropProducts} />
+        {/* 3. Signature Culture & Discovery Rail: THE CARTYGO DROP */}
+        <CartygoDrop products={dropProducts} />
 
         {/* Editorial Divider */}
         <div className="w-full h-px bg-line/80" />
@@ -52,7 +52,7 @@ export default async function HomePage() {
         {/* Editorial Divider */}
         <div className="w-full h-px bg-line/80" />
 
-        {/* 6. Popular on Cartigo Section */}
+        {/* 6. Popular on Cartygo Section */}
         <section>
           <div className="flex items-center justify-between mb-6 pb-3 border-b border-line">
             <div>
@@ -63,7 +63,7 @@ export default async function HomePage() {
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink">
-                Popular on Cartigo
+                Popular on Cartygo
               </h2>
               <p className="text-xs sm:text-sm text-navy-600 mt-0.5">
                 Top trending items purchased by verified customers this week
@@ -91,10 +91,10 @@ export default async function HomePage() {
           )}
         </section>
 
-        {/* 7. Meet the Builders: The Minds Behind Cartigo */}
+        {/* 7. Meet the Builders: The Minds Behind Cartygo */}
         <TeamSection />
 
-        {/* 8. Download Cartigo App / APK Banner */}
+        {/* 8. Download Cartygo App / APK Banner */}
         <AppDownloadBanner />
       </main>
 

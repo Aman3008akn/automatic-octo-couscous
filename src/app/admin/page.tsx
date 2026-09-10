@@ -45,7 +45,7 @@ export default async function AdminDashboardPage() {
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <span className="text-xs font-mono font-medium text-amber-500 uppercase tracking-wider">
-            Cartigo Control Tower
+            Cartygo Control Tower
           </span>
           <h1 className="text-3xl font-display font-bold text-ink">Executive Admin Console</h1>
         </div>
@@ -251,7 +251,7 @@ export default async function AdminDashboardPage() {
               </div>
               <div className="flex justify-between items-center py-1 border-b border-line">
                 <span className="text-navy-600 font-medium">Admin Email:</span>
-                <span className="font-mono text-[11px] text-navy-900 font-semibold">sumitgautam@cartigo.admin</span>
+                <span className="font-mono text-[11px] text-navy-900 font-semibold">sumitgautam@cartygo.admin</span>
               </div>
               <div className="flex justify-between items-center py-1 border-b border-line">
                 <span className="text-navy-600 font-medium">Role Level:</span>
@@ -291,7 +291,7 @@ export default async function AdminDashboardPage() {
               </div>
 
               <Link
-                href="/admin/audit?actor=sumitgautam@cartigo.admin"
+                href="/admin/audit?actor=sumitgautam@cartygo.admin"
                 className="block text-center w-full rounded-card bg-navy-900 py-1.5 text-xs font-bold text-amber-400 hover:bg-navy-600 transition-colors shadow-sm mt-2"
               >
                 View Full Audit Logs for Sumit Gautam →

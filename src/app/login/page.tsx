@@ -127,7 +127,7 @@ function LoginForm() {
         <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-card bg-navy-900 text-amber-400 font-display font-bold text-2xl">
           C
         </div>
-        <CardTitle className="text-2xl font-display">Sign In to Cartigo</CardTitle>
+        <CardTitle className="text-2xl font-display">Sign In to Cartygo</CardTitle>
         <CardDescription>
           Enter your details to access the marketplace.
         </CardDescription>
@@ -268,12 +268,12 @@ function LoginForm() {
             <div className="flex flex-col gap-2">
               <button
                 type="button"
-                onClick={() => handleQuickLogin("amanshukla@cartigo.admin", "Aman@2008")}
+                onClick={() => handleQuickLogin("amanshukla@cartygo.admin", "Aman@2008")}
                 className="flex items-center justify-between rounded-card border border-amber-300 bg-amber-50/60 p-2.5 text-xs text-left hover:bg-amber-100 transition-colors"
               >
                 <div>
                   <p className="font-semibold text-navy-900">Aman Shukla (Super Admin)</p>
-                  <p className="text-navy-600 font-mono text-[10px]">amanshukla@cartigo.admin</p>
+                  <p className="text-navy-600 font-mono text-[10px]">amanshukla@cartygo.admin</p>
                 </div>
                 <span className="rounded bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-navy-900">
                   SUPER_ADMIN
@@ -282,12 +282,12 @@ function LoginForm() {
   
               <button
                 type="button"
-                onClick={() => handleQuickLogin("sumitgautam@cartigo.admin", "Sumit@2008")}
+                onClick={() => handleQuickLogin("sumitgautam@cartygo.admin", "Sumit@2008")}
                 className="flex items-center justify-between rounded-card border border-navy-200 bg-navy-50/60 p-2.5 text-xs text-left hover:bg-navy-100 transition-colors"
               >
                 <div>
                   <p className="font-semibold text-navy-900">Sumit Gautam (Super Admin)</p>
-                  <p className="text-navy-600 font-mono text-[10px]">sumitgautam@cartigo.admin</p>
+                  <p className="text-navy-600 font-mono text-[10px]">sumitgautam@cartygo.admin</p>
                 </div>
                 <span className="rounded bg-navy-900 px-2 py-0.5 text-[10px] font-bold text-white">
                   SUPER_ADMIN
@@ -306,7 +306,7 @@ function LoginForm() {
           </Link>
         </div>
         <div>
-          Want to sell on Cartigo?{" "}
+          Want to sell on Cartygo?{" "}
           <Link href="/reseller" className="font-semibold text-navy-900 underline ml-1 hover:text-amber-600">
             Apply as Reseller
           </Link>

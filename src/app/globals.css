@@ -40,14 +40,14 @@
     .pwa-only-bottom-nav {
       display: block !important;
     }
-    #cartigo-app-download {
+    #cartygo-app-download {
       display: none !important;
     }
   }
   [data-pwa="true"] .pwa-only-bottom-nav {
     display: block !important;
   }
-  [data-pwa="true"] #cartigo-app-download {
+  [data-pwa="true"] #cartygo-app-download {
     display: none !important;
   }
 }

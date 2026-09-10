@@ -101,7 +101,7 @@ export const MOCK_PRODUCTS: Product[] = [
     compareAtCents: 799900,
     discountPercent: 38,
     sellerName: "Aura Official India",
-    sellerFulfillment: "cartigo",
+    sellerFulfillment: "cartygo",
     availableStock: 18,
     variants: [
       { id: "v1-1", sku: "AUR-BLK-01", priceCents: 499900, compareAtCents: 799900, availableStock: 12, options: { color: "Matte Black" } },
@@ -132,7 +132,7 @@ export const MOCK_PRODUCTS: Product[] = [
     compareAtCents: 899900,
     discountPercent: 28,
     sellerName: "KeebCraft Studio",
-    sellerFulfillment: "cartigo",
+    sellerFulfillment: "cartygo",
     availableStock: 14,
     variants: [
       { id: "v2-1", sku: "KB-YLW-01", priceCents: 649900, compareAtCents: 899900, availableStock: 10, options: { switch: "Gateron Yellow Linear" } },
@@ -190,7 +190,7 @@ export const MOCK_PRODUCTS: Product[] = [
     compareAtCents: 399900,
     discountPercent: 30,
     sellerName: "Lumina Direct",
-    sellerFulfillment: "cartigo",
+    sellerFulfillment: "cartygo",
     availableStock: 22,
     variants: [
       { id: "v4-1", sku: "LUM-WHT-01", priceCents: 279900, compareAtCents: 399900, availableStock: 22, options: { color: "Matte White" } },

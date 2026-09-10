@@ -63,7 +63,7 @@ export const useCartStore = create<CartState>((set, get) => ({
         imageUrl: product.imageUrl,
         availableStock: product.availableStock || 10,
         sellerName: product.sellerName,
-        fulfillmentMode: product.sellerFulfillment || "cartigo",
+        fulfillmentMode: product.sellerFulfillment || "cartygo",
         deliveryEstimate: "2-4 Business Days",
       };
       updated = [newItem, ...currentItems];

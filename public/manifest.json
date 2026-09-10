@@ -1,6 +1,6 @@
 {
-  "name": "Cartigo Marketplace",
-  "short_name": "Cartigo",
+  "name": "Cartygo Marketplace",
+  "short_name": "Cartygo",
   "description": "Your verified premium marketplace.",
   "start_url": "/?mode=pwa",
   "display": "standalone",

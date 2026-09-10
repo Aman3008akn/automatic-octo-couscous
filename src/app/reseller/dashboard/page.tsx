@@ -45,7 +45,7 @@ export default function ResellerDashboardPage() {
         <Card className="w-full">
           <CardHeader>
             <CardTitle>Sign In Required</CardTitle>
-            <CardDescription>Sign in to access your Cartigo seller dashboard.</CardDescription>
+            <CardDescription>Sign in to access your Cartygo seller dashboard.</CardDescription>
           </CardHeader>
           <div className="p-6 pt-0">
             <Link href="/login?callbackUrl=/reseller/dashboard">
@@ -167,7 +167,7 @@ export default function ResellerDashboardPage() {
                 <div className="p-8 text-center text-navy-500 space-y-2">
                   <p className="text-sm font-semibold text-navy-800">No products submitted yet.</p>
                   <p className="text-xs text-navy-500">
-                    Your seller account is approved. Start adding products to showcase them on Cartigo.
+                    Your seller account is approved. Start adding products to showcase them on Cartygo.
                   </p>
                   <Link href="/reseller/products/new">
                     <Button variant="primary" className="mt-2 text-xs">
@@ -266,7 +266,7 @@ export default function ResellerDashboardPage() {
               <span className="text-xs font-mono text-amber-400 uppercase tracking-widest">Partner Operations</span>
               <CardTitle className="text-white text-lg">Account Active & Verified</CardTitle>
               <CardDescription className="text-navy-100 text-xs">
-                Your seller application has been approved by Cartigo compliance. You have full privileges to submit listings and process marketplace orders.
+                Your seller application has been approved by Cartygo compliance. You have full privileges to submit listings and process marketplace orders.
               </CardDescription>
             </CardHeader>
           </Card>

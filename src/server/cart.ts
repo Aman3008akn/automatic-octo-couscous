@@ -66,10 +66,10 @@ export async function getCart() {
       subtotalCents += lineTotalCents;
     }
 
-    const isCartigoFulfill = v?.product.resellerProfile.fulfillmentMode === "cartigo";
-    const deliveryDays = isCartigoFulfill ? 2 : 4;
+    const isCartygoFulfill = v?.product.resellerProfile.fulfillmentMode === "cartygo" || v?.product.resellerProfile.fulfillmentMode === "cartigo";
+    const deliveryDays = isCartygoFulfill ? 2 : 4;
     const deliveryDate = new Date(Date.now() + deliveryDays * 24 * 60 * 60 * 1000);
-    const deliveryEstimate = `${isCartigoFulfill ? "Express Delivery" : "Standard Delivery"} by ${deliveryDate.toLocaleDateString("en-IN", { month: "short", day: "numeric", weekday: "short" })}`;
+    const deliveryEstimate = `${isCartygoFulfill ? "Express Delivery" : "Standard Delivery"} by ${deliveryDate.toLocaleDateString("en-IN", { month: "short", day: "numeric", weekday: "short" })}`;
 
     return {
       id: item.id,

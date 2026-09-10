@@ -37,7 +37,7 @@ export default function LoginScreen() {
       // Simulate quick auth & sign-in
       await login("mock-jwt-token-12345", {
         id: "usr-current",
-        email: identifier.includes("@") ? identifier : `${identifier}@cartigo.in`,
+        email: identifier.includes("@") ? identifier : `${identifier}@cartygo.in`,
         name: identifier.split("@")[0] || "Aman Shukla",
         phone: "+91 98200 12345",
         role: "CUSTOMER",
@@ -65,7 +65,7 @@ export default function LoginScreen() {
         {/* Brand Header */}
         <View style={styles.header}>
           <View style={styles.brandContainer}>
-            <Text style={styles.brandTitle}>CARTIGO</Text>
+            <Text style={styles.brandTitle}>CARTYGO</Text>
             <View style={styles.brandDot} />
           </View>
           <Text style={styles.title}>Welcome Back</Text>
@@ -84,7 +84,7 @@ export default function LoginScreen() {
         <View style={styles.form}>
           <Input
             label="Email or Mobile Phone *"
-            placeholder="e.g. aman@cartigo.in or 9820012345"
+            placeholder="e.g. aman@cartygo.in or 9820012345"
             keyboardType="email-address"
             autoCapitalize="none"
             value={identifier}
@@ -109,7 +109,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
 
           <Button
-            title="Sign In to Cartigo"
+            title="Sign In to Cartygo"
             loading={loading}
             onPress={handleLogin}
             style={styles.loginBtn}
@@ -132,7 +132,7 @@ export default function LoginScreen() {
 
         {/* Sign Up Link */}
         <View style={styles.signupRow}>
-          <Text style={styles.signupText}>Don't have a Cartigo account? </Text>
+          <Text style={styles.signupText}>Don't have a Cartygo account? </Text>
           <TouchableOpacity onPress={() => router.push("/(auth)/signup" as any)}>
             <Text style={styles.signupLink}>Create Account</Text>
           </TouchableOpacity>

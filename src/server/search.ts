@@ -99,7 +99,7 @@ export async function searchCatalog(params: SearchParams = {}) {
       const sellerName =
         p.resellerProfile?.legalName?.trim() ||
         p.resellerProfile?.user?.name?.trim() ||
-        "Cartigo Official";
+        "Cartygo Official";
 
       return {
         id: p.id,

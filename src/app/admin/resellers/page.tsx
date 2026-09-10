@@ -252,7 +252,7 @@ export default function AdminResellersQueuePage() {
                 {/* Admin Internal Notes Editor (STRICTLY HIDDEN FROM RESELLER STATUS) */}
                 <div className="pt-2 border-t border-line space-y-1">
                   <label className="block text-xs font-semibold text-navy-900">
-                    Internal Admin Notes <span className="text-[10px] text-amber-600 font-normal">(Private to Cartigo admins)</span>
+                    Internal Admin Notes <span className="text-[10px] text-amber-600 font-normal">(Private to Cartygo admins)</span>
                   </label>
                   <textarea
                     rows={3}

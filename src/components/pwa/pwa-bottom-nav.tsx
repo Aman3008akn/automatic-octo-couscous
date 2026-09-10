@@ -46,14 +46,14 @@ export function PwaBottomNav() {
         search.includes("pwa=1")
       ) {
         try {
-          sessionStorage.setItem("cartigo_app_pwa", "true");
+          sessionStorage.setItem("cartygo_app_pwa", "true");
         } catch {}
         return true;
       }
 
       // 5. Persisted PWA session across route changes inside the PWA app
       try {
-        if (sessionStorage.getItem("cartigo_app_pwa") === "true") {
+        if (sessionStorage.getItem("cartygo_app_pwa") === "true") {
           return true;
         }
       } catch {}
@@ -112,20 +112,14 @@ export function PwaBottomNav() {
   const isHomeActive = pathname === "/";
   const isCategoriesActive = pathname.startsWith("/search");
   const isAccountActive =
+    pathname.startsWith("/account") ||
     pathname.startsWith("/orders") ||
     pathname.startsWith("/reseller") ||
     pathname === "/login" ||
     pathname === "/signup";
   const isCartActive = pathname.startsWith("/cart") || pathname.startsWith("/checkout");
 
-  const userRole = session?.user?.role;
-  const accountHref = session?.user
-    ? userRole === "SUPER_ADMIN" || userRole === "ADMIN"
-      ? "/admin"
-      : userRole === "APPROVED_RESELLER"
-      ? "/reseller/dashboard"
-      : "/orders"
-    : "/login";
+  const accountHref = "/account";
 
   return (
     <nav

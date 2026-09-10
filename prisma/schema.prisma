@@ -1,4 +1,4 @@
-// Cartigo — core data model for MongoDB
+// Cartygo — core data model for MongoDB
 
 generator client {
   provider = "prisma-client-js"
@@ -88,7 +88,7 @@ model ResellerProfile {
   contactPhone    String
   country         String
   businessType    String
-  fulfillmentMode String // "reseller" | "cartigo"
+  fulfillmentMode String // "reseller" | "cartygo"
   status          ResellerStatus @default(DRAFT)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt

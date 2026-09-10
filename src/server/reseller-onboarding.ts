@@ -13,7 +13,7 @@ const resellerApplicationSchema = z.object({
   contactPhone: z.string().min(6, "Valid phone number is required."),
   country: z.string().min(2, "Country code/name is required."),
   businessType: z.string().min(2, "Business type is required."),
-  fulfillmentMode: z.enum(["reseller", "cartigo"]),
+  fulfillmentMode: z.enum(["reseller", "cartygo", "cartigo"]),
   categories: z.array(z.string()).min(1, "Select at least one category."),
   monthlyVolumeEst: z.number().int().positive().optional(),
   returnPolicyNote: z.string().max(1000).optional(),

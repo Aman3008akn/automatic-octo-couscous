@@ -1,6 +1,6 @@
-# Cartigo Mobile — Native Android & iOS Application
+# Cartygo Mobile — Native Android & iOS Application
 
-Production-ready native mobile application for Cartigo built with **React Native**, **Expo SDK 52**, **Expo Router**, **TypeScript**, **TanStack Query**, **Zustand**, **React Hook Form + Zod**, and **Expo SecureStore**.
+Production-ready native mobile application for Cartygo built with **React Native**, **Expo SDK 52**, **Expo Router**, **TypeScript**, **TanStack Query**, **Zustand**, **React Hook Form + Zod**, and **Expo SecureStore**.
 
 ---
 
@@ -13,7 +13,7 @@ Production-ready native mobile application for Cartigo built with **React Native
 - **Validation**: React Hook Form + Zod schemas
 - **Storage**: Expo SecureStore (Encrypted mobile keychain/keystore token storage)
 - **Icons**: `@expo/vector-icons` (Ionicons)
-- **Design System**: Cartigo Ledger Navy (`#12172B`), Signal Amber (`#E8A33D`), Paper (`#F7F7F5`)
+- **Design System**: Cartygo Ledger Navy (`#12172B`), Signal Amber (`#E8A33D`), Paper (`#F7F7F5`)
 
 ---
 
@@ -50,7 +50,7 @@ mobile/
     ├── api/                     # TanStack Query client & resilient fallback provider
     ├── components/              # Native UI system (Button, Input, Card, Header, Badge, ProductCard)
     ├── store/                   # Zustand stores (useAuthStore, useCartStore, useWishlistStore)
-    ├── theme/                   # Cartigo design tokens
+    ├── theme/                   # Cartygo design tokens
     ├── types/                   # TypeScript interfaces matching Prisma database
     └── utils/                   # SecureStore, currency & date formatting
 ```

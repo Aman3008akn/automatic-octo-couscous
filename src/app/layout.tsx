@@ -16,7 +16,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Cartigo — Verified Reseller Marketplace",
+  title: "Cartygo — Verified Reseller Marketplace",
   description: "The trusted reseller-only marketplace for verified products.",
   manifest: "/manifest.json",
 };
@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="flex-1">{children}</div>
           <footer className="border-t border-line bg-paper py-8 text-center text-xs text-navy-400">
             <div className="mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-              <p>© {new Date().getFullYear()} Cartigo Marketplace Inc. All rights reserved.</p>
+              <p>© {new Date().getFullYear()} Cartygo Marketplace Inc. All rights reserved.</p>
               <div className="flex items-center gap-6 text-navy-600 font-medium">
                 <span>Authenticity Guaranteed</span>
                 <span>Verified Resellers Only</span>

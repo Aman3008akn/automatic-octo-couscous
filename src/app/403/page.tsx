@@ -11,15 +11,15 @@ export default function ForbiddenPage() {
         <div className="space-y-2">
           <h1 className="text-2xl font-display font-bold text-ink">Admin Privileges Required</h1>
           <p className="text-xs text-navy-600">
-            The Admin Console is restricted to authorized Cartigo Super Admins and Team Executives.
+            The Admin Console is restricted to authorized Cartygo Super Admins and Team Executives.
           </p>
         </div>
 
         <div className="rounded-card bg-navy-50 p-4 border border-line text-left text-xs space-y-2 font-mono">
           <p className="font-bold text-navy-900 font-sans uppercase text-[10px] tracking-wider">Super Admin Login Accounts:</p>
           <div className="space-y-1">
-            <p className="text-ink"><strong>1. Aman Shukla:</strong> amanshukla@cartigo.admin</p>
-            <p className="text-ink"><strong>2. Sumit Gautam:</strong> sumitgautam@cartigo.admin</p>
+            <p className="text-ink"><strong>1. Aman Shukla:</strong> amanshukla@cartygo.admin</p>
+            <p className="text-ink"><strong>2. Sumit Gautam:</strong> sumitgautam@cartygo.admin</p>
           </div>
         </div>
 

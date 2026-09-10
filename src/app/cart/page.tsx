@@ -159,7 +159,7 @@ export default function CartPage() {
           <CardHeader>
             <CardTitle className="text-2xl font-display">Your Shopping Cart is Empty</CardTitle>
             <CardDescription>
-              Explore approved products from verified resellers on the Cartigo storefront.
+              Explore approved products from verified resellers on the Cartygo storefront.
             </CardDescription>
           </CardHeader>
           <CardFooter className="justify-center pt-4">

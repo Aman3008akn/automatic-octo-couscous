@@ -12,17 +12,21 @@ async function getAdminSession() {
 }
 
 /**
- * Gets or creates the official Cartigo Reseller profile to own first-party products.
+ * Gets or creates the official Cartygo Reseller profile to own first-party products.
  */
-async function getOrCreateCartigoOfficialProfile() {
-  const email = "official@cartigo.admin";
-  let user = await prisma.user.findUnique({ where: { email } });
+async function getOrCreateCartygoOfficialProfile() {
+  const email = "official@cartygo.admin";
+  let user = await prisma.user.findFirst({
+    where: {
+      OR: [{ email: "official@cartygo.admin" }, { email: "official@cartigo.admin" }],
+    },
+  });
 
   if (!user) {
     user = await prisma.user.create({
       data: {
         email,
-        name: "Cartigo Official",
+        name: "Cartygo Official",
         role: "APPROVED_RESELLER",
       },
     });
@@ -36,13 +40,13 @@ async function getOrCreateCartigoOfficialProfile() {
     profile = await prisma.resellerProfile.create({
       data: {
         userId: user.id,
-        legalName: "Cartigo Official",
+        legalName: "Cartygo Official",
         contactPerson: "Admin",
         contactEmail: email,
         contactPhone: "000-000-0000",
         country: "US",
         businessType: "Company",
-        fulfillmentMode: "cartigo",
+        fulfillmentMode: "cartygo",
         status: "APPROVED",
       },
     });
@@ -149,7 +153,7 @@ export async function createAdminProduct(data: {
 }) {
   try {
     await getAdminSession();
-    const profile = await getOrCreateCartigoOfficialProfile();
+    const profile = await getOrCreateCartygoOfficialProfile();
 
     // Basic slug generation
     const slug = data.title

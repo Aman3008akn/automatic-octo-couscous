@@ -60,9 +60,9 @@ export default async function AdminAuditLogsPage({ searchParams }: PageProps) {
             All System Events
           </Link>
           <Link
-            href="/admin/audit?actor=sumitgautam@cartigo.admin"
+            href="/admin/audit?actor=sumitgautam@cartygo.admin"
             className={`rounded-full px-3.5 py-1 text-xs font-bold transition-colors ${
-              actorFilter === "sumitgautam@cartigo.admin"
+              actorFilter === "sumitgautam@cartygo.admin"
                 ? "bg-amber-500 text-navy-900 shadow-sm"
                 : "bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100"
             }`}
@@ -70,9 +70,9 @@ export default async function AdminAuditLogsPage({ searchParams }: PageProps) {
             🕵️ Monitor Sumit Gautam
           </Link>
           <Link
-            href="/admin/audit?actor=amanshukla@cartigo.admin"
+            href="/admin/audit?actor=amanshukla@cartygo.admin"
             className={`rounded-full px-3.5 py-1 text-xs font-semibold transition-colors ${
-              actorFilter === "amanshukla@cartigo.admin"
+              actorFilter === "amanshukla@cartygo.admin"
                 ? "bg-navy-900 text-white shadow-sm"
                 : "bg-navy-50 text-navy-600 hover:bg-navy-100"
             }`}

@@ -1,28 +1,28 @@
 {
   "expo": {
-    "name": "Cartigo",
-    "slug": "cartigo",
+    "name": "Cartygo",
+    "slug": "cartygo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "cartigo",
+    "scheme": "cartygo",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#12172B"
+      "backgroundColor": "#FFFFFF"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.cartigo.app"
+      "bundleIdentifier": "com.cartygo.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#12172B"
+        "backgroundColor": "#FFFFFF"
       },
-      "package": "com.cartigo.app"
+      "package": "com.cartygo.app"
     },
     "web": {
       "bundler": "metro",

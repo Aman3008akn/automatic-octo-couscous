@@ -34,7 +34,7 @@ export default function VerifyOtpScreen() {
     try {
       await login("mock-jwt-otp-token", {
         id: "usr-otp-verified",
-        email: "verified@cartigo.in",
+        email: "verified@cartygo.in",
         name: "Aman Shukla",
         phone: "+91 98200 12345",
         role: "CUSTOMER",

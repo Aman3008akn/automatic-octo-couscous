@@ -216,8 +216,8 @@ export default function ProductDetailScreen() {
             <View style={styles.sellerTextCol}>
               <Text style={styles.sellerName}>Sold by {product.sellerName}</Text>
               <Text style={styles.sellerBadge}>
-                {product.sellerFulfillment === "cartigo"
-                  ? "⚡ Cartigo Express Warehouse Fulfillment"
+                {product.sellerFulfillment === "cartygo"
+                  ? "⚡ Cartygo Express Warehouse Fulfillment"
                   : "🛡️ Verified Partner Direct Dispatch"}
               </Text>
             </View>

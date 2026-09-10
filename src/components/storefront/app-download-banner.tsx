@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CartigoLogoIcon } from "@/components/ui/cartigo-logo";
+import { CartygoLogoIcon } from "@/components/ui/cartygo-logo";
 import { Smartphone, Download, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
 
 export function AppDownloadBanner() {
@@ -33,7 +33,7 @@ export function AppDownloadBanner() {
         return true;
       }
       try {
-        if (sessionStorage.getItem("cartigo_app_pwa") === "true") return true;
+        if (sessionStorage.getItem("cartygo_app_pwa") === "true") return true;
       } catch {}
       return false;
     };
@@ -80,7 +80,7 @@ export function AppDownloadBanner() {
   };
 
   return (
-    <section id="cartigo-app-download" className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0B0F19] via-[#12172B] to-[#0B0F19] border border-navy-700/60 shadow-xl p-8 sm:p-12 my-12 scroll-mt-20">
+    <section id="cartygo-app-download" className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0B0F19] via-[#12172B] to-[#0B0F19] border border-navy-700/60 shadow-xl p-8 sm:p-12 my-12 scroll-mt-20">
       {/* Amber Radial Glow */}
       <div className="absolute -right-20 -top-20 w-96 h-96 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
       <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-amber-500/5 blur-3xl pointer-events-none" />
@@ -89,12 +89,12 @@ export function AppDownloadBanner() {
         {/* Left Side: Content */}
         <div className="w-full lg:w-3/5 text-center lg:text-left space-y-5">
           <div className="inline-flex items-center gap-3 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-bold tracking-wider uppercase">
-            <img src="/icons/cartigo-app-logo.png" alt="Cartigo APK" className="w-5 h-5 rounded-full object-cover" />
+            <img src="/icons/cartygo-app-logo.png" alt="Cartygo APK" className="w-5 h-5 rounded-full object-cover" />
             <span>Official Mobile Experience</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-white tracking-tight leading-tight">
-            Download the <span className="text-amber-400">Cartigo App</span>
+            Download the <span className="text-amber-400">Cartygo App</span>
           </h2>
 
           <p className="text-navy-200 text-sm sm:text-base max-w-xl leading-relaxed">
@@ -148,11 +148,11 @@ export function AppDownloadBanner() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <img
-                    src="/icons/cartigo-app-logo.png"
-                    alt="Cartigo Logo"
+                    src="/icons/cartygo-app-logo.png"
+                    alt="Cartygo Logo"
                     className="w-8 h-8 rounded-lg object-cover shadow-sm"
                   />
-                  <span className="font-display font-black text-sm text-white tracking-wider">CARTIGO</span>
+                  <span className="font-display font-black text-sm text-white tracking-wider">CARTYGO</span>
                 </div>
                 <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">
                   LIVE
@@ -162,7 +162,7 @@ export function AppDownloadBanner() {
               {/* Sample Mini Cards */}
               <div className="space-y-2 my-auto">
                 <div className="bg-navy-800/80 p-2.5 rounded-xl border border-navy-700">
-                  <div className="text-[10px] font-bold text-amber-400 uppercase">Cartigo Drop</div>
+                  <div className="text-[10px] font-bold text-amber-400 uppercase">Cartygo Drop</div>
                   <div className="text-xs font-bold text-white truncate">Premium Tech Accessories</div>
                   <div className="text-[11px] text-navy-300 font-mono">₹2,499 (29% OFF)</div>
                 </div>
@@ -189,7 +189,7 @@ export function AppDownloadBanner() {
             <div className="flex items-center justify-between pb-2 border-b border-navy-800">
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
                 <Download className="w-5 h-5 text-amber-400" />
-                <span>Install Cartigo on Phone</span>
+                <span>Install Cartygo on Phone</span>
               </h3>
               <button
                 onClick={() => setShowGuideModal(false)}
@@ -204,7 +204,7 @@ export function AppDownloadBanner() {
                 <p className="font-bold text-amber-400 mb-1">Android (Chrome / Samsung Internet):</p>
                 <p>1. Top-right me <strong className="text-white">3 dots (⋮)</strong> menu par tap karein.</p>
                 <p>2. <strong className="text-white">"Install app"</strong> ya <strong className="text-white">"Add to Home screen"</strong> select karein.</p>
-                <p>3. Confirm karein. Cartigo ka icon aapki home screen par add ho jayega!</p>
+                <p>3. Confirm karein. Cartygo ka icon aapki home screen par add ho jayega!</p>
               </div>
 
               <div className="bg-navy-800/70 p-3 rounded-xl border border-navy-700/60">

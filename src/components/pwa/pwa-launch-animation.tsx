@@ -16,11 +16,11 @@ export function PwaLaunchAnimation() {
         new URLSearchParams(window.location.search).has("splash"));
 
     // 2. Only show once per session in PWA mode
-    const alreadySeen = sessionStorage.getItem("cartigo_pwa_splash_seen");
+    const alreadySeen = sessionStorage.getItem("cartygo_pwa_splash_seen");
 
     if (isStandalone && !alreadySeen) {
       setShowSplash(true);
-      sessionStorage.setItem("cartigo_pwa_splash_seen", "true");
+      sessionStorage.setItem("cartygo_pwa_splash_seen", "true");
 
       // Tactile haptic tap on launch
       if ("vibrate" in navigator) {
@@ -60,11 +60,11 @@ export function PwaLaunchAnimation() {
     return null;
   }
 
-  const letters = ["A", "R", "T", "I", "G", "O"];
+  const letters = ["A", "R", "T", "Y", "G", "O"];
 
   return (
     <div
-      id="cartigo-pwa-splash"
+      id="cartygo-pwa-splash"
       className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-[#080D1A] overflow-hidden select-none transition-all duration-400 ease-out ${
         isExiting ? "opacity-0 scale-105 pointer-events-none" : "opacity-100 scale-100"
       }`}

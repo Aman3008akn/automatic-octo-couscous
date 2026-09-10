@@ -51,7 +51,7 @@ export function TeamScrollPopup() {
             <div className="h-6 w-6 rounded-full bg-amber-500 flex items-center justify-center text-[10px] font-bold border border-navy-900 z-30">C</div>
             <div className="h-6 w-6 rounded-full bg-navy-600 flex items-center justify-center text-[10px] font-bold border border-navy-900 z-20 text-white">4+</div>
           </div>
-          <span className="text-sm font-bold text-amber-400 tracking-wide pr-2">Meet the Visionaries Behind Cartigo ✨</span>
+          <span className="text-sm font-bold text-amber-400 tracking-wide pr-2">Meet the Visionaries Behind Cartygo ✨</span>
           
           <button 
             onClick={(e) => {

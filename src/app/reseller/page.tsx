@@ -20,13 +20,13 @@ export default async function ResellerProgramPage() {
       <section className="relative overflow-hidden rounded-2xl bg-navy-900 text-paper p-8 sm:p-12 shadow-xl mb-16">
         <div className="relative z-10 max-w-3xl">
           <span className="inline-flex items-center rounded-full bg-amber-400/20 px-3 py-1 text-xs font-mono font-semibold text-amber-400 mb-6">
-            Cartigo Partner Program
+            Cartygo Partner Program
           </span>
           <h1 className="text-4xl sm:text-5xl font-display font-bold tracking-tight text-white mb-6 leading-tight">
-            Sell verified products as an Approved Cartigo Reseller.
+            Sell verified products as an Approved Cartygo Reseller.
           </h1>
           <p className="text-lg text-navy-100 mb-8 leading-relaxed">
-            Cartigo is an exclusive reseller-only marketplace. Unlike open platforms, every seller is vetted, verified, and backed by Cartigo&apos;s authenticity and fulfillment standard.
+            Cartygo is an exclusive reseller-only marketplace. Unlike open platforms, every seller is vetted, verified, and backed by Cartygo&apos;s authenticity and fulfillment standard.
           </p>
           <div className="flex flex-wrap gap-4">
             {isApproved ? (
@@ -62,10 +62,10 @@ export default async function ResellerProgramPage() {
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-96 h-96 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
       </section>
 
-      {/* Why Cartigo Section */}
+      {/* Why Cartygo Section */}
       <section className="mb-16">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-3xl font-display font-bold text-ink">Why top distributors sell on Cartigo</h2>
+          <h2 className="text-3xl font-display font-bold text-ink">Why top distributors sell on Cartygo</h2>
           <p className="text-navy-600 mt-2">Built specifically for high-volume verified suppliers, brands, and liquidators.</p>
         </div>
 
@@ -129,7 +129,7 @@ export default async function ResellerProgramPage() {
               <h3 className="font-semibold text-ink">Admin Moderation</h3>
             </div>
             <p className="text-xs text-navy-600 leading-relaxed pl-11">
-              Cartigo compliance officers review your business registration and catalog fit within 24-48 hours.
+              Cartygo compliance officers review your business registration and catalog fit within 24-48 hours.
             </p>
           </div>
 
@@ -160,7 +160,7 @@ export default async function ResellerProgramPage() {
         <Card>
           <CardHeader>
             <CardTitle>Reseller Qualification Standards</CardTitle>
-            <CardDescription>Criteria required for approval on Cartigo marketplace</CardDescription>
+            <CardDescription>Criteria required for approval on Cartygo marketplace</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-navy-600">
             <div className="flex items-start gap-2">
@@ -177,7 +177,7 @@ export default async function ResellerProgramPage() {
             </div>
             <div className="flex items-start gap-2">
               <span className="text-success font-bold">✓</span>
-              <p>Agreement to Cartigo&apos;s mandatory 14-day customer return policy.</p>
+              <p>Agreement to Cartygo&apos;s mandatory 14-day customer return policy.</p>
             </div>
           </CardContent>
         </Card>
