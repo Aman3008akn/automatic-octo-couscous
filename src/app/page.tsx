@@ -1,8 +1,6 @@
 import Link from "next/link";
-export const dynamic = "force-dynamic";
 import { searchCatalog } from "@/server/search";
 import { HeroCarousel } from "@/components/storefront/hero-carousel";
-import { MerchandisingGrid } from "@/components/storefront/merchandising-grid";
 import { CategoryGrid } from "@/components/storefront/category-grid";
 import { ProductCard } from "@/components/storefront/product-card";
 import { CartygoDrop } from "@/components/storefront/cartygo-drop";
@@ -14,10 +12,12 @@ import { WelcomeOffer } from "@/components/storefront/welcome-offer";
 import { AppDownloadBanner } from "@/components/storefront/app-download-banner";
 import { getBanners } from "@/server/banners";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   // Fetch products for storefront sections
   const [{ items: popularProducts }, { items: dealProducts }, { items: dropProducts }, heroBanners] = await Promise.all([
-    searchCatalog({ take: 8, sortBy: "newest" }),
+    searchCatalog({ take: 24, sortBy: "newest" }),
     searchCatalog({ take: 4, sortBy: "price_asc" }),
     searchCatalog({ take: 8, sortBy: "newest" }),
     getBanners("HERO_CAROUSEL"),
@@ -46,13 +46,10 @@ export default async function HomePage() {
         {/* 4. Curated Verified Price Drops (4 Outstanding Deals) */}
         <PriceDrops products={dealProducts} />
 
-        {/* 5. Editorial 4-Card Merchandising Grid */}
-        <MerchandisingGrid />
-
         {/* Editorial Divider */}
         <div className="w-full h-px bg-line/80" />
 
-        {/* 6. Popular on Cartygo Section */}
+        {/* 5. Popular on Cartygo Section */}
         <section>
           <div className="flex items-center justify-between mb-6 pb-3 border-b border-line">
             <div>
