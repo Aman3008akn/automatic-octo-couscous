@@ -2,6 +2,7 @@ import { searchCatalog, getStorefrontCategories } from "@/server/search";
 import { ProductCard } from "@/components/storefront/product-card";
 import { Footer } from "@/components/storefront/footer";
 import { SortDropdown } from "@/components/storefront/sort-dropdown";
+import { AutoScrollToProducts } from "@/components/storefront/auto-scroll-to-products";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -56,9 +57,10 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
 
   return (
     <div className="min-h-screen bg-paper flex flex-col">
+      <AutoScrollToProducts />
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 flex-1">
         {/* Results Header */}
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
+        <div id="products" className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4 scroll-mt-32 sm:scroll-mt-40">
           <div>
             <span className="text-xs font-mono text-navy-400 uppercase tracking-wider">Marketplace Catalog Search</span>
             <h1 className="text-2xl sm:text-3xl font-display font-bold text-ink">
@@ -88,7 +90,7 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
               <ul className="space-y-1.5 text-xs">
                 <li>
                   <Link
-                    href={`/search${q ? `?q=${q}` : ""}`}
+                    href={`/search${q ? `?q=${q}` : ""}#products`}
                     className={`block px-2 py-1 rounded transition-colors ${
                       categorySlug === "all" ? "bg-navy-900 text-amber-400 font-bold" : "text-navy-600 hover:text-ink"
                     }`}
@@ -99,7 +101,7 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
                 {categories.map((c) => (
                   <li key={c.id}>
                     <Link
-                      href={`/search?categorySlug=${c.slug}${q ? `&q=${q}` : ""}`}
+                      href={`/search?categorySlug=${c.slug}${q ? `&q=${q}` : ""}#products`}
                       className={`flex justify-between items-center px-2 py-1 rounded transition-colors ${
                         categorySlug === c.slug ? "bg-navy-900 text-amber-400 font-bold" : "text-navy-600 hover:text-ink"
                       }`}
@@ -146,7 +148,7 @@ export default async function SearchResultsPage({ searchParams }: SearchPageProp
           </aside>
 
           {/* Results Product Grid */}
-          <div className="lg:col-span-3">
+          <div id="products-grid" className="lg:col-span-3 scroll-mt-32 sm:scroll-mt-40">
             {items.length === 0 ? (
               <div className="rounded-card border border-line bg-white p-12 text-center text-navy-600">
                 <p className="text-lg font-bold text-ink">no products right now:), maybe the reseller has not approved yet</p>

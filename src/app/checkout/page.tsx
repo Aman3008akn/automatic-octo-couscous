@@ -15,6 +15,8 @@ export default function CheckoutPage() {
   const [checkingCart, setCheckingCart] = useState(true);
   const [cartSummary, setCartSummary] = useState<any>(null);
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [line1, setLine1] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -42,6 +44,13 @@ export default function CheckoutPage() {
         router.replace("/cart");
       });
   }, [router]);
+
+  useEffect(() => {
+    if (session?.user) {
+      if (!firstName && session.user.firstName) setFirstName(session.user.firstName);
+      if (!lastName && session.user.lastName) setLastName(session.user.lastName);
+    }
+  }, [session, firstName, lastName]);
 
   async function handlePincodeChange(e: React.ChangeEvent<HTMLInputElement>) {
     const val = e.target.value.replace(/\D/g, "").slice(0, 6);
@@ -134,6 +143,30 @@ export default function CheckoutPage() {
 
               <div className="p-6 space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-navy-600 mb-1.5">First Name *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Rahul"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full rounded-lg border border-line bg-gray-50/50 px-4 py-3 text-sm text-ink outline-none focus:border-navy-400 focus:bg-white transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-navy-600 mb-1.5">Last Name *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Sharma"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="w-full rounded-lg border border-line bg-gray-50/50 px-4 py-3 text-sm text-ink outline-none focus:border-navy-400 focus:bg-white transition-colors"
+                    />
+                  </div>
+
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-bold uppercase tracking-wider text-navy-600 mb-1.5">Street Address *</label>
                     <input

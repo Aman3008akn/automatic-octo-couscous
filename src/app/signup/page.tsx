@@ -13,7 +13,8 @@ function SignupForm() {
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const supabase = createClient();
 
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   
@@ -26,12 +27,17 @@ function SignupForm() {
     setError(null);
     setLoading(true);
 
+    const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
+
     const { error: signUpError, data } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          full_name: name,
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          full_name: fullName,
+          name: fullName,
         },
       },
     });
@@ -87,18 +93,34 @@ function SignupForm() {
           </div>
         ) : (
           <form onSubmit={handleSignup} className="flex flex-col gap-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-navy-600 mb-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="John Doe"
-                className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none transition focus:border-navy-400 focus:ring-2 focus:ring-navy-400/20"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-navy-600 mb-1">
+                  First Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="e.g. John"
+                  className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none transition focus:border-navy-400 focus:ring-2 focus:ring-navy-400/20"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-navy-600 mb-1">
+                  Last Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="e.g. Doe"
+                  className="w-full rounded-card border border-line bg-white px-3.5 py-2 text-sm text-ink outline-none transition focus:border-navy-400 focus:ring-2 focus:ring-navy-400/20"
+                />
+              </div>
             </div>
 
             <div>

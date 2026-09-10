@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { searchCatalog } from "@/server/search";
 import { HeroCarousel } from "@/components/storefront/hero-carousel";
-import { CategoryGrid } from "@/components/storefront/category-grid";
 import { ProductCard } from "@/components/storefront/product-card";
 import { CartygoDrop } from "@/components/storefront/cartygo-drop";
 import { PriceDrops } from "@/components/storefront/price-drops";
@@ -31,13 +30,7 @@ export default async function HomePage() {
         {/* 1. Hero Promotional Carousel */}
         <HeroCarousel banners={heroBanners.length > 0 ? heroBanners : undefined} />
 
-        {/* 2. Architectural Category Discovery */}
-        <CategoryGrid />
-
-        {/* Editorial Divider */}
-        <div className="w-full h-px bg-line/80" />
-
-        {/* 3. Signature Culture & Discovery Rail: THE CARTYGO DROP */}
+        {/* 2. Signature Culture & Discovery Rail: THE CARTYGO DROP */}
         <CartygoDrop products={dropProducts} />
 
         {/* Editorial Divider */}

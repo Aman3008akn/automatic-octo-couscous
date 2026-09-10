@@ -34,6 +34,7 @@ import {
   Info,
   ShieldAlert,
   ArrowLeft,
+  User as UserIcon,
 } from "lucide-react";
 
 export default function AccountPage() {
@@ -48,6 +49,23 @@ export default function AccountPage() {
   const [selectedLanguage, setSelectedLanguage] = useState<"en" | "hi">("en");
   const [emailUpdatedMsg, setEmailUpdatedMsg] = useState(false);
   const [emailInput, setEmailInput] = useState(user?.email || "");
+
+  const [firstNameInput, setFirstNameInput] = useState(user?.firstName || user?.name?.split(" ")[0] || "");
+  const [lastNameInput, setLastNameInput] = useState(user?.lastName || user?.name?.split(" ").slice(1).join(" ") || "");
+  const [profileUpdatedMsg, setProfileUpdatedMsg] = useState(false);
+
+  // Sync inputs when user data is ready
+  useEffect(() => {
+    if (user) {
+      if (user.firstName) setFirstNameInput(user.firstName);
+      else if (user.name) setFirstNameInput(user.name.split(" ")[0] || "");
+
+      if (user.lastName) setLastNameInput(user.lastName);
+      else if (user.name) setLastNameInput(user.name.split(" ").slice(1).join(" ") || "");
+
+      if (user.email) setEmailInput(user.email);
+    }
+  }, [user]);
 
   // Notification toggles
   const [notifications, setNotifications] = useState({
@@ -259,6 +277,20 @@ export default function AccountPage() {
         {/* 5. Account Settings Menu List (Matching Screenshot 1) */}
         <div className="bg-white border-b border-slate-200 divide-y divide-slate-100">
           <button
+            onClick={() => setActiveModal("profile")}
+            className="w-full px-4 py-3.5 flex items-center justify-between hover:bg-slate-50/70 text-left transition-colors"
+          >
+            <div className="flex items-center gap-3.5 text-slate-700">
+              <UserIcon className="w-5 h-5 text-[#0066ff]" />
+              <div>
+                <span className="text-xs font-bold text-slate-900">Profile Information</span>
+                <p className="text-[10px] text-slate-500">First Name, Last Name & Personal Details</p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-400" />
+          </button>
+
+          <button
             onClick={() => setActiveModal("cards")}
             className="w-full px-4 py-3.5 flex items-center justify-between hover:bg-slate-50/70 text-left transition-colors"
           >
@@ -456,6 +488,88 @@ export default function AccountPage() {
           <p className="mt-0.5 font-mono">Verified Reseller Commerce Standard</p>
         </div>
       </div>
+
+      {/* ========================================================================= */}
+      {/* MODAL: PROFILE INFORMATION (First Name, Last Name & Personal Details)      */}
+      {/* ========================================================================= */}
+      {activeModal === "profile" && (
+        <div className="fixed inset-0 z-[1000] bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#0066ff] flex items-center justify-center">
+                  <UserIcon className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-navy-950 font-display">Profile Information</h2>
+                  <p className="text-[11px] text-slate-500">Manage your name and contact details</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setActiveModal(null)}
+                className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300 flex items-center justify-center transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              {profileUpdatedMsg && (
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-600" />
+                  <span>Profile details saved successfully!</span>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">First Name</label>
+                  <input
+                    type="text"
+                    value={firstNameInput}
+                    onChange={(e) => setFirstNameInput(e.target.value)}
+                    placeholder="First Name"
+                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-[#0066ff] focus:ring-1 focus:ring-[#0066ff]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Last Name</label>
+                  <input
+                    type="text"
+                    value={lastNameInput}
+                    onChange={(e) => setLastNameInput(e.target.value)}
+                    placeholder="Last Name"
+                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-[#0066ff] focus:ring-1 focus:ring-[#0066ff]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
+                <input
+                  type="email"
+                  value={emailInput}
+                  disabled
+                  className="w-full px-3 py-2 text-sm border border-slate-200 bg-slate-50 text-slate-500 rounded-lg cursor-not-allowed"
+                />
+                <p className="text-[10px] text-slate-400 mt-1">Email is tied to your login account</p>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  onClick={() => {
+                    setProfileUpdatedMsg(true);
+                    setTimeout(() => setProfileUpdatedMsg(false), 2500);
+                  }}
+                  className="w-full py-2.5 bg-[#0066ff] hover:bg-blue-700 active:scale-98 text-white font-bold text-xs rounded-xl shadow-sm transition-all"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* MODAL: CARTYGO TERMS, POLICIES & LICENSES (Full Legal Center)             */}

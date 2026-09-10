@@ -9,6 +9,7 @@ import { getSearchSuggestions } from "@/server/search";
 import { getMyResellerStatus } from "@/server/reseller-onboarding";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { CartygoLogoIcon } from "@/components/ui/cartygo-logo";
+import { ActiveUsersBanner } from "@/components/layout/active-users-banner";
 
 import { 
   Tv, 
@@ -104,6 +105,9 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 shadow-sm flex flex-col bg-white">
+      {/* 0. Live Active Users & Retailer Excitement Pop-Up Banner */}
+      <ActiveUsersBanner />
+
       {/* 1. Top Utility Announcement Bar (Hidden on Mobile) */}
       <div className="hidden sm:flex bg-navy-900 text-white text-[11px] py-1.5 px-4 sm:px-8 items-center justify-between font-medium">
         <div className="flex items-center gap-4">
@@ -281,7 +285,21 @@ export function Header() {
       {/* 3. Category Navigation Strip (Scrollable on mobile) */}
       <nav className="border-b sm:border-t sm:border-b-0 border-line bg-navy-50 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center gap-6 text-xs sm:text-xs font-semibold py-2.5 sm:py-2 whitespace-nowrap">
-          <Link href="/search" className="flex items-center gap-1.5 text-navy-900 font-bold hover:text-amber-600 transition-colors">
+          <Link
+            href="/search#products"
+            onClick={() => {
+              if (pathname === "/search") {
+                setTimeout(() => {
+                  const target =
+                    window.innerWidth < 1024
+                      ? document.getElementById("products-grid") || document.getElementById("products")
+                      : document.getElementById("products") || document.getElementById("products-grid");
+                  target?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }, 150);
+              }
+            }}
+            className="flex items-center gap-1.5 text-navy-900 font-bold hover:text-amber-600 transition-colors"
+          >
             <span className="text-lg leading-none">≡</span> 
             <span>All Categories</span>
           </Link>
@@ -293,7 +311,18 @@ export function Header() {
             return (
               <Link
                 key={cat.slug}
-                href={`/search?categorySlug=${cat.slug}`}
+                href={`/search?categorySlug=${cat.slug}#products`}
+                onClick={() => {
+                  if (pathname === "/search") {
+                    setTimeout(() => {
+                      const target =
+                        window.innerWidth < 1024
+                          ? document.getElementById("products-grid") || document.getElementById("products")
+                          : document.getElementById("products") || document.getElementById("products-grid");
+                      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }, 150);
+                  }
+                }}
                 className="flex items-center gap-1.5 text-navy-800 sm:text-navy-600 hover:text-ink transition-colors"
               >
                 <Icon className="w-4 h-4 sm:w-3.5 sm:h-3.5" />

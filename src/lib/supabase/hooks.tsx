@@ -11,6 +11,8 @@ type SessionData = {
     id: string;
     email: string;
     name?: string;
+    firstName?: string;
+    lastName?: string;
     role?: string;
   } | null;
 };
@@ -48,11 +50,23 @@ export function SupabaseSessionProvider({ children }: { children: React.ReactNod
           // fallback to metadata or undefined
         }
 
+        const meta = currentSession.user.user_metadata || {};
+        const fullName =
+          meta.name ||
+          meta.full_name ||
+          [meta.first_name, meta.last_name].filter(Boolean).join(" ") ||
+          currentSession.user.email?.split("@")[0] ||
+          "Cartygo User";
+        const firstName = meta.first_name || fullName.split(" ")[0] || "";
+        const lastName = meta.last_name || fullName.split(" ").slice(1).join(" ") || "";
+
         const authData = {
           user: {
             id: currentSession.user.id,
             email: currentSession.user.email!,
-            name: currentSession.user.user_metadata?.name || currentSession.user.email,
+            name: fullName,
+            firstName,
+            lastName,
             role,
           },
         };
@@ -74,11 +88,23 @@ export function SupabaseSessionProvider({ children }: { children: React.ReactNod
           // fallback
         }
 
+        const meta = newSession.user.user_metadata || {};
+        const fullName =
+          meta.name ||
+          meta.full_name ||
+          [meta.first_name, meta.last_name].filter(Boolean).join(" ") ||
+          newSession.user.email?.split("@")[0] ||
+          "Cartygo User";
+        const firstName = meta.first_name || fullName.split(" ")[0] || "";
+        const lastName = meta.last_name || fullName.split(" ").slice(1).join(" ") || "";
+
         const authData = {
           user: {
             id: newSession.user.id,
             email: newSession.user.email!,
-            name: newSession.user.user_metadata?.name || newSession.user.email,
+            name: fullName,
+            firstName,
+            lastName,
             role,
           },
         };

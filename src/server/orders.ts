@@ -5,6 +5,11 @@ import { prisma } from "@/lib/prisma";
 import { requireSession, requireRole } from "@/lib/authz";
 import { getCart } from "./cart";
 import type { OrderStatus } from "@prisma/client";
+import {
+  sendOrderConfirmationEmail,
+  sendOrderCancellationEmail,
+  sendOrderStatusUpdateEmail,
+} from "@/lib/email";
 
 const checkoutSchema = z.object({
   line1: z.string().min(3, "Street address is required."),
@@ -155,6 +160,32 @@ export async function createOrderFromCart(input: CheckoutInput): Promise<OrderAc
 
       return { order, orderNumber: order.orderNumber };
     });
+
+    // 7. Dispatch asynchronous Order Confirmation Email
+    if (session.user.email) {
+      sendOrderConfirmationEmail({
+        toEmail: session.user.email,
+        customerName: session.user.name || session.user.email.split("@")[0] || "Customer",
+        orderNumber: result.orderNumber,
+        items: cart.items.map((i) => ({
+          title: i.title,
+          quantity: i.quantity,
+          unitPriceCents: i.unitPriceCents,
+          sku: i.sku,
+        })),
+        totalCents: cart.totalCents,
+        paymentMethod: data.paymentMethod,
+        shippingAddress: {
+          line1: data.line1,
+          line2: data.line2,
+          city: data.city,
+          state: data.state,
+          postalCode: data.postalCode,
+          country: data.country,
+          phone: data.phone,
+        },
+      }).catch((err) => console.error("Error sending order confirmation email:", err));
+    }
 
     return { ok: true, orderId: result.order.id, orderNumber: result.orderNumber };
   } catch (error) {
@@ -308,7 +339,12 @@ export async function updateFulfillmentStatus(orderId: string, toStatus: OrderSt
   const userId = session.user.id;
   const userRole = session.user.role;
 
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      user: { select: { name: true, email: true } },
+    },
+  });
   if (!order) {
     return { ok: false, error: "Order not found." };
   }
@@ -361,6 +397,18 @@ export async function updateFulfillmentStatus(orderId: string, toStatus: OrderSt
       });
     });
 
+    // Dispatch Order Status Update Email
+    if (order.user?.email) {
+      sendOrderStatusUpdateEmail({
+        toEmail: order.user.email,
+        customerName: order.user.name || order.user.email.split("@")[0] || "Customer",
+        orderNumber: order.orderNumber,
+        status: toStatus,
+        trackingNumber,
+        carrier,
+      }).catch((err) => console.error("Error sending order status email:", err));
+    }
+
     return { ok: true };
   } catch (error) {
     return { ok: false, error: (error as Error).message };
@@ -399,6 +447,9 @@ export async function cancelOrder(orderId: string) {
 
   const order = await prisma.order.findUnique({
     where: { id: orderId },
+    include: {
+      user: { select: { name: true, email: true } },
+    },
   });
 
   if (!order) {
@@ -428,6 +479,17 @@ export async function cancelOrder(orderId: string) {
       },
     });
   });
+
+  // Dispatch Order Cancellation Email
+  if (order.user?.email) {
+    sendOrderCancellationEmail({
+      toEmail: order.user.email,
+      customerName: order.user.name || order.user.email.split("@")[0] || "Customer",
+      orderNumber: order.orderNumber,
+      paymentMethod: order.paymentMethod,
+      totalCents: order.totalCents,
+    }).catch((err) => console.error("Error sending order cancellation email:", err));
+  }
 
   return { ok: true };
 }

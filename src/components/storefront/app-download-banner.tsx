@@ -97,21 +97,21 @@ export function AppDownloadBanner() {
             Download the <span className="text-amber-400">Cartygo App</span>
           </h2>
 
-          <p className="text-navy-200 text-sm sm:text-base max-w-xl leading-relaxed">
+          <p className="text-gray-200 text-sm sm:text-base max-w-xl leading-relaxed font-normal">
             Experience our ultra-fast mobile application with instant order tracking, real-time verified price drops, and 1-tap checkout. No bloated app store download required.
           </p>
 
           {/* Value Props */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-            <div className="flex items-center gap-2 text-xs font-semibold text-navy-200 justify-center lg:justify-start">
+            <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-white justify-center lg:justify-start bg-white/10 border border-white/10 px-3 py-2 rounded-xl">
               <Zap className="w-4 h-4 text-amber-400 shrink-0" />
               <span>Instant Launch</span>
             </div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-navy-200 justify-center lg:justify-start">
+            <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-white justify-center lg:justify-start bg-white/10 border border-white/10 px-3 py-2 rounded-xl">
               <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
               <span>Buyer Protection</span>
             </div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-navy-200 justify-center lg:justify-start">
+            <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-white justify-center lg:justify-start bg-white/10 border border-white/10 px-3 py-2 rounded-xl">
               <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
               <span>100% Real-Time Sync</span>
             </div>
@@ -121,7 +121,7 @@ export function AppDownloadBanner() {
           <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 justify-center lg:justify-start">
             <button
               onClick={handleInstallClick}
-              className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 active:scale-98 text-navy-950 font-black text-sm px-8 py-4 rounded-xl shadow-[0_4px_20px_rgba(232,163,61,0.35)] transition-all flex items-center justify-center gap-3 cursor-pointer group"
+              className="w-full sm:w-auto bg-amber-400 hover:bg-amber-300 active:scale-98 text-navy-950 font-black text-sm px-8 py-4 rounded-xl shadow-[0_4px_25px_rgba(232,163,61,0.45)] transition-all flex items-center justify-center gap-3 cursor-pointer group tracking-wide"
             >
               <Download className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
               <span>DOWNLOAD & INSTALL APP</span>
@@ -129,7 +129,7 @@ export function AppDownloadBanner() {
 
             <button
               onClick={() => setShowGuideModal(true)}
-              className="text-xs font-semibold text-navy-300 hover:text-white transition-colors underline underline-offset-4 py-2"
+              className="text-xs sm:text-sm font-bold text-amber-300 hover:text-amber-200 transition-colors underline underline-offset-4 py-2"
             >
               How to install on Android & iOS?
             </button>
@@ -199,19 +199,19 @@ export function AppDownloadBanner() {
               </button>
             </div>
 
-            <div className="space-y-3 text-xs text-navy-200 leading-relaxed">
-              <div className="bg-navy-800/70 p-3 rounded-xl border border-navy-700/60">
-                <p className="font-bold text-amber-400 mb-1">Android (Chrome / Samsung Internet):</p>
-                <p>1. Top-right me <strong className="text-white">3 dots (⋮)</strong> menu par tap karein.</p>
-                <p>2. <strong className="text-white">"Install app"</strong> ya <strong className="text-white">"Add to Home screen"</strong> select karein.</p>
+            <div className="space-y-3 text-xs sm:text-sm text-slate-100 leading-relaxed font-medium">
+              <div className="bg-navy-800/90 p-3.5 rounded-xl border border-navy-700/80">
+                <p className="font-bold text-amber-300 text-sm mb-1.5">Android (Chrome / Samsung Internet):</p>
+                <p>1. Top-right me <strong className="text-white font-bold">3 dots (⋮)</strong> menu par tap karein.</p>
+                <p>2. <strong className="text-white font-bold">"Install app"</strong> ya <strong className="text-white font-bold">"Add to Home screen"</strong> select karein.</p>
                 <p>3. Confirm karein. Cartygo ka icon aapki home screen par add ho jayega!</p>
               </div>
 
-              <div className="bg-navy-800/70 p-3 rounded-xl border border-navy-700/60">
-                <p className="font-bold text-amber-400 mb-1">iPhone / iPad (Safari):</p>
-                <p>1. Bottom bar me <strong className="text-white">Share (⎋)</strong> icon par tap karein.</p>
-                <p>2. Scroll karke <strong className="text-white">"Add to Home Screen"</strong> par tap karein.</p>
-                <p>3. Top-right me <strong className="text-white">"Add"</strong> tap karein.</p>
+              <div className="bg-navy-800/90 p-3.5 rounded-xl border border-navy-700/80">
+                <p className="font-bold text-amber-300 text-sm mb-1.5">iPhone / iPad (Safari):</p>
+                <p>1. Bottom bar me <strong className="text-white font-bold">Share (⎋)</strong> icon par tap karein.</p>
+                <p>2. Scroll karke <strong className="text-white font-bold">"Add to Home Screen"</strong> par tap karein.</p>
+                <p>3. Top-right me <strong className="text-white font-bold">"Add"</strong> tap karein.</p>
               </div>
             </div>
 
