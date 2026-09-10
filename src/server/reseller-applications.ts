@@ -4,6 +4,11 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/authz";
 import type { ResellerStatus } from "@prisma/client";
+import {
+  sendResellerApprovalEmail,
+  sendResellerRejectionEmail,
+  sendResellerInfoRequestedEmail,
+} from "@/lib/email";
 
 const decisionSchema = z.object({
   applicationId: z.string().length(24, "Must be a valid MongoDB ObjectId"),
@@ -42,7 +47,15 @@ export async function decideResellerApplication(
 
   const application = await prisma.resellerApplication.findUnique({
     where: { id: applicationId },
-    include: { resellerProfile: true },
+    include: {
+      resellerProfile: {
+        include: {
+          user: {
+            select: { id: true, name: true, email: true, role: true },
+          },
+        },
+      },
+    },
   });
   if (!application) {
     return { ok: false, error: "Application not found.", code: "NOT_FOUND" };
@@ -115,9 +128,41 @@ export async function decideResellerApplication(
     });
   });
 
-  // Notification dispatch (email/in-app) is queued here in a later slice —
-  // kept out of the transaction so a notification-provider outage can never
-  // roll back a decision that has already been made.
+  // Automated Email Dispatch to Retailer
+  // Kept out of the transaction so notification hiccups can never roll back the DB decision.
+  const targetEmail = application.resellerProfile.contactEmail || application.resellerProfile.user?.email;
+  const recipientName = application.resellerProfile.contactPerson || application.resellerProfile.user?.name || "Retailer Partner";
+  const businessName = application.resellerProfile.legalName || "Your Store";
+
+  if (targetEmail) {
+    if (decision === "APPROVED") {
+      sendResellerApprovalEmail({
+        toEmail: targetEmail,
+        recipientName,
+        businessName,
+      }).catch((err) => {
+        console.error(`[Reseller Decision] Failed to send approval email to ${targetEmail}:`, err);
+      });
+    } else if (decision === "REJECTED") {
+      sendResellerRejectionEmail({
+        toEmail: targetEmail,
+        recipientName,
+        businessName,
+        reason: reason || undefined,
+      }).catch((err) => {
+        console.error(`[Reseller Decision] Failed to send rejection email to ${targetEmail}:`, err);
+      });
+    } else if (decision === "INFO_REQUESTED") {
+      sendResellerInfoRequestedEmail({
+        toEmail: targetEmail,
+        recipientName,
+        businessName,
+        reason: reason || undefined,
+      }).catch((err) => {
+        console.error(`[Reseller Decision] Failed to send info requested email to ${targetEmail}:`, err);
+      });
+    }
+  }
 
   return { ok: true };
 }

@@ -486,7 +486,7 @@ export async function cancelOrder(orderId: string) {
       toEmail: order.user.email,
       customerName: order.user.name || order.user.email.split("@")[0] || "Customer",
       orderNumber: order.orderNumber,
-      paymentMethod: order.paymentMethod,
+      paymentMethod: order.paymentMethod || "COD",
       totalCents: order.totalCents,
     }).catch((err) => console.error("Error sending order cancellation email:", err));
   }
