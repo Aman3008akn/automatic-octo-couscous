@@ -1,6 +1,8 @@
 import { createClient } from "./supabase/server";
 import { prisma } from "./prisma";
 import type { Role } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./auth";
 
 export class UnauthorizedError extends Error {
   code = "UNAUTHORIZED";
@@ -10,6 +12,40 @@ export class ForbiddenError extends Error {
 }
 
 export async function requireSession() {
+  // 1. Check NextAuth session first (Google OAuth)
+  try {
+    const nextAuthSession = await getServerSession(authOptions);
+    if (nextAuthSession?.user?.email) {
+      const email = nextAuthSession.user.email.toLowerCase();
+      let dbUser = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!dbUser) {
+        dbUser = await prisma.user.create({
+          data: {
+            email,
+            name: nextAuthSession.user.name || email.split("@")[0],
+            role: "CUSTOMER",
+          },
+        });
+      }
+
+      return {
+        user: {
+          id: dbUser.id,
+          email: dbUser.email,
+          name: dbUser.name,
+          role: dbUser.role as Role,
+          supabaseId: dbUser.id,
+        },
+      };
+    }
+  } catch (err) {
+    // NextAuth check fallback
+  }
+
+  // 2. Supabase session (Phone OTP & Supabase users)
   const supabase = createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   

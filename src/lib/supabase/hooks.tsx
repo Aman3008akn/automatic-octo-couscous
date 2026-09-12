@@ -72,6 +72,29 @@ export function SupabaseSessionProvider({ children }: { children: React.ReactNod
         };
         if (mounted) setSession({ data: authData, status: "authenticated" });
       } else {
+        // Fallback check for NextAuth session (Google OAuth)
+        try {
+          const res = await fetch("/api/auth/session");
+          const nextAuth = await res.json();
+          if (nextAuth?.user?.email) {
+            const fullName = nextAuth.user.name || nextAuth.user.email.split("@")[0];
+            const firstName = fullName.split(" ")[0] || "";
+            const lastName = fullName.split(" ").slice(1).join(" ") || "";
+            const authData = {
+              user: {
+                id: nextAuth.user.id || nextAuth.user.uid || "google-user",
+                email: nextAuth.user.email,
+                name: fullName,
+                firstName,
+                lastName,
+                role: nextAuth.user.role || "CUSTOMER",
+              },
+            };
+            if (mounted) setSession({ data: authData, status: "authenticated" });
+            return;
+          }
+        } catch {}
+
         if (mounted) setSession({ data: null, status: "unauthenticated" });
       }
     }
@@ -129,6 +152,11 @@ export function useSession() {
 
 export async function signOut(options?: { callbackUrl?: string }) {
   const supabase = createClient();
-  await supabase.auth.signOut();
-  window.location.href = options?.callbackUrl || "/";
+  try {
+    await supabase.auth.signOut();
+  } catch {}
+  
+  // Also sign out from NextAuth
+  const target = options?.callbackUrl || "/";
+  window.location.href = `/api/auth/signout?callbackUrl=${encodeURIComponent(target)}`;
 }

@@ -1,6 +1,6 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 
@@ -10,12 +10,20 @@ import { prisma } from "./prisma";
  * each server action / API route — never trust the client-side role alone.
  */
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
   },
   providers: [
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            allowDangerousEmailAccountLinking: true,
+          }),
+        ]
+      : []),
     CredentialsProvider({
       name: "Email and password",
       credentials: {
@@ -56,10 +64,50 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account }) {
+      if (account?.provider === "google" && user.email) {
+        const inputEmail = user.email.toLowerCase();
+        try {
+          let dbUser = await prisma.user.findUnique({
+            where: { email: inputEmail },
+          });
+          if (!dbUser) {
+            await prisma.user.create({
+              data: {
+                email: inputEmail,
+                name: user.name || inputEmail.split("@")[0],
+                role: "CUSTOMER",
+              },
+            });
+          }
+        } catch (err) {
+          console.error("Error creating user during Google sign in:", err);
+        }
+      }
+      return true;
+    },
+    async jwt({ token, user, account }) {
       if (user) {
-        token.role = (user as { role?: string }).role;
-        token.uid = user.id;
+        const email = (user.email || token.email)?.toLowerCase();
+        if (email) {
+          try {
+            const dbUser = await prisma.user.findUnique({
+              where: { email },
+              select: { id: true, role: true, name: true },
+            });
+            if (dbUser) {
+              token.uid = dbUser.id;
+              token.role = dbUser.role;
+              if (dbUser.name) token.name = dbUser.name;
+            }
+          } catch {
+            token.role = (user as { role?: string }).role || "CUSTOMER";
+            token.uid = user.id;
+          }
+        } else {
+          token.role = (user as { role?: string }).role || "CUSTOMER";
+          token.uid = user.id;
+        }
       } else if (token.uid) {
         try {
           const dbUser = await prisma.user.findUnique({

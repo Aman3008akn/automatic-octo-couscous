@@ -56,10 +56,16 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
+  const hasNextAuthSession = Boolean(
+    request.cookies.get("next-auth.session-token")?.value ||
+    request.cookies.get("__Secure-next-auth.session-token")?.value
+  );
+
+  const isAuthenticated = Boolean(user || hasNextAuthSession);
   const path = request.nextUrl.pathname;
 
   // Basic authentication check
-  if (!user && (path.startsWith("/admin") || path.startsWith("/reseller/dashboard") || path.startsWith("/account"))) {
+  if (!isAuthenticated && (path.startsWith("/admin") || path.startsWith("/reseller/dashboard") || path.startsWith("/account"))) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
