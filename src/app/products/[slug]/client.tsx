@@ -6,10 +6,15 @@ import { useSession } from "@/lib/supabase/hooks";
 import { addToCart } from "@/server/cart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ProductReviews } from "@/components/storefront/product-reviews";
+import { RelatedProducts } from "@/components/storefront/related-products";
+import type { ReviewStats } from "@/server/reviews";
+import type { ProductCardProps } from "@/components/storefront/product-card";
 
 interface ProductDetailProps {
   product: {
     id: string;
+    slug: string;
     title: string;
     description: string;
     brand?: string | null;
@@ -24,9 +29,15 @@ interface ProductDetailProps {
     availableStock: number;
     images: string[];
   };
+  relatedProducts: ProductCardProps[];
+  reviewStats: ReviewStats;
 }
 
-export default function ProductDetailClient({ product }: ProductDetailProps) {
+export default function ProductDetailClient({
+  product,
+  relatedProducts,
+  reviewStats,
+}: ProductDetailProps) {
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -126,9 +137,12 @@ export default function ProductDetailClient({ product }: ProductDetailProps) {
 
             {/* Rating summary */}
             <div className="flex items-center gap-2 mt-3 text-xs text-navy-600">
-              <span className="text-amber-500 font-bold">★★★★★</span>
-              <span className="font-bold text-ink">4.9</span>
-              <span>(24 verified reviews)</span>
+              <span className="text-amber-500 font-bold">
+                {"★".repeat(Math.round(reviewStats.averageRating))}
+                {"☆".repeat(Math.max(0, 5 - Math.round(reviewStats.averageRating)))}
+              </span>
+              <span className="font-bold text-ink">{reviewStats.averageRating}</span>
+              <span>({reviewStats.totalReviews} verified reviews)</span>
             </div>
           </div>
 
@@ -227,6 +241,16 @@ export default function ProductDetailClient({ product }: ProductDetailProps) {
           </Card>
         </div>
       </div>
+
+      {/* Customer Reviews & Ratings */}
+      <ProductReviews
+        productId={product.id}
+        productSlug={product.slug}
+        initialStats={reviewStats}
+      />
+
+      {/* Related Products Algorithm Grid */}
+      <RelatedProducts products={relatedProducts} />
     </main>
   );
 }

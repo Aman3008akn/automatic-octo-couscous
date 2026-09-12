@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getRelatedProducts } from "@/server/recommendations";
+import { getProductReviews } from "@/server/reviews";
 import ProductDetailClient from "./client";
 
 export default async function ProductDetailPage({ params }: { params: { slug: string } }) {
@@ -40,10 +42,22 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
   const compareAtCents = mainVariant?.compareAtCents;
   const availableStock = mainVariant?.inventory?.available ?? 0;
 
+  const [relatedProducts, reviewStats] = await Promise.all([
+    getRelatedProducts({
+      productId: product.id,
+      categoryId: product.categoryId,
+      brand: product.brand,
+      priceCents,
+      limit: 8,
+    }),
+    getProductReviews(product.id),
+  ]);
+
   return (
     <ProductDetailClient
       product={{
         id: product.id,
+        slug: product.slug,
         title: product.title,
         description: product.description,
         brand: product.brand,
@@ -58,6 +72,8 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
         availableStock,
         images: product.images.map((i) => i.url),
       }}
+      relatedProducts={relatedProducts}
+      reviewStats={reviewStats}
     />
   );
 }
