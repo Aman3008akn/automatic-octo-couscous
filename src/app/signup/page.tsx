@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
+import { GoogleSignInButton } from "@/components/ui/google-sign-in-button";
 
 function SignupForm() {
   const router = useRouter();
@@ -71,6 +72,21 @@ function SignupForm() {
       </CardHeader>
 
       <CardContent className="pt-4">
+        {/* Google Sign Up Option */}
+        <div className="mb-4">
+          <GoogleSignInButton
+            callbackUrl={callbackUrl}
+            text="Sign up with Google"
+            onError={(msg) => setError(msg)}
+          />
+        </div>
+
+        <div className="relative my-4 flex items-center">
+          <div className="flex-grow border-t border-line"></div>
+          <span className="shrink-0 px-3 text-xs text-navy-400 uppercase tracking-wider font-semibold">Or with Email</span>
+          <div className="flex-grow border-t border-line"></div>
+        </div>
+
         {error && (
           <div className="mb-4 rounded-card bg-danger/10 border border-danger/20 p-3 text-xs text-danger font-medium">
             {error}

@@ -228,7 +228,7 @@ export default async function AdminDashboardPage() {
 
         {/* Right Column: Platform Operational Status & Surveillance */}
         <div className="space-y-6">
-          {/* Executive Admin Activity Surveillance Card (Aman Shukla Exclusive Control) */}
+          {/* Executive Admin Activity Surveillance Card */}
           <Card className="border-amber-400/80 bg-amber-50/20 shadow-md">
             <CardHeader className="pb-3 border-b border-amber-200">
               <div className="flex items-center justify-between">
@@ -238,20 +238,20 @@ export default async function AdminDashboardPage() {
                 <span className="h-2 w-2 rounded-full bg-success animate-ping"></span>
               </div>
               <CardTitle className="text-base font-bold text-ink mt-1">
-                🕵️ Sumit Gautam Activity Tracker
+                🕵️ Admin Operator Activity Tracker
               </CardTitle>
               <CardDescription className="text-xs text-navy-600">
-                Special audit feed for Aman Shukla to monitor Sumit Gautam's admin dashboard actions
+                Live audit monitoring feed for all administrator dashboard modifications
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-3 space-y-3 text-xs">
               <div className="flex justify-between items-center py-1 border-b border-line">
                 <span className="text-navy-600 font-medium">Monitored Admin:</span>
-                <span className="font-bold text-ink">Sumit Gautam</span>
+                <span className="font-bold text-ink">Operations Admin</span>
               </div>
               <div className="flex justify-between items-center py-1 border-b border-line">
                 <span className="text-navy-600 font-medium">Admin Email:</span>
-                <span className="font-mono text-[11px] text-navy-900 font-semibold">sumitgautam@cartygo.admin</span>
+                <span className="font-mono text-[11px] text-navy-900 font-semibold">operations@cartygo.admin</span>
               </div>
               <div className="flex justify-between items-center py-1 border-b border-line">
                 <span className="text-navy-600 font-medium">Role Level:</span>
@@ -316,15 +316,15 @@ export default async function AdminDashboardPage() {
             <CardContent className="space-y-3 text-xs text-navy-600">
               <div className="flex justify-between py-1 border-b border-line">
                 <span>Super Admins:</span>
-                <span className="font-semibold text-ink">Aman Shukla, Sumit Gautam</span>
+                <span className="font-semibold text-ink">Primary Admin, Operations Admin</span>
               </div>
               <div className="flex justify-between py-1 border-b border-line">
-                <span>Aman Shukla Privilege:</span>
-                <span className="font-semibold text-amber-600">Full Access + Audit Monitor</span>
+                <span>Primary Privilege:</span>
+                <span className="font-semibold text-amber-600">Full Root Access + Audit Monitor</span>
               </div>
               <div className="flex justify-between py-1 border-b border-line">
-                <span>Sumit Gautam Privilege:</span>
-                <span className="font-semibold text-success">Full Access</span>
+                <span>Secondary Privilege:</span>
+                <span className="font-semibold text-success">Catalog & Reseller Operations</span>
               </div>
             </CardContent>
           </Card>

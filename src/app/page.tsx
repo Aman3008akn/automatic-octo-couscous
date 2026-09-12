@@ -4,8 +4,6 @@ import { HeroCarousel } from "@/components/storefront/hero-carousel";
 import { ProductCard } from "@/components/storefront/product-card";
 import { CartygoDrop } from "@/components/storefront/cartygo-drop";
 import { PriceDrops } from "@/components/storefront/price-drops";
-import { TeamSection } from "@/components/storefront/team-section";
-import { TeamScrollPopup } from "@/components/storefront/team-scroll-popup";
 import { Footer } from "@/components/storefront/footer";
 import { WelcomeOffer } from "@/components/storefront/welcome-offer";
 import { AppDownloadBanner } from "@/components/storefront/app-download-banner";
@@ -81,17 +79,11 @@ export default async function HomePage() {
           )}
         </section>
 
-        {/* 7. Meet the Builders: The Minds Behind Cartygo */}
-        <TeamSection />
-
-        {/* 8. Download Cartygo App / APK Banner */}
+        {/* 7. Download Cartygo App / APK Banner */}
         <AppDownloadBanner />
       </main>
 
-      {/* Floating Action Badge to scroll to Team Section */}
-      <TeamScrollPopup />
-
-      {/* 9. Marketplace Footer */}
+      {/* 8. Marketplace Footer */}
       <Footer />
     </div>
   );

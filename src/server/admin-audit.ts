@@ -4,8 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/authz";
 
 /**
- * Fetch detailed administrative activity log specifically for monitoring Sumit Gautam's actions.
- * Accessible by Super Admins (specifically Aman Shukla).
+ * Fetch detailed administrative activity log for executive operator actions.
+ * Accessible by Super Admins.
  */
 export async function getSumitGautamActivityLogs() {
   try {

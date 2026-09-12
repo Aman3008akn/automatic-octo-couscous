@@ -39,10 +39,17 @@ export async function GET(request: Request) {
       })
 
       if (!existingUser) {
+        const metadata = data.user.user_metadata || {}
+        const displayName =
+          metadata.full_name ||
+          metadata.name ||
+          [metadata.first_name, metadata.last_name].filter(Boolean).join(' ') ||
+          email.split('@')[0]
+
         await prisma.user.create({
           data: {
             email,
-            name: data.user.user_metadata?.name || email.split('@')[0],
+            name: displayName,
             role: 'CUSTOMER',
           },
         })

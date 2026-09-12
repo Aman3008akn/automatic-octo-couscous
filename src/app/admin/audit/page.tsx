@@ -67,7 +67,7 @@ export default async function AdminAuditLogsPage({ searchParams }: PageProps) {
                 : "bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100"
             }`}
           >
-            🕵️ Monitor Sumit Gautam
+            🕵️ Operations Admin
           </Link>
           <Link
             href="/admin/audit?actor=amanshukla@cartygo.admin"
@@ -77,7 +77,7 @@ export default async function AdminAuditLogsPage({ searchParams }: PageProps) {
                 : "bg-navy-50 text-navy-600 hover:bg-navy-100"
             }`}
           >
-            Aman Shukla Actions
+            Super Admin Events
           </Link>
         </div>
       </div>

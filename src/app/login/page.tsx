@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
+import { GoogleSignInButton } from "@/components/ui/google-sign-in-button";
 
 function LoginForm() {
   const router = useRouter();
@@ -134,6 +135,21 @@ function LoginForm() {
       </CardHeader>
 
       <CardContent className="pt-4">
+        {/* Google Sign In Option */}
+        <div className="mb-4">
+          <GoogleSignInButton
+            callbackUrl={callbackUrl}
+            text="Sign in with Google"
+            onError={(msg) => setError(msg)}
+          />
+        </div>
+
+        <div className="relative my-4 flex items-center">
+          <div className="flex-grow border-t border-line"></div>
+          <span className="shrink-0 px-3 text-xs text-navy-400 uppercase tracking-wider font-semibold">Or with Phone / Email</span>
+          <div className="flex-grow border-t border-line"></div>
+        </div>
+
         {/* Method Toggle */}
         <div className="flex rounded-card bg-navy-50/50 p-1 mb-6 border border-line">
           <button
@@ -272,8 +288,8 @@ function LoginForm() {
                 className="flex items-center justify-between rounded-card border border-amber-300 bg-amber-50/60 p-2.5 text-xs text-left hover:bg-amber-100 transition-colors"
               >
                 <div>
-                  <p className="font-semibold text-navy-900">Aman Shukla (Super Admin)</p>
-                  <p className="text-navy-600 font-mono text-[10px]">amanshukla@cartygo.admin</p>
+                  <p className="font-semibold text-navy-900">Primary Super Admin</p>
+                  <p className="text-navy-600 font-mono text-[10px]">admin@cartygo.com</p>
                 </div>
                 <span className="rounded bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-navy-900">
                   SUPER_ADMIN
@@ -286,8 +302,8 @@ function LoginForm() {
                 className="flex items-center justify-between rounded-card border border-navy-200 bg-navy-50/60 p-2.5 text-xs text-left hover:bg-navy-100 transition-colors"
               >
                 <div>
-                  <p className="font-semibold text-navy-900">Sumit Gautam (Super Admin)</p>
-                  <p className="text-navy-600 font-mono text-[10px]">sumitgautam@cartygo.admin</p>
+                  <p className="font-semibold text-navy-900">Secondary Super Admin</p>
+                  <p className="text-navy-600 font-mono text-[10px]">operations@cartygo.com</p>
                 </div>
                 <span className="rounded bg-navy-900 px-2 py-0.5 text-[10px] font-bold text-white">
                   SUPER_ADMIN
