@@ -11,7 +11,8 @@ import { GoogleSignInButton } from "@/components/ui/google-sign-in-button";
 function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const rawCallbackUrl = searchParams.get("callbackUrl");
+  const callbackUrl = rawCallbackUrl && rawCallbackUrl.startsWith("/") ? rawCallbackUrl : "/";
   const supabase = createClient();
 
   const [firstName, setFirstName] = useState("");
@@ -19,7 +20,10 @@ function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   
-  const [error, setError] = useState<string | null>(null);
+  const authError = searchParams.get("error");
+  const [error, setError] = useState<string | null>(
+    authError ? (authError === "OAuthCallback" ? "Google signup was interrupted. Please try again." : authError) : null
+  );
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 

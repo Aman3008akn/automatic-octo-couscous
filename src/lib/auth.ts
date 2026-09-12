@@ -4,22 +4,38 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
+const NEXTAUTH_SECRET =
+  process.env.NEXTAUTH_SECRET ||
+  "cartigo-secret-dev-key-random-string-12345";
+
+if (!process.env.NEXTAUTH_URL) {
+  process.env.NEXTAUTH_URL =
+    process.env.URL ||
+    (process.env.NODE_ENV === "production"
+      ? "https://cartygo.netlify.app"
+      : "http://localhost:3000");
+}
+
 /**
  * Central auth config. Role lives on the User row (see prisma/schema.prisma).
  * Route-level authorization is enforced in middleware.ts and again inside
  * each server action / API route — never trust the client-side role alone.
  */
 export const authOptions: NextAuthOptions = {
+  secret: NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
+    error: "/login",
   },
   providers: [
-    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ...(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET
       ? [
           GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            clientId: GOOGLE_CLIENT_ID,
+            clientSecret: GOOGLE_CLIENT_SECRET,
             allowDangerousEmailAccountLinking: true,
           }),
         ]
