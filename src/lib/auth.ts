@@ -10,12 +10,16 @@ const NEXTAUTH_SECRET =
   process.env.NEXTAUTH_SECRET ||
   "cartigo-secret-dev-key-random-string-12345";
 
+const DEFAULT_AUTH_BASE_URL =
+  process.env.NEXTAUTH_URL ||
+  process.env.NEXT_PUBLIC_APP_URL ||
+  process.env.URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://cartygo.store"
+    : "http://localhost:3000");
+
 if (!process.env.NEXTAUTH_URL) {
-  process.env.NEXTAUTH_URL =
-    process.env.URL ||
-    (process.env.NODE_ENV === "production"
-      ? "https://cartygo.netlify.app"
-      : "http://localhost:3000");
+  process.env.NEXTAUTH_URL = DEFAULT_AUTH_BASE_URL;
 }
 
 /**
@@ -25,6 +29,7 @@ if (!process.env.NEXTAUTH_URL) {
  */
 export const authOptions: NextAuthOptions = {
   secret: NEXTAUTH_SECRET,
+  trustHost: true,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
